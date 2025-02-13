@@ -26,7 +26,7 @@ class MainRoutes {
 
   private initializeRoutes(): void {
     // Home route
-    this.app.use("${this.path}`", home);
+    this.app.use("/", home);
 
     // API routes
     this.app.use(`${this.path}`, Api_user);

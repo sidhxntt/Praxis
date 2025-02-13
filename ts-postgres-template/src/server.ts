@@ -15,7 +15,7 @@ dotenv.config();
 export default class SERVER {
   private app: Application;
   private port: string | number;
-  private httpServer: any; // Store the HTTP server instance
+  private httpServer: any; 
   private serverUrl: string;
 
   constructor() {

@@ -12,6 +12,9 @@ export class BaseData {
     this.model = model;
     this.modelName = modelName;
   }
+  protected parseIdToNumber(id: string): number {
+    return parseInt(id, 10);
+  }
   protected generateCacheKey = (page?: number, limit?: number, id?: string) =>
     id ? `${this.modelName}:${id}` : `${this.modelName}:${page}:${limit}`;
 
@@ -89,6 +92,7 @@ export class BaseData {
 
   public async getOne(req: Request, res: Response) {
     const { id } = req.params;
+    const userID = this.parseIdToNumber(id)
 
     const cacheKey = this.generateCacheKey(undefined, undefined, id);
     const cachedData = await redis.get(cacheKey);
@@ -100,7 +104,7 @@ export class BaseData {
         JSON.parse(cachedData)
       );
 
-    const item = await this.model.findUnique({ where: { id } });
+    const item = await this.model.findUnique({ where: { id: userID } });
     if (!item)
       return this.sendResponse(
         res,

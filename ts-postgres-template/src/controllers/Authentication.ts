@@ -28,7 +28,7 @@ export default class JWT {
     this.maxAge = process.env.MAX_AGE;
   }
 
-  public createToken(id: string, role: string): Promise<string> {
+  public createToken(id: number, role: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       jwt.sign(
         { id, role }, 

@@ -18,7 +18,7 @@ async function main() {
             zipcode: "92998-3874",
           },
         },
-        todos: {
+        Todos: {
           create: [
             {
               title: "Buy milk",
@@ -146,11 +146,11 @@ async function main() {
             },
           ],
         },
-        albums: {
+        Album: {
           create: [
             {
               title: "Beautiful Landscapes",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -421,7 +421,7 @@ async function main() {
             },
             {
               title: "Urban Explorations",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -692,7 +692,7 @@ async function main() {
             },
             {
               title: "Sunny Beaches",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -963,7 +963,7 @@ async function main() {
             },
             {
               title: "Mountain Adventures",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -1234,7 +1234,7 @@ async function main() {
             },
             {
               title: "Vintage Cars",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -1505,7 +1505,7 @@ async function main() {
             },
             {
               title: "Wildlife Wonders",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -1776,7 +1776,7 @@ async function main() {
             },
             {
               title: "City Skylines",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -2047,7 +2047,7 @@ async function main() {
             },
             {
               title: "Underwater Life",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -2318,7 +2318,7 @@ async function main() {
             },
             {
               title: "Historic Architecture",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -2589,7 +2589,7 @@ async function main() {
             },
             {
               title: "Seasonal Colors",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -2860,7 +2860,7 @@ async function main() {
             },
             {
               title: "Cultural Festivals",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -3131,7 +3131,7 @@ async function main() {
             },
             {
               title: "Starlit Nights",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -3402,7 +3402,7 @@ async function main() {
             },
             {
               title: "Family Moments",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -3673,7 +3673,7 @@ async function main() {
             },
             {
               title: "Gourmet Dishes",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -3944,7 +3944,7 @@ async function main() {
             },
             {
               title: "Artistic Expressions",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -4215,7 +4215,7 @@ async function main() {
             },
             {
               title: "Travel Diaries",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -4486,7 +4486,7 @@ async function main() {
             },
             {
               title: "Sports Action",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -4757,7 +4757,7 @@ async function main() {
             },
             {
               title: "Nightlife Scenes",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -5028,7 +5028,7 @@ async function main() {
             },
             {
               title: "Relaxing Parks",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -5299,7 +5299,7 @@ async function main() {
             },
             {
               title: "Creative Portraits",
-              images: {
+              Image: {
                 create: [
                   {
                     title: "accusamus beatae ad facilis cum similique qui sunt",
@@ -5571,7 +5571,7 @@ async function main() {
           ],
           
         },
-        posts:{
+        Post:{
           create:[
             {
               title: "are or do repels provide blacked out except option criticizes",
