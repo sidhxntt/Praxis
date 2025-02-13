@@ -20,4 +20,3 @@ export const disconnectDB = async () => {
     console.error("Failed to disconnect from database:", error.message || error);
   }
 };
-

@@ -6,7 +6,6 @@ export class AlbumData extends BaseData {
     super(model, "Album");
     this.prisma = new PrismaClient();
   }
-
   async create(req, res) {
     const { userID, title } = req.body;
 
@@ -21,9 +20,10 @@ export class AlbumData extends BaseData {
   async update(req, res) {
     const { id } = req.params;
     const { title } = req.body;
+    const albumID = this.parseIdToNumber(id);
 
     const album = await this.model.update({
-      where: { id },
+      where: { id: albumID },
       data: { title },
     });
 
@@ -37,10 +37,11 @@ export class AlbumData extends BaseData {
 
   async delete(req, res) {
     const { id } = req.params;
+    const albumID = this.parseIdToNumber(id);
 
-    await this.prisma.$transaction(async (prisma) => {
-      await prisma.image.deleteMany({ where: { albumID: id } });
-      await prisma.album.delete({ where: { id } });
+    await this.prisma.$transaction(async (tx) => {
+      await tx.image.deleteMany({ where: { albumID: albumID } });
+      await tx.album.delete({ where: { id: albumID } });
     });
 
     await this.clearModelCache();

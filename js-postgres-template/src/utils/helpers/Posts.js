@@ -19,9 +19,10 @@ export class PostData extends BaseData {
   async update(req, res) {
     const { id } = req.params;
     const { title, body } = req.body;
+    const postID = this.parseIdToNumber(id);
 
     const post = await this.model.update({
-      where: { id },
+      where: { id: postID },
       data: { title, body },
     });
 
@@ -35,8 +36,10 @@ export class PostData extends BaseData {
 
   async delete(req, res) {
     const { id } = req.params;
+    const postID = this.parseIdToNumber(id);
 
-    await this.model.delete({ where: { id } });
+    await this.model.delete({ where: { id: postID } });
     await this.clearModelCache();
+    return this.sendResponse(res, 200, "Post deleted successfully");
   }
 }

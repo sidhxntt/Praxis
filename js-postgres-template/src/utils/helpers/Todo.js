@@ -19,9 +19,10 @@ export class TodoData extends BaseData {
   async update(req, res) {
     const { id } = req.params;
     const { title, completed } = req.body;
+    const todoID = this.parseIdToNumber(id);
 
     const todo = await this.model.update({
-      where: { id },
+      where: { id: todoID },
       data: { title, completed },
     });
 
@@ -35,8 +36,9 @@ export class TodoData extends BaseData {
 
   async delete(req, res) {
     const { id } = req.params;
+    const todoID = this.parseIdToNumber(id);
 
-    await this.model.delete({ where: { id } });
+    await this.model.delete({ where: { id: todoID } });
     await this.clearModelCache();
     return this.sendResponse(res, 200, "Todo deleted successfully");
   }

@@ -42,9 +42,10 @@ export class UserData extends BaseData {
   async update(req, res) {
     const { id } = req.params;
     const { name, username, email, address, phone, website } = req.body;
+    const userID = this.parseIdToNumber(id);
 
     const user = await this.model.update({
-      where: { id },
+      where: { id: userID },
       data: {
         name,
         username,
@@ -72,16 +73,17 @@ export class UserData extends BaseData {
 
   async delete(req, res) {
     const { id } = req.params;
+    const userID = this.parseIdToNumber(id);
 
     await this.prisma.$transaction(async (prisma) => {
       await prisma.image.deleteMany({
-        where: { album: { userID: id } },
+        where: { Album: { userID } },
       });
-      await prisma.album.deleteMany({ where: { userID: id } });
-      await prisma.post.deleteMany({ where: { userID: id } });
-      await prisma.todos.deleteMany({ where: { userID: id } });
-      await prisma.address.deleteMany({ where: { userID: id } });
-      await prisma.user.delete({ where: { id } });
+      await prisma.album.deleteMany({ where: { userID } });
+      await prisma.post.deleteMany({ where: { userID } });
+      await prisma.todos.deleteMany({ where: { userID } });
+      await prisma.address.deleteMany({ where: { userID } });
+      await prisma.user.delete({ where: { id: userID } });
     });
 
     await this.clearModelCache();

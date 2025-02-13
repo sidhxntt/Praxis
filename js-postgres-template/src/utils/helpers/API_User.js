@@ -158,8 +158,11 @@ export default class User extends BaseData {
 
   async delete(req, res) {
     const { id } = req.params;
+    const api_users_id = this.parseIdToNumber(id);
 
-    const existingUser = await this.model.findUnique({ where: { id } });
+    const existingUser = await this.model.findUnique({
+      where: { api_users_id },
+    });
 
     if (!existingUser) {
       return this.sendResponse(
@@ -171,19 +174,20 @@ export default class User extends BaseData {
       );
     }
 
-    await this.model.delete({ where: { id } });
+    await this.model.delete({ where: { api_users_id } });
     await this.clearModelCache();
 
-    console.info(`User with ID ${id} deleted`);
+    console.info(`User with ID ${api_users_id} deleted`);
     return this.sendResponse(res, 200, "User deleted successfully");
   }
 
   async update(req, res) {
     const { id } = req.params;
     const { email, password, role } = req.body;
+    const api_users_id = this.parseIdToNumber(id);
 
     const api_users = await this.model.update({
-      where: { id },
+      where: { id: api_users_id },
       data: { email, password, role },
     });
 

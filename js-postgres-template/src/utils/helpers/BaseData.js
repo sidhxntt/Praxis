@@ -8,8 +8,14 @@ export class BaseData {
     this.model = model;
     this.modelName = modelName;
   }
-  generateCacheKey = (page, limit, id) =>
-    id ? `${this.modelName}:${id}` : `${this.modelName}:${page}:${limit}`;
+
+  parseIdToNumber(id) {
+    return parseInt(id, 10);
+  }
+
+  generateCacheKey(page, limit, id) {
+    return id ? `${this.modelName}:${id}` : `${this.modelName}:${page}:${limit}`;
+  }
 
   async clearModelCache() {
     const keys = await redis.keys(`${this.modelName}:*`);
@@ -39,7 +45,6 @@ export class BaseData {
     return { page, limit, offset: (page - 1) * limit };
   }
 
-  // Common GET methods
   async getAll(req, res) {
     const { page, limit, offset } = this.generatePagination(req);
     const cacheKey = this.generateCacheKey(page, limit);
@@ -79,6 +84,7 @@ export class BaseData {
 
   async getOne(req, res) {
     const { id } = req.params;
+    const userID = this.parseIdToNumber(id);
 
     const cacheKey = this.generateCacheKey(undefined, undefined, id);
     const cachedData = await redis.get(cacheKey);
@@ -90,7 +96,7 @@ export class BaseData {
         JSON.parse(cachedData)
       );
 
-    const item = await this.model.findUnique({ where: { id } });
+    const item = await this.model.findUnique({ where: { id: userID } });
     if (!item)
       return this.sendResponse(
         res,
@@ -104,3 +110,5 @@ export class BaseData {
     return this.sendResponse(res, 200, "Data fetched successfully", item);
   }
 }
+
+

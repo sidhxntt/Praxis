@@ -1,5 +1,5 @@
 // Description: This file contains the worker for processing email jobs using BullMQ. It uses Nodemailer to send emails.
-import { Worker } from "bullmq";
+import { Worker, Job } from "bullmq";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 

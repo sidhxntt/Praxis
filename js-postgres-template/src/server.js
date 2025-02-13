@@ -1,5 +1,6 @@
 // Description: This file is the entry point of the application. It starts the server, connects to the database & redis, and initializes the routes.
 // It also handles graceful shutdown of the server and database connections.
+
 import express from "express";
 import AllRoutes from "./routes/Main_Routes.js";
 import error_handling from "./controllers/error.js";
@@ -12,12 +13,7 @@ import { redis_connection, disconnectRedis } from "./utils/Clients/Redis.js";
 
 dotenv.config();
 
-export default class SERVER {
-   app;
-   port;
-   httpServer; // Store the HTTP server instance
-   serverUrl;
-
+class SERVER {
   constructor() {
     this.app = express();
     this.port = process.env.MAIN_SERVER_PORT || 8000;
@@ -25,24 +21,24 @@ export default class SERVER {
     this.initialize_Routes_and_middlewares();
   }
 
-   initialize_Routes_and_middlewares() {
+  initialize_Routes_and_middlewares() {
     this.app.use(
       cors({
         origin: process.env.CLIENT,
         methods: ["GET", "POST", "PUT", "DELETE"],
         allowedHeaders: ["Content-Type", "Authorization"],
       })
-    ), // Enable CORS
+    ); // Enable CORS
 
     this.app.use(express.json()); // Parse JSON bodies
     this.app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
-    this.app.use(helmet()); //security middleware
+    this.app.use(helmet()); // Security middleware
 
     AllRoutes(this.app); // Main routes
-    this.app.use(error_handling); // global error handling middlewares
+    this.app.use(error_handling); // Global error handling middlewares
   }
 
-   async start() {
+  async start() {
     try {
       await connectDB();
       redis_connection();
@@ -51,7 +47,7 @@ export default class SERVER {
         console.log(`Server is running at: ${this.serverUrl} 🏄`);
       });
 
-      //graceful shutdown 
+      // Graceful shutdown 
       GracefulShutdown(this.httpServer, {
         signals: "SIGINT SIGTERM",
         timeout: 3000,

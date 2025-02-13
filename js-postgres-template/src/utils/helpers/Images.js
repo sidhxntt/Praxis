@@ -19,9 +19,10 @@ export class ImageData extends BaseData {
   async update(req, res) {
     const { id } = req.params;
     const { title, url, thumbnailUrl } = req.body;
+    const imageID = this.parseIdToNumber(id);
 
     const image = await this.model.update({
-      where: { id },
+      where: { id: imageID },
       data: { title, url, thumbnailUrl },
     });
 
@@ -35,8 +36,9 @@ export class ImageData extends BaseData {
 
   async delete(req, res) {
     const { id } = req.params;
+    const imageID = this.parseIdToNumber(id);
 
-    await this.model.delete({ where: { id } });
+    await this.model.delete({ where: { id: imageID } });
     await this.clearModelCache();
     return this.sendResponse(res, 200, "Image deleted successfully");
   }

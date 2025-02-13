@@ -1,6 +1,3 @@
-// Purpose: Main routes file to define all routes for the application. It imports all the sub-routes and initializes them.
-// This file is then imported in the server file to initialize all the routes.
-
 import users from "./users.js";
 import Api_user from "./API_user.js";
 import addresses from "./addresses.js";

@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+
 /**
  * Centralized error handling middleware.
  * Handles Prisma errors, validation errors, and general server errors.

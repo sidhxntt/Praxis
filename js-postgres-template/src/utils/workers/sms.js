@@ -1,6 +1,6 @@
 // Code for processing SMS jobs using Twilio
 
-import { Worker } from "bullmq";
+import { Worker, Job } from "bullmq";
 import twilio from "twilio";
 import dotenv from "dotenv";
 dotenv.config();
