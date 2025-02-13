@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  username String   @unique
+  email    String   @unique
+  address  Address?
+  phone    String   @unique
+  website  String   @unique
+  albums   Album[]
+  posts    Post[]
+  todos    Todos[]
+}
+
+model Address {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  street  String
+  suite   String
+  city    String
+  zipcode String
+  user    User   @relation(fields: [userID], references: [id])
+  userID  String @unique @db.ObjectId
+}
+
+model Album {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  userID String  @db.ObjectId
+  title  String
+  user   User    @relation(fields: [userID], references: [id])
+  images Image[]
+}
+
+model Image {
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  albumID      String @db.ObjectId
+  title        String
+  url          String
+  thumbnailUrl String
+  album        Album  @relation(fields: [albumID], references: [id])
+}
+
+model Post {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userID String @db.ObjectId
+  title  String
+  body   String
+  user   User   @relation(fields: [userID], references: [id])
+}
+
+model Todos {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  userID    String  @db.ObjectId
+  title     String
+  completed Boolean
+  user      User    @relation(fields: [userID], references: [id])
+}
+
+model Api_users {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  email    String @unique
+  password String
+  role     String @default("user")
+}
