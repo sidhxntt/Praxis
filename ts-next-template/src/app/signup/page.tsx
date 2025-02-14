@@ -2,7 +2,7 @@ import SignupFormDemo from "../../components/aceternityComponents/Signup"
 
 const page = () => {
   return (
-    <section className="my-16 mb-28">
+    <section className="my-12">
         <SignupFormDemo/>
     </section>
   

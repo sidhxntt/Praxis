@@ -22,7 +22,7 @@ interface MetadataOptions {
 }
 
 export function constructMetadata({
-  title = "Your App",
+  title = "Starter Template",
   description = "Your app description goes here",
   image = "/openGraph.png",
   icons = "/favicon.ico",
