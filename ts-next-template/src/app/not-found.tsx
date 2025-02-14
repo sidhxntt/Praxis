@@ -1,4 +1,4 @@
-import { Error } from "./components/Layout/Error"
+import { Error } from "../components/Layout/Error"
 
 
 export default function NotFound() {

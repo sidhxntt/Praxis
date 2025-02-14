@@ -4,7 +4,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "../ui/button";
 import { AnimatedTooltipPreview } from "../aceternityComponents/AnimatedTooltip";
-import { HeroHighlightDemo } from "../aceternityComponents/ HeroHighlight";
+import { HeroHighlightDemo } from "../aceternityComponents/HeroHighlight";
 import Image from "next/image";
 
 function HeroSection() {

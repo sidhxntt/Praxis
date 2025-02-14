@@ -1,11 +1,11 @@
 import { Mulish } from "next/font/google";
 import "./globals.css";
 import { cn, constructMetadata } from "@/lib/utils";
-import Navbar from "./components/Layout/Navbar";
-import { Toaster } from "./components/ui/toaster";
-import { ThemeProvider } from "./components/Layout/ThemeProvider";
-import Footer from "./components/Layout/Footer";
-import ScreenRestriction from "./components/Layout/ScreenRestriction";
+import Navbar from "../components/Layout/Navbar";
+import { Toaster } from "../components/ui/toaster";
+import { ThemeProvider } from "../components/Layout/ThemeProvider";
+import Footer from "../components/Layout/Footer";
+import ScreenRestriction from "../components/Layout/ScreenRestriction";
 import { ClerkProvider } from "@clerk/nextjs";
 
 const mulish = Mulish({ subsets: ["latin"] });

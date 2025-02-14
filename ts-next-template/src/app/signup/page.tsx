@@ -1,4 +1,4 @@
-import SignupFormDemo from "../components/aceternityComponents/Signup"
+import SignupFormDemo from "../../components/aceternityComponents/Signup"
 
 const page = () => {
   return (
