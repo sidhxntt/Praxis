@@ -1,7 +1,22 @@
 ## Unlock the Full Potential of Your Application
 
 This starter template gives you a glimpse of what's possible. Ready to build something extraordinary?
-> To use clerk update your .env file and uncomment respective files.
+> To use clerk update your .env file and uncomment respective files (Navbar & DsiplayPic). Also add `middleware.ts` in `src/` & copy paste this:
+```typescript
+import { clerkMiddleware } from "@clerk/nextjs/server";
+
+export default clerkMiddleware();
+
+export const config = {
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Always run for API routes
+    "/(api|trpc)(.*)",
+  ],
+};
+
+```
 
 ### Premium Templates Available Now
 

@@ -30,7 +30,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         className={cn("min-h-screen font-sans antialiased", mulish.className)}
       >
         <ScreenRestriction>
-          <ClerkProvider>
+          {/* <ClerkProvider> */}
             <ThemeProvider
               attribute="class"
               defaultTheme="system"
@@ -42,7 +42,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
               {children}
               <Footer />
             </ThemeProvider>
-          </ClerkProvider>
+          {/* </ClerkProvider> */}
         </ScreenRestriction>
       </body>
     </html>

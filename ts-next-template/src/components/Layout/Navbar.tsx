@@ -5,33 +5,33 @@ import { Menu } from "lucide-react";
 import { ModeToggle } from "../ui/toggleButton";
 import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import DisplayPic from "../Clerk/Displaypic";
+// import DisplayPic from "../Clerk/Displaypic";
 
 function Navbar() {
-  const jwtTemplate = process.env.NEXT_PUBLIC_CLERK_JWT_TEMPLATE; // Renamed for clarity
-  const { isSignedIn, getToken } = useAuth();
-  const [_, setToken] = useState<string | null>(null);
+  // const jwtTemplate = process.env.NEXT_PUBLIC_CLERK_JWT_TEMPLATE; // Renamed for clarity
+  // const { isSignedIn, getToken } = useAuth();
+  // const [_, setToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    let mounted = true;
+  // useEffect(() => {
+  //   let mounted = true;
 
-    const fetchToken = async () => {
-      if (typeof window === "undefined") return;
+  //   const fetchToken = async () => {
+  //     if (typeof window === "undefined") return;
 
-      try {
-        const newToken = await getToken({ template: jwtTemplate });
-        if (newToken && mounted) {
-          setToken(newToken);
-        }
-      } catch (error) {
-        console.error("Failed to fetch token:", error);
-        if (mounted) setToken(null);
-      }
-    };
+  //     try {
+  //       const newToken = await getToken({ template: jwtTemplate });
+  //       if (newToken && mounted) {
+  //         setToken(newToken);
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to fetch token:", error);
+  //       if (mounted) setToken(null);
+  //     }
+  //   };
 
-    fetchToken();
-    return () => { mounted = false; };
-  }, [getToken, jwtTemplate]);
+  //   fetchToken();
+  //   return () => { mounted = false; };
+  // }, [getToken, jwtTemplate]);
 
   return (
     <nav className="sticky h-16 inset-x-0 top-0 z-30 w-full border-b backdrop-blur-3xl transition-all">
@@ -57,11 +57,11 @@ function Navbar() {
                 About
               </Link>
               {/* Show "Dashboard" only when signed in */}
-              {isSignedIn && (
+              {/* {isSignedIn && ( */}
                 <Link href="/dashboard" className="font-semibold hover:underline hover:underline-offset-1">
                   Dashboard
                 </Link>
-              )}
+              {/* )} */}
             </div>
           </div>
 
@@ -73,7 +73,7 @@ function Navbar() {
           {/* Right Side - Theme Toggle & Auth */}
           <div className="hidden md:flex items-center space-x-3">
             <ModeToggle />
-            <DisplayPic />
+            {/* <DisplayPic /> */}
           </div>
         </div>
       </MaxWidthWrapper>
