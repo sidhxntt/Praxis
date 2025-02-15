@@ -6,7 +6,7 @@ import { Toaster } from "../components/ui/toaster";
 import { ThemeProvider } from "../components/Layout/ThemeProvider";
 import Footer from "../components/Layout/Footer";
 import ScreenRestriction from "../components/Layout/ScreenRestriction";
-import { ClerkProvider } from "@clerk/nextjs";
+// import { ClerkProvider } from "@clerk/nextjs";
 
 const mulish = Mulish({ subsets: ["latin"] });
 
