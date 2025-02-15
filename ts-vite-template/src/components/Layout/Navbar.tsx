@@ -3,12 +3,12 @@ import { Menu } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "../ui/mode-toggle";
 import ScrollLink from './ScrollLink';
-import { useAuth } from "@clerk/clerk-react";
-import { useEffect, useState } from "react";
+// import { useAuth } from "@clerk/clerk-react";
+// import { useEffect, useState } from "react";
 // import DisplayPic from "../Clerk/Displaypic";
 
 function Navbar() {
-  // const jwtTemplate = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY // Renamed for clarity
+  // const jwtTemplate = import.meta.env.VITE_CLERK_JWT_TEMPLATE
   // const { isSignedIn, getToken } = useAuth();
   // const [_, setToken] = useState<string | null>(null);
 
@@ -77,7 +77,7 @@ function Navbar() {
                 <Link to="/dashboard" className="font-semibold hover:underline hover:underline-offset-1">
                   Dashboard
                 </Link>
-               {/* )}  */}
+                {/* )}   */}
             </div>
           </div>
 
