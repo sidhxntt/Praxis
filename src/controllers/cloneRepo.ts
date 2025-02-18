@@ -7,7 +7,7 @@ export default async function cloneRepository(
   s: any,
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    const command = `git clone --single-branch --branch ${branchName} https://github.com/sidhxntt/CodeRush.git . > /dev/null 2>&1`;
+    const command = `git clone --single-branch --branch ${branchName} https://github.com/sidhxntt/Jolt.git . > /dev/null 2>&1`;
     const child = spawn(command, { stdio: "inherit", shell: true });
 
     child.on("error", (err) => {

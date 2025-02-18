@@ -8,7 +8,7 @@ function EndMessage(text: string) {
       console.dir(err);
       return;
     }
-    console.log(chalk.cyan(data));
+    console.log(chalk.magenta(data));
   });
 }
 

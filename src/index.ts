@@ -11,7 +11,7 @@ import { getUserName, getTimeBasedGreeting, isGitInstalled , showRandomAnimation
 async function main() {
   const userName = getUserName();
   const greeting = getTimeBasedGreeting();
-  await showRandomAnimation('Welcome to CodeRush 🚀')
+  await showRandomAnimation('Welcome to Jolt ⚡️🚀')
 
   // Check for Git installation
   if (!isGitInstalled()) {

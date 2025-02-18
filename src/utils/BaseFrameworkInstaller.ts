@@ -37,7 +37,7 @@ class BaseFrameworkInstaller {
       await cloneRepository(this.config.branch, this.s);
       await refineProject(this.config.branch);
       displayNextSteps(this.projectName, this.s);
-      EndMessage('Coderush')
+      EndMessage('Jolt')
     } catch (error) {
       handleError(error, this.packageName, this.s);
     }
