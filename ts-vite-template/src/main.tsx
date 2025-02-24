@@ -2,24 +2,18 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import { ThemeProvider } from "./components/Layout/ThemeProvider";
-import ScreenRestriction from "./components/Layout/ScreenRestriction";
-// import { ClerkProvider } from "@clerk/clerk-react";
-
-// const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-
-// if (!PUBLISHABLE_KEY) {
-//   throw new Error("Missing Publishable Key");
-// }
+import { RecoilRoot } from "recoil";
+import { ThemeProvider } from "./Context/ThemeContext";
+import ScreenRestriction from "./components/CommonLayouts/ScreenRestriction";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ScreenRestriction>
-    <ThemeProvider>
-      {/* <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/"> */}
-      <App />
-      {/* </ClerkProvider> */}
-    </ThemeProvider>
+      <RecoilRoot>
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
+      </RecoilRoot>
     </ScreenRestriction>
   </StrictMode>
 );
