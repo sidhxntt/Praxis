@@ -11,6 +11,6 @@ export default defineConfig({
     preserveSymlinks: true
   },
   build: {
-    chunkSizeWarningLimit: 6000, // Increase the chunk size limit to 6000 KB
+    chunkSizeWarningLimit: 3000, // Increase the chunk size limit to 3000 KB
   },
 })

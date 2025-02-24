@@ -1,13 +1,10 @@
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { Menu } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useRecoilState } from "recoil";
-import { LoginState } from "@/lib/atom";
 import ScrollLink from "./ScrollLink";
 import { ModeToggle } from "@/components/AdminDashboard/AdminDashboardComponents/ModeToggle";
 
 function Navbar() {
-  const [LoggedIn] = useRecoilState(LoginState);
 
   return (
     <nav className="sticky h-16 inset-x-0 top-0 z-30 w-full border-b backdrop-blur-3xl transition-all">
@@ -48,15 +45,6 @@ function Navbar() {
               >
                 About
               </ScrollLink>
-              {LoggedIn && (
-                <Link
-                  to="/dashboard"
-                  target="_blank"
-                  className="font-semibold hover:underline hover:underline-offset-1"
-                >
-                  Dashboard
-                </Link>
-              )}
             </div>
           </div>
 

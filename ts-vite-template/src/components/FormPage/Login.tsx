@@ -5,9 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import isEmail from "validator/lib/isEmail";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useRecoilState } from "recoil";
 import { Link, useNavigate } from "react-router-dom";
-import { LoginState } from "@/lib/atom";
+import { useState } from "react";
 
 interface LoginFormInputs {
   email: string;
@@ -18,7 +17,7 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [_, setLoggedIn] = useRecoilState(LoginState);
+  const [_, setLoggedIn] = useState(false);
   const navigate = useNavigate();
   const {
     register,
