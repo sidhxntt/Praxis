@@ -1,8 +1,7 @@
-import { Error } from "../components/Layout/Error"
+import { ErrorBoundary } from "@/components/CommonLayouts/ErrorBoundary";
 
+const NotFound = () => {
+  return <ErrorBoundary />;
+};
 
-export default function NotFound() {
-  return (
-    <Error/>
-  )
-}
+export default NotFound;

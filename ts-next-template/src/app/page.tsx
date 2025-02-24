@@ -1,7 +1,15 @@
-import LandingPage from "../components/Layout/LandingPage";
+import Footer from "@/components/LandingPage/LandingPageLayout/Footer";
+import LandingPage from "@/components/LandingPage/LandingPageLayout/LandingPage";
+import Navbar from "@/components/LandingPage/LandingPageLayout/Navbar";
 
-export default function Home() {
+const Page = () => {
   return (
-    <LandingPage />
+    <>
+      <Navbar />
+      <LandingPage />
+      <Footer />
+    </>
   );
-}
+};
+
+export default Page;
