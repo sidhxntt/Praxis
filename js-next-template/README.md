@@ -1,54 +1,36 @@
-## Unlock the Full Potential of Your Application
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-This starter template gives you a glimpse of what's possible. Ready to build something extraordinary?
-> To use clerk update your .env file and uncomment respective files (Navbar & DsiplayPic). Also add `middleware.js` in `src/` & copy paste this:
-```typescript
-import { clerkMiddleware } from "@clerk/nextjs/server";
+## Getting Started
 
-export default clerkMiddleware();
+First, run the development server:
 
-export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
-    "/(api|trpc)(.*)",
-  ],
-};
-
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-### Premium Templates Available Now
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-🚀 **Backend Template**
-- Complete API architecture
-- Docker containerization
-- Production-ready configuration (Redis, Queues, Auth and many more)
-- Advanced security features
-- Scalable database integration
-> Deploy your complete backend infrastructure in just two commands.
+You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-🔥 **Full-Stack Template**
-- Everything in the Backend Template, plus:
-- Seamless frontend-backend integration
-- Pre-built authentication flows
-- Real-time data synchronization
-- Advanced state management
-- Production deployment guides
-- Enterprise-grade architecture
-> Launch your full-stack application in four simple steps..
+## Learn More
 
-### Why Upgrade?
+To learn more about Next.js, take a look at the following resources:
 
-- **Save Weeks of Development Time**
-- **Production-Ready Architecture**
-- **Best Practices Implemented**
-- **Enterprise-Grade Security**
-- **Scalable from Day One**
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-[View Premium Features](#) | [Purchase Backend Template](#) | [Purchase Full-Stack Template](#)
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-*Trusted by developers worldwide to build robust, scalable applications*
+## Deploy on Vercel
 
----
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
