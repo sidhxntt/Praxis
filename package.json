@@ -1,8 +1,8 @@
 {
-  "name": "coderush",
+  "name": "jolt",
   "version": "1.0.0",
   "bin": {
-    "coderush": "./dist/index.js"
+    "jolt": "./dist/index.js"
   },
   "license": "MIT",
   "scripts": {
