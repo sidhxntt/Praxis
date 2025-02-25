@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { z } from "zod";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
@@ -42,7 +42,7 @@ const languages = [
   { label: "Japanese", value: "ja" },
   { label: "Korean", value: "ko" },
   { label: "Chinese", value: "zh" },
-] as const;
+];
 
 const accountFormSchema = z.object({
   name: z
@@ -61,20 +61,18 @@ const accountFormSchema = z.object({
   }),
 });
 
-type AccountFormValues = z.infer<typeof accountFormSchema>;
-
 // This can come from your database or API.
-const defaultValues: Partial<AccountFormValues> = {
+const defaultValues = {
   name: "",
 };
 
 export function AccountForm() {
-  const form = useForm<AccountFormValues>({
+  const form = useForm({
     resolver: zodResolver(accountFormSchema),
     defaultValues,
   });
 
-  function onSubmit(data: AccountFormValues) {
+  function onSubmit(data) {
     toast({
       title: "You submitted the following values:",
       description: (
@@ -135,7 +133,7 @@ export function AccountForm() {
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date: Date) =>
+                    disabled={(date) =>
                       date > new Date() || date < new Date("1900-01-01")
                     }
                   />

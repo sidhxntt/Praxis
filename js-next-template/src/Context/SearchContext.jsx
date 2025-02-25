@@ -1,23 +1,14 @@
-"use client"
+"use client";
 import { CommandMenu } from "@/components/AdminDashboard/AdminDashboardComponents/CommandMenu";
 import React from "react";
 
-interface SearchContextType {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
+const SearchContext = React.createContext(null);
 
-const SearchContext = React.createContext<SearchContextType | null>(null);
-
-interface Props {
-  children: React.ReactNode;
-}
-
-export function SearchProvider({ children }: Props) {
+export function SearchProvider({ children }) {
   const [open, setOpen] = React.useState(false);
 
   React.useEffect(() => {
-    const down = (e: KeyboardEvent) => {
+    const down = (e) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);

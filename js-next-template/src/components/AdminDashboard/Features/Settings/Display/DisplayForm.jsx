@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,7 +40,7 @@ const items = [
     id: "documents",
     label: "Documents",
   },
-] as const;
+];
 
 const displayFormSchema = z.object({
   items: z.array(z.string()).refine((value) => value.some((item) => item), {
@@ -48,20 +48,18 @@ const displayFormSchema = z.object({
   }),
 });
 
-type DisplayFormValues = z.infer<typeof displayFormSchema>;
-
 // This can come from your database or API.
-const defaultValues: Partial<DisplayFormValues> = {
+const defaultValues = {
   items: ["recents", "home"],
 };
 
 export function DisplayForm() {
-  const form = useForm<DisplayFormValues>({
+  const form = useForm({
     resolver: zodResolver(displayFormSchema),
     defaultValues,
   });
 
-  function onSubmit(data: DisplayFormValues) {
+  function onSubmit(data) {
     toast({
       title: "You submitted the following values:",
       description: (

@@ -1,17 +1,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 
-interface ContentSectionProps {
-  title: string;
-  desc: string;
-  children: React.JSX.Element;
-}
-
-export default function ContentSection({
-  title,
-  desc,
-  children,
-}: ContentSectionProps) {
+export default function ContentSection({ title, desc, children }) {
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex-none">

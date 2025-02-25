@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { z } from "zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,7 +25,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
 
-
 const profileFormSchema = z.object({
   username: z
     .string()
@@ -50,10 +49,8 @@ const profileFormSchema = z.object({
     .optional(),
 });
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
-
 // This can come from your database or API.
-const defaultValues: Partial<ProfileFormValues> = {
+const defaultValues = {
   bio: "I own a computer.",
   urls: [
     { value: "https://shadcn.com" },
@@ -62,7 +59,7 @@ const defaultValues: Partial<ProfileFormValues> = {
 };
 
 export default function ProfileForm() {
-  const form = useForm<ProfileFormValues>({
+  const form = useForm({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
     mode: "onChange",
@@ -73,7 +70,7 @@ export default function ProfileForm() {
     control: form.control,
   });
 
-  function onSubmit(data: ProfileFormValues) {
+  function onSubmit(data) {
     toast({
       title: "You submitted the following values:",
       description: (

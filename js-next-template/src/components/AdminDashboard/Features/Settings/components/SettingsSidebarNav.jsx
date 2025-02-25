@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type JSX } from "react";
+import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -14,24 +14,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
-  items: {
-    href: string;
-    title: string;
-    icon: JSX.Element;
-  }[];
-}
-
-export default function SidebarNav({
-  className,
-  items,
-  ...props
-}: SidebarNavProps) {
+export default function SidebarNav({ className, items, ...props }) {
   const pathname = usePathname();
   const router = useRouter();
   const [val, setVal] = useState(pathname ?? "/settings");
 
-  const handleSelect = (e: string) => {
+  const handleSelect = (e) => {
     setVal(e);
     router.push(e);
   };

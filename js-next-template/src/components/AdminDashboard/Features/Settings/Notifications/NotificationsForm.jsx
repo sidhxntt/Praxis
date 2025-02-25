@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,10 +29,8 @@ const notificationsFormSchema = z.object({
   security_emails: z.boolean(),
 });
 
-type NotificationsFormValues = z.infer<typeof notificationsFormSchema>;
-
 // This can come from your database or API.
-const defaultValues: Partial<NotificationsFormValues> = {
+const defaultValues = {
   communication_emails: false,
   marketing_emails: false,
   social_emails: true,
@@ -40,12 +38,12 @@ const defaultValues: Partial<NotificationsFormValues> = {
 };
 
 export function NotificationsForm() {
-  const form = useForm<NotificationsFormValues>({
+  const form = useForm({
     resolver: zodResolver(notificationsFormSchema),
     defaultValues,
   });
 
-  function onSubmit(data: NotificationsFormValues) {
+  function onSubmit(data) {
     toast({
       title: "You submitted the following values:",
       description: (

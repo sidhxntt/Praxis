@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,7 +16,6 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useTheme } from "next-themes";
 
-
 // Define schema correctly
 const appearanceFormSchema = z.object({
   theme: z.enum(["light", "dark"], {
@@ -24,22 +23,20 @@ const appearanceFormSchema = z.object({
   }),
 });
 
-type AppearanceFormValues = z.infer<typeof appearanceFormSchema>;
-
 export function AppearanceForm() {
   const { theme, setTheme } = useTheme();
 
   // Ensure correct type for default values
-  const defaultValues: AppearanceFormValues = {
-    theme: theme as "light" | "dark",
+  const defaultValues = {
+    theme: theme,
   };
 
-  const form = useForm<AppearanceFormValues>({
+  const form = useForm({
     resolver: zodResolver(appearanceFormSchema),
     defaultValues,
   });
 
-  function onSubmit(data: AppearanceFormValues) {
+  function onSubmit(data) {
     if (data.theme !== theme) setTheme(data.theme);
 
     toast({
