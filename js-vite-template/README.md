@@ -1,39 +1,8 @@
-## Unlock the Full Potential of Your Application
+# React + Vite
 
-This starter template gives you a glimpse of what's possible. Ready to build something extraordinary?
-> To use clerk update your .env file and uncomment respective files (Navbar, DsiplayPic & main.tsx ).
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-### Premium Templates Available Now
+Currently, two official plugins are available:
 
-🚀 **Backend Template**
-- Complete API architecture
-- Docker containerization
-- Production-ready configuration (Redis, Queues, Auth and many more)
-- Advanced security features
-- Scalable database integration
-> Deploy your complete backend infrastructure in just two commands.
-
-
-🔥 **Full-Stack Template**
-- Everything in the Backend Template, plus:
-- Seamless frontend-backend integration
-- Pre-built authentication flows
-- Real-time data synchronization
-- Advanced state management
-- Production deployment guides
-- Enterprise-grade architecture
-> Launch your full-stack application in four simple steps..
-
-### Why Upgrade?
-
-- **Save Weeks of Development Time**
-- **Production-Ready Architecture**
-- **Best Practices Implemented**
-- **Enterprise-Grade Security**
-- **Scalable from Day One**
-
-[View Premium Features](#) | [Purchase Backend Template](#) | [Purchase Full-Stack Template](#)
-
-*Trusted by developers worldwide to build robust, scalable applications*
-
----
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh

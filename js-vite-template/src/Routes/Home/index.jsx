@@ -1,11 +1,7 @@
-import LandingPage from "@/components/Layout/LandingPage";
+import LandingPage from "@/components/LandingPage/LandingPageLayout/LandingPage";
 
 const Home = () => {
-  return (
-    <>
-      <LandingPage />
-    </>
-  );
+  return <LandingPage />;
 };
 
 export default Home;

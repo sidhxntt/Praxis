@@ -5,18 +5,21 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
-export const formatPrice = (price, currency = "CAD") => {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(price);
+export const formatPrice = (price) => {
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "CAD",
+  });
+
+  return formatter.format(price);
 };
 
-export function constructMetadata(options = {}) {
-  const {
-    title = "Your App",
-    description = "Your app description goes here",
-    image = "/openGraph.png",
-    icons = "/favicon.ico",
-  } = options;
-
+export function constructMetadata({
+  title = "Your App",
+  description = "Your app description goes here",
+  image = "/openGraph.png",
+  icons = "/favicon.ico",
+}) {
   return {
     title,
     description,
