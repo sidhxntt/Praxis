@@ -1,4 +1,4 @@
-import { To } from "react-router-dom"; // Correct import from react-router-dom
+import { To } from "react-router-dom";
 
 interface User {
   name: string;

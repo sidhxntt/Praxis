@@ -1,7 +1,6 @@
 ## Unlock the Full Potential of Your Application
 
 This starter template gives you a glimpse of what's possible. Ready to build something extraordinary?
-> To use clerk update your .env file and uncomment respective files (Navbar, DsiplayPic & main.tsx ).
 
 ### Premium Templates Available Now
 
@@ -22,7 +21,7 @@ This starter template gives you a glimpse of what's possible. Ready to build som
 - Advanced state management
 - Production deployment guides
 - Enterprise-grade architecture
-> Launch your full-stack application in four simple steps..
+> Launch your full-stack application in just four simple steps..
 
 ### Why Upgrade?
 
@@ -32,7 +31,7 @@ This starter template gives you a glimpse of what's possible. Ready to build som
 - **Enterprise-Grade Security**
 - **Scalable from Day One**
 
-[View Premium Features](#) | [Purchase Backend Template](#) | [Purchase Full-Stack Template](#)
+[View Documentation](#) | [Purchase Backend Template](#) | [Purchase Full-Stack Template](#)
 
 *Trusted by developers worldwide to build robust, scalable applications*
 

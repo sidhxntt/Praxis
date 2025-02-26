@@ -1,4 +1,4 @@
-import Page from "@/components/Documentaton";
+import Page from "@/components/Documentation";
 
 const Documentaton = () => {
   return <Page />;
