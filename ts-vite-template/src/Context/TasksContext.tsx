@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useDialogState from "@/Hooks/use-dialog-state";
+import useDialogState from "@/hooks/use-dialog-state";
 import { Task } from "@/SampleData/Tasks/schema";
 
 type TasksDialogType = "create" | "update" | "delete" | "import";
