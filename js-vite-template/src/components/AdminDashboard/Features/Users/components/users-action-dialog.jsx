@@ -21,9 +21,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { userTypes } from "@/SampleData/Users/data";
 import { PasswordInput } from "@/components/AdminDashboard/AdminDashboardComponents/PasswordInput";
 import { SelectDropdown } from "@/components/AdminDashboard/AdminDashboardComponents/SelectDropdown";
+import { userTypes } from "@/SampleData/AdminDashboard/Users/data";
 
 const formSchema = z
   .object({

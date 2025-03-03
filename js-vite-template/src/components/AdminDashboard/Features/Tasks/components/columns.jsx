@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
-import { labels, priorities, statuses } from "@/SampleData/Tasks/data";
+import { labels, priorities, statuses } from "@/SampleData/AdminDashboard/Tasks/data";
 
 export const columns = [
   {

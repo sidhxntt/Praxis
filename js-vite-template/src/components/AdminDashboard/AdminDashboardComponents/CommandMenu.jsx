@@ -11,9 +11,9 @@ import {
 } from "@/components/ui/command";
 import { ScrollArea } from "../../ui/scroll-area";
 import { useSearch } from "@/Context/SearchContext";
-import { sidebarData } from "@/SampleData/SidebarData";
 import { ModeToggle } from "./ModeToggle";
 import { useNavigate } from "react-router-dom";
+import { sidebarData } from "@/SampleData/AdminDashboard/SidebarData";
 
 export function CommandMenu() {
   const navigate = useNavigate();

@@ -18,8 +18,8 @@ function HeroSection() {
             </h1>
 
             <p className="mt-8 text-balance text-lg max-w-prose text-center font-semibold lg:pr-10 md:text-wrap lg:text-left">
-              This is a great place to describe your product and what it does.
-              This is a great place to describe your product and what it does.
+              This is a great place href describe your product and what it does.
+              This is a great place href describe your product and what it does.
             </p>
 
             <ul className="hidden mt-8 text-left font-medium md:flex flex-col items-center sm:items-start">

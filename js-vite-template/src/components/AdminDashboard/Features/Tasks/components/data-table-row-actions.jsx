@@ -14,10 +14,11 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { labels } from "@/SampleData/Tasks/data";
-taskSchema;
+
 import { useTasks } from "@/Context/TasksContext";
-import { taskSchema } from "@/SampleData/Tasks/schema";
+
+import { labels } from "@/SampleData/AdminDashboard/Tasks/data";
+import { taskSchema } from "@/SampleData/AdminDashboard/Tasks/schema";
 
 export function DataTableRowActions({ row }) {
   const task = taskSchema.parse(row.original);
