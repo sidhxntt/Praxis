@@ -7,11 +7,7 @@ import isEmail from "validator/lib/isEmail";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-
-interface LoginFormInputs {
-  email: string;
-  password: string;
-}
+import { LoginFormInputs } from "@/lib/types";
 
 export function LoginForm({
   className,

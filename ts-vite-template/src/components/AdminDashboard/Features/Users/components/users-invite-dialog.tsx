@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { userTypes } from "@/SampleData/Users/data";
+import { userTypes } from "@/SampleData/AdminDashboard/Users/data";
 import { SelectDropdown } from "@/components/AdminDashboard/AdminDashboardComponents/SelectDropdown";
 
 const formSchema = z.object({

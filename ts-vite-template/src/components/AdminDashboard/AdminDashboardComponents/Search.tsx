@@ -1,16 +1,13 @@
 import { IconSearch } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-
+import { Search_Props } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { useSearch } from "@/Context/SearchContext";
 
-interface Props {
-  className?: string;
-  type?: React.HTMLInputTypeAttribute;
-  placeholder?: string;
-}
-
-export function Search({ className = "", placeholder = "Search" }: Props) {
+export function Search({
+  className = "",
+  placeholder = "Search",
+}: Search_Props) {
   const { setOpen } = useSearch();
   return (
     <Button

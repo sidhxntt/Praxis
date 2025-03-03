@@ -1,13 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import { ReactNode } from 'react';
-
-interface ScrollLinkProps {
-  to: string;
-  id: string;
-  children: ReactNode;
-  className?: string;
-}
+import { ScrollLinkProps } from '@/lib/types';
 
 const ScrollLink = ({ to, id, children, className }: ScrollLinkProps) => {
   const location = useLocation();
@@ -26,7 +19,7 @@ const ScrollLink = ({ to, id, children, className }: ScrollLinkProps) => {
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>): void => {
     if (location.pathname === to) {
       e.preventDefault();
-      const element = document.getElementById(id);
+      const element = document.getElementById(id!);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }

@@ -8,15 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Link } from "react-router-dom";
-
-interface TopNavProps extends React.HTMLAttributes<HTMLElement> {
-  links: {
-    title: string;
-    href: string;
-    isActive: boolean;
-    disabled?: boolean;
-  }[];
-}
+import { TopNavProps } from "@/lib/types";
 
 export function TopNav({ className, links, ...props }: TopNavProps) {
   return (

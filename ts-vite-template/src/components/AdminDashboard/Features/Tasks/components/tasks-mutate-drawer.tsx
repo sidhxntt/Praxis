@@ -23,7 +23,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { SelectDropdown } from "@/components/AdminDashboard/AdminDashboardComponents/SelectDropdown";
-import { Task } from "@/SampleData/Tasks/schema";
+import { Task } from "@/SampleData/AdminDashboard/Tasks/schema";
 
 interface Props {
   open: boolean;

@@ -4,7 +4,7 @@ import { toast } from "@/Hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User } from "@/SampleData/Users/schema";
+import { User } from "@/SampleData/AdminDashboard/Users/schema";
 import { ConfirmDialog } from "@/components/AdminDashboard/AdminDashboardComponents/ConfirmDialog";
 
 interface Props {

@@ -1,5 +1,6 @@
 import { Box, Lock, Search, Settings, Sparkles } from "lucide-react";
 import { GlowingEffect } from "./GlowingEffect";
+import { GridItemProps } from "@/lib/types";
 
 export function GlowingEffectDemo() {
   return (
@@ -40,13 +41,6 @@ export function GlowingEffectDemo() {
       />
     </ul>
   );
-}
-
-interface GridItemProps {
-  area: string;
-  icon: React.ReactNode;
-  title: string;
-  description: React.ReactNode;
 }
 
 const GridItem = ({ area, icon, title, description }: GridItemProps) => {

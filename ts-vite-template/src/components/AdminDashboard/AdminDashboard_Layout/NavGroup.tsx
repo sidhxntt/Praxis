@@ -26,7 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { NavCollapsible, NavItem, NavLink, type NavGroup } from "./types";
+import { NavLink, NavCollapsible, NavItem, type NavGroup  } from "@/lib/types";
 import { Link } from "react-router-dom";
 
 export function NavGroup({ title, items }: NavGroup) {
