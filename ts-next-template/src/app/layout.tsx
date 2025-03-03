@@ -6,7 +6,12 @@ import { ThemeProvider } from "@/Context/ThemeContext";
 
 const mulish = Mulish({ subsets: ["latin"] });
 
-export const metadata = constructMetadata();
+export const metadata = constructMetadata({
+  title: "Your App",
+  description: "Your app description goes here",
+  image: "/openGraph.png",
+  icons: "/favicon.ico",
+});
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -26,16 +31,16 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body
         className={cn("min-h-screen font-sans antialiased", mulish.className)}
       >
-          <ScreenRestriction>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              {children}
-            </ThemeProvider>
-          </ScreenRestriction>
+        <ScreenRestriction>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </ScreenRestriction>
       </body>
     </html>
   );

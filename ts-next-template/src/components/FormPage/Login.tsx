@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { GalleryVerticalEnd } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -7,13 +7,9 @@ import { Label } from "@/components/ui/label";
 import isEmail from "validator/lib/isEmail";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Link from "next/link";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-
-interface LoginFormInputs {
-  email: string;
-  password: string;
-}
+import { LoginFormInputs } from "@/lib/types";
 
 export function LoginForm({
   className,
@@ -39,7 +35,6 @@ export function LoginForm({
       }, 5000);
     });
   };
-
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -135,7 +130,6 @@ export function LoginForm({
                 <span>Login &rarr;</span>
               )}
             </Button>
-
           </div>
           <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
             <span className="relative z-10 bg-background px-2 text-muted-foreground">
@@ -165,8 +159,9 @@ export function LoginForm({
         </div>
       </form>
       <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary  ">
-        By clicking continue, you agree href our <Link href="#">Terms of Service</Link>{" "}
-        and <Link href="#">Privacy Policy</Link>.
+        By clicking continue, you agree href our{" "}
+        <Link href="#">Terms of Service</Link> and{" "}
+        <Link href="#">Privacy Policy</Link>.
       </div>
     </div>
   );

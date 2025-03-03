@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Search } from "@/components/AdminDashboard/AdminDashboardComponents/Search";
-import { apps } from "@/SampleData/Apps";
+import { apps } from "@/SampleData/AdminDashboard/Apps";
 import { ModeToggle } from "@/components/AdminDashboard/AdminDashboardComponents/ModeToggle";
 import { ProfileDropdown } from "@/components/AdminDashboard/AdminDashboardComponents/ProfileDropdown";
 import { Main } from "@/components/AdminDashboard/AdminDashboard_Layout/Main";

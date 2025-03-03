@@ -1,6 +1,7 @@
 import { IconMenu } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { TopNavProps } from "@/lib/types";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,15 +9,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-
-interface TopNavProps extends React.HTMLAttributes<HTMLElement> {
-  links: {
-    title: string;
-    href: string;
-    isActive: boolean;
-    disabled?: boolean;
-  }[];
-}
 
 export function TopNav({ className, links, ...props }: TopNavProps) {
   return (

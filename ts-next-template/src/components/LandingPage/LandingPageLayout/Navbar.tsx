@@ -1,10 +1,11 @@
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { Menu } from "lucide-react";
-import { ModeToggle } from "@/components/AdminDashboard/AdminDashboardComponents/ModeToggle";
+import { NavbarProps } from "@/lib/types";
+import React from "react";
+import ScrollLink from "./ScrollLink";
 import Link from "next/link";
 
-function Navbar() {
-
+function Navbar({ logo, links = [], optionalElements }: NavbarProps) {
   return (
     <nav className="sticky h-16 inset-x-0 top-0 z-30 w-full border-b backdrop-blur-3xl transition-all">
       <MaxWidthWrapper>
@@ -12,35 +13,23 @@ function Navbar() {
           {/* Left Side - Logo & Links */}
           <div className="flex items-center gap-14">
             <Link href="/" className="flex z-40 font-bold text-lg">
-              <span>Your App</span>
+              <span>{logo}</span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-8 lg:gap-14">
-              <Link
-                href="#pricing"
-                className="font-semibold hover:underline hover:underline-offset-1"
-              >
-                Pricing
-              </Link>
-              <Link
-                href="#demo"
-                className="font-semibold hover:underline hover:underline-offset-1"
-              >
-                Demo
-              </Link>
-              <Link
-                href="#faq"
-                className="font-semibold hover:underline hover:underline-offset-1"
-              >
-                FAQ
-              </Link>
-              <Link
-                href="#about"
-                className="font-semibold hover:underline hover:underline-offset-1"
-              >
-                About
-              </Link>
-            </div>
+            {links.length > 0 && (
+              <div className="hidden md:flex items-center gap-8 lg:gap-14">
+                {links.map(({ id, label, href }) => (
+                  <ScrollLink
+                    key={id}
+                    to={href}
+                    id={id}
+                    className="font-semibold hover:underline hover:underline-offset-1"
+                  >
+                    {label}
+                  </ScrollLink>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Mobile Menu Icon */}
@@ -48,9 +37,15 @@ function Navbar() {
             <Menu className="h-6 w-6 cursor-pointer" />
           </div>
 
-          {/* Right Side - Theme Toggle & Auth */}
+          {/* Right Side - Custom Elements */}
           <div className="hidden md:flex items-center space-x-3">
-            <ModeToggle />
+            {optionalElements?.map((element, index) =>
+              typeof element === "string" ? (
+                <span key={index}>{element}</span>
+              ) : (
+                <React.Fragment key={index}>{element}</React.Fragment>
+              )
+            )}
           </div>
         </div>
       </MaxWidthWrapper>

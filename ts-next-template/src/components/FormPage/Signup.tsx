@@ -7,13 +7,7 @@ import { Label } from "@/components/ui/label";
 import validatePassword from "@/lib/validatePassword";
 import isEmail from "validator/lib/isEmail";
 import { useForm, SubmitHandler } from "react-hook-form";
-
-interface SignupFormInputs {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword?: string;
-}
+import { SignupFormInputs } from "@/lib/types";
 
 export function SignupForm({
   className,

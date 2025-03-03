@@ -1,10 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-
-interface MainProps extends React.HTMLAttributes<HTMLElement> {
-  fixed?: boolean;
-  ref?: React.Ref<HTMLElement>;
-}
+import { MainProps } from "@/lib/types";
 
 export const Main = ({ fixed, ...props }: MainProps) => {
   return (

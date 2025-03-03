@@ -5,20 +5,26 @@ import { buttonVariants } from "@/components/ui/button";
 import { AnimatedTooltipPreview } from "../AceternityComponents/AnimatedTooltip";
 import { HeroHighlightDemo } from "../AceternityComponents/HeroHighlight";
 import Link from "next/link";
+import Image from "next/image";
 
-function HeroSection() {
+interface HeroSectionProps {
+  highlighted_text: string;
+}
+
+function HeroSection({ highlighted_text }: HeroSectionProps) {
   return (
     <section className="bg-slate-50 dark:bg-[#020817]" id="about">
       <MaxWidthWrapper className="pt-10 !px-2 lg:!px-10 lg:grid lg:grid-cols-2 lg:gap-x-0 lg:pt-24 lg:pb-20">
         <div className="col-span-1 px-2 lg:px-0">
           <div className="relative mx-auto text-center lg:text-left flex flex-col items-center lg:items-start">
             <h1 className="relative w-fit tracking-tighter text-balance font-bold !leading-tight text-gray-900 dark:text-white text-5xl md:text-6xl">
-            Your tagline here for <HeroHighlightDemo text=" your cool product"/>
+              Your tagline here for{" "}
+              <HeroHighlightDemo text={highlighted_text} />
             </h1>
 
             <p className="mt-8 text-balance text-lg max-w-prose text-center font-semibold lg:pr-10 md:text-wrap lg:text-left">
-              This is a great place href describe your product and what it does.
-              This is a great place href describe your product and what it does.
+              This is a great place to describe your product and what it does.
+              This is a great place to describe your product and what it does.
             </p>
 
             <ul className="hidden mt-8 text-left font-medium md:flex flex-col items-center sm:items-start">
@@ -42,31 +48,30 @@ function HeroSection() {
               </div>
             </ul>
             <div className="flex gap-6 items-center sm:items-start">
-                 {/* CTA button */}
-            <Link
-              href="/login"
-              target="_blank"
-              className={cn(
-                buttonVariants({ size: "lg" }),
-                "flex items-center justify-center mt-8 group"
-              )}
-            >
-              <span>Start Now</span>
-              <ArrowRight className="ml-1.5 transform h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
-            <Link
-              href="/documentation"
-              target="_blank"
-              className={cn(
-                buttonVariants({ variant:"outline",size: "lg" }),
-                "flex items-center justify-center mt-8 group"
-              )}
-            >
-              <span>Learn More</span>
-              <ArrowRight className="ml-1.5 transform h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
+              {/* CTA button */}
+              <Link
+                href="/login"
+                target="_blank"
+                className={cn(
+                  buttonVariants({ size: "lg" }),
+                  "flex items-center justify-center mt-8 group"
+                )}
+              >
+                <span>Start Now</span>
+                <ArrowRight className="ml-1.5 transform h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </Link>
+              <Link
+                href="/documentation"
+                target="_blank"
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "lg" }),
+                  "flex items-center justify-center mt-8 group"
+                )}
+              >
+                <span>Learn More</span>
+                <ArrowRight className="ml-1.5 transform h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </Link>
             </div>
-         
 
             <div className="mt-12 flex flex-col sm:flex-row sm:items-start items-center gap-5">
               <div className="flex -space-x-1">
@@ -94,13 +99,12 @@ function HeroSection() {
         </div>
 
         <div className="col-span-full mt-14 md:mt-0 lg:col-span-1">
-          <img 
-          src="/K_DOT.jpeg"
-          width={500}
-          height={500}
-          alt="product image"
+          <Image
+            src="/K_DOT.jpeg"
+            width={500}
+            height={500}
+            alt="product image"
           />
-
         </div>
       </MaxWidthWrapper>
     </section>

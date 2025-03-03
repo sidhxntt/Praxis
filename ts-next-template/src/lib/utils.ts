@@ -1,5 +1,6 @@
-import { clsx,ClassValue } from "clsx";
+import { clsx, ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { MetadataOptions } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -14,18 +15,11 @@ export const formatPrice = (price: number): string => {
   return formatter.format(price);
 };
 
-interface MetadataOptions {
-  title?: string;
-  description?: string;
-  image?: string;
-  icons?: string;
-}
-
 export function constructMetadata({
-  title = "Your App",
-  description = "Your app description goes here",
-  image = "/openGraph.png",
-  icons = "/favicon.ico",
+  title,
+  description,
+  image,
+  icons,
 }: MetadataOptions = {}) {
   return {
     title,

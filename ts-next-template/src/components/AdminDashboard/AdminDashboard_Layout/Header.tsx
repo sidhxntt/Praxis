@@ -3,11 +3,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-
-interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
-  fixed?: boolean;
-  ref?: React.Ref<HTMLElement>;
-}
+import { HeaderProps } from "@/lib/types";
 
 export const Header = ({
   className,

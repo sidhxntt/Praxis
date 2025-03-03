@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -12,18 +12,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-interface Props {
-  children: React.ReactNode;
-  className?: string;
-  contentClassName?: string;
-}
+import { LongText_Props } from "@/lib/types";
 
 export default function LongText({
   children,
   className = "",
   contentClassName = "",
-}: Props) {
+}: LongText_Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [isOverflown, setIsOverflown] = useState(false);
 

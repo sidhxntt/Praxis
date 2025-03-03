@@ -1,8 +1,6 @@
-"use client"
+"use client";
 import React from "react";
-import {
-  IconArrowRightDashed,
-} from "@tabler/icons-react";
+import { IconArrowRightDashed } from "@tabler/icons-react";
 
 import {
   CommandDialog,
@@ -16,7 +14,7 @@ import {
 import { ScrollArea } from "../../ui/scroll-area";
 
 import { useSearch } from "@/Context/SearchContext";
-import { sidebarData } from "@/SampleData/SidebarData";
+import { sidebarData } from "@/SampleData/AdminDashboard/SidebarData";
 import { ModeToggle } from "./ModeToggle";
 import { useRouter } from "next/navigation";
 
@@ -38,9 +36,9 @@ export function CommandMenu() {
       <CommandList>
         <ScrollArea type="hover" className="h-72 pr-1">
           <CommandEmpty>No results found.</CommandEmpty>
-          {sidebarData.navGroups.map((group) => (
+          {sidebarData.navGroups.map((group: any) => (
             <CommandGroup key={group.title} heading={group.title}>
-              {group.items.map((navItem, i) => {
+              {group.items.map((navItem: any, i: any) => {
                 if (navItem.url)
                   return (
                     <CommandItem
@@ -57,7 +55,7 @@ export function CommandMenu() {
                     </CommandItem>
                   );
 
-                return navItem.items?.map((subItem, i) => (
+                return navItem.items?.map((subItem: any, i: any) => (
                   <CommandItem
                     key={`${subItem.url}-${i}`}
                     value={subItem.title}
@@ -75,7 +73,7 @@ export function CommandMenu() {
             </CommandGroup>
           ))}
           <CommandSeparator />
-          <ModeToggle/>
+          <ModeToggle />
         </ScrollArea>
       </CommandList>
     </CommandDialog>

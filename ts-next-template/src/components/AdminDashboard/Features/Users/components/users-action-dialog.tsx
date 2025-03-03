@@ -23,8 +23,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { userTypes } from "@/SampleData/Users/data";
-import { User } from "@/SampleData/Users/schema";
+import { userTypes } from "@/SampleData/AdminDashboard/Users/data";
+import { User } from "@/SampleData/AdminDashboard/Users/schema";
 import { PasswordInput } from "@/components/AdminDashboard/AdminDashboardComponents/PasswordInput";
 import { SelectDropdown } from "@/components/AdminDashboard/AdminDashboardComponents/SelectDropdown";
 

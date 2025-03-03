@@ -13,14 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
-  items: {
-    href: string;
-    title: string;
-    icon: JSX.Element;
-  }[];
-}
+import { SidebarNavProps } from "@/lib/types";
 
 export default function SidebarNav({
   className,
