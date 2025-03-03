@@ -5,10 +5,10 @@ import { TasksPrimaryButtons } from "./components/tasks-primary-buttons";
 import { Main } from "../../AdminDashboard_Layout/Main";
 import { Header } from "../../AdminDashboard_Layout/Header";
 import TasksProvider from "@/Context/TasksContext";
-import { tasks } from "@/SampleData/Tasks/tasks";
 import { Search } from "../../AdminDashboardComponents/Search";
 import { ModeToggle } from "../../AdminDashboardComponents/ModeToggle";
 import { ProfileDropdown } from "../../AdminDashboardComponents/ProfileDropdown";
+import { tasks } from "@/SampleData/AdminDashboard/Tasks/tasks";
 
 export default function Tasks() {
   return (

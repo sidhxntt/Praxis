@@ -8,7 +8,7 @@ import {
 import { NavGroup } from "./NavGroup";
 import { TeamSwitcher } from "./TeamSwitcher";
 import { NavUser } from "./NavUser";
-import { sidebarData } from "@/SampleData/SidebarData";
+import { sidebarData } from "@/SampleData/AdminDashboard/SidebarData";
 
 export function AppSidebar({ ...props }) {
   return (

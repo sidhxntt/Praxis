@@ -12,11 +12,10 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { ScrollArea } from "../../ui/scroll-area";
-
 import { useSearch } from "@/Context/SearchContext";
-import { sidebarData } from "@/SampleData/SidebarData";
 import { ModeToggle } from "./ModeToggle";
 import { useRouter } from "next/navigation";
+import { sidebarData } from "@/SampleData/AdminDashboard/SidebarData";
 
 export function CommandMenu() {
   const router = useRouter();

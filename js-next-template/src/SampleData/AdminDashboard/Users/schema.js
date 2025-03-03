@@ -1,18 +1,18 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 const userStatusSchema = z.union([
-  z.literal("active"),
-  z.literal("inactive"),
-  z.literal("invited"),
-  z.literal("suspended"),
-]);
+  z.literal('active'),
+  z.literal('inactive'),
+  z.literal('invited'),
+  z.literal('suspended'),
+])
 
 const userRoleSchema = z.union([
-  z.literal("superadmin"),
-  z.literal("admin"),
-  z.literal("cashier"),
-  z.literal("manager"),
-]);
+  z.literal('superadmin'),
+  z.literal('admin'),
+  z.literal('cashier'),
+  z.literal('manager'),
+])
 
 const userSchema = z.object({
   id: z.string(),
@@ -25,6 +25,6 @@ const userSchema = z.object({
   role: userRoleSchema,
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-});
+})
 
-export const userListSchema = z.array(userSchema);
+export const userListSchema = z.array(userSchema)

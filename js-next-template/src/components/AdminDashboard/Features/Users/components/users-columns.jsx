@@ -5,8 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
-import { userTypes, callTypes } from "@/SampleData/Users/data";
 import LongText from "@/components/AdminDashboard/AdminDashboardComponents/LongText";
+import { userTypes, callTypes } from "@/SampleData/AdminDashboard/Users/data";
 
 export const columns = [
   {
