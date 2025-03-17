@@ -6,11 +6,11 @@
   "scripts": {
     "seed": "ts-node prisma/seeding/data.ts",
     "build": "tsc",
-    "sync-db": "prisma migrate dev --name migration_1",
-    "dev:server": "prisma generate && nodemon --exec ts-node ./src/server.ts",
+    "sync-db": "npx prisma migrate dev --name migration_1",
+    "dev:server": "npx prisma generate && nodemon --exec ts-node ./src/server.ts",
     "dev:worker:email": "nodemon --exec ts-node ./src/utils/workers/email.ts",
     "dev:worker:sms": "nodemon --exec ts-node ./src/utils/workers/sms.ts",
-    "prod:server": "prisma generate && pm2-runtime start ecosystem.config.js",
+    "prod:server": "npx prisma generate && pm2-runtime start ecosystem.config.js",
     "dockerise": "docker compose up",
     "ngrok": "npx ngrok http 8000"
   },
