@@ -12,13 +12,13 @@ export default class JWT {
     this.maxAge = process.env.MAX_AGE;
   }
 
-  createToken(id, role) {
+  createToken(payload) {
     return (
       new Promise() <
       string >
       ((resolve, reject) => {
         jwt.sign(
-          { id, role },
+          payload,
           this.secretKey,
           {
             expiresIn: parseInt(this.maxAge, 10),
@@ -51,7 +51,7 @@ export default class JWT {
           return res.status(403).json({ message: "Invalid or expired token" });
         }
         // Cast decoded to include both id and role
-        req.user;
+        req.user = decoded;
         next();
       });
     } catch (error) {

@@ -8,7 +8,7 @@ router.get("/", async (req, res, next) => {
       .status(200)
       .json({
         message:
-          "Welcome to CODERUSH 🚀, to access this API please signup & then login.",
+          "Welcome to JOLT 🚀, to access this API please signup & then login.",
         for_signup:
           "Please go to the path /api/signup and register yourself to access the API",
         for_login:

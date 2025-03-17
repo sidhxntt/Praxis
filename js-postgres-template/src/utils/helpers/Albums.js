@@ -6,11 +6,25 @@ export class AlbumData extends BaseData {
     super(model, "Album");
     this.prisma = new PrismaClient();
   }
+
   async create(req, res) {
-    const { userID, title } = req.body;
+    const { userId, title } = req.body;
+
+    if (!userId || !title) {
+      return this.sendResponse(
+        res,
+        400,
+        "userId and title are required",
+        undefined,
+        "Missing required fields"
+      );
+    }
 
     const album = await this.model.create({
-      data: { userID, title },
+      data: {
+        userId: parseInt(userId, 10),
+        title,
+      },
     });
 
     await this.clearModelCache();
@@ -20,10 +34,20 @@ export class AlbumData extends BaseData {
   async update(req, res) {
     const { id } = req.params;
     const { title } = req.body;
-    const albumID = this.parseIdToNumber(id);
+    const albumId = this.parseIdToNumber(id);
+
+    if (!title) {
+      return this.sendResponse(
+        res,
+        400,
+        "Title is required",
+        undefined,
+        "Missing required field"
+      );
+    }
 
     const album = await this.model.update({
-      where: { id: albumID },
+      where: { id: albumId },
       data: { title },
     });
 
@@ -37,14 +61,25 @@ export class AlbumData extends BaseData {
 
   async delete(req, res) {
     const { id } = req.params;
-    const albumID = this.parseIdToNumber(id);
+    const albumId = this.parseIdToNumber(id);
 
     await this.prisma.$transaction(async (tx) => {
-      await tx.image.deleteMany({ where: { albumID: albumID } });
-      await tx.album.delete({ where: { id: albumID } });
+      // First delete all images in the album
+      await tx.image.deleteMany({
+        where: { albumId },
+      });
+
+      // Then delete the album
+      await tx.album.delete({
+        where: { id: albumId },
+      });
     });
 
     await this.clearModelCache();
-    return this.sendResponse(res, 200, "Album and images deleted successfully");
+    return this.sendResponse(
+      res,
+      200,
+      "Album and related images deleted successfully"
+    );
   }
 }

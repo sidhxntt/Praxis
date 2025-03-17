@@ -6,10 +6,24 @@ export class TodoData extends BaseData {
   }
 
   async create(req, res) {
-    const { userID, title, completed } = req.body;
+    const { userId, title, completed = false } = req.body;
+
+    if (!userId || !title) {
+      return this.sendResponse(
+        res,
+        400,
+        "userId and title are required",
+        undefined,
+        "Missing required fields"
+      );
+    }
 
     const todo = await this.model.create({
-      data: { userID, title, completed },
+      data: {
+        userId: parseInt(userId, 10),
+        title,
+        completed: Boolean(completed),
+      },
     });
 
     await this.clearModelCache();
@@ -19,11 +33,24 @@ export class TodoData extends BaseData {
   async update(req, res) {
     const { id } = req.params;
     const { title, completed } = req.body;
-    const todoID = this.parseIdToNumber(id);
+    const todoId = this.parseIdToNumber(id);
+
+    if (!title && completed === undefined) {
+      return this.sendResponse(
+        res,
+        400,
+        "At least one field (title or completed) must be provided",
+        undefined,
+        "Missing update fields"
+      );
+    }
 
     const todo = await this.model.update({
-      where: { id: todoID },
-      data: { title, completed },
+      where: { id: todoId },
+      data: {
+        ...(title && { title }),
+        ...(completed !== undefined && { completed: Boolean(completed) }),
+      },
     });
 
     await Promise.all([
@@ -36,9 +63,9 @@ export class TodoData extends BaseData {
 
   async delete(req, res) {
     const { id } = req.params;
-    const todoID = this.parseIdToNumber(id);
+    const todoId = this.parseIdToNumber(id);
 
-    await this.model.delete({ where: { id: todoID } });
+    await this.model.delete({ where: { id: todoId } });
     await this.clearModelCache();
     return this.sendResponse(res, 200, "Todo deleted successfully");
   }

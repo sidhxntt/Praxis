@@ -14,7 +14,9 @@ export class BaseData {
   }
 
   generateCacheKey(page, limit, id) {
-    return id ? `${this.modelName}:${id}` : `${this.modelName}:${page}:${limit}`;
+    return id
+      ? `${this.modelName}:${id}`
+      : `${this.modelName}:${page}:${limit}`;
   }
 
   async clearModelCache() {
@@ -84,7 +86,7 @@ export class BaseData {
 
   async getOne(req, res) {
     const { id } = req.params;
-    const userID = this.parseIdToNumber(id);
+    const itemId = this.parseIdToNumber(id);
 
     const cacheKey = this.generateCacheKey(undefined, undefined, id);
     const cachedData = await redis.get(cacheKey);
@@ -96,7 +98,7 @@ export class BaseData {
         JSON.parse(cachedData)
       );
 
-    const item = await this.model.findUnique({ where: { id: userID } });
+    const item = await this.model.findUnique({ where: { id: itemId } });
     if (!item)
       return this.sendResponse(
         res,
@@ -109,6 +111,22 @@ export class BaseData {
     await this.updateRecordCache(id, item);
     return this.sendResponse(res, 200, "Data fetched successfully", item);
   }
+
+  // // Helper method to safely handle related records deletion
+  // async deleteRelatedRecords(userId, relations) {
+  //   const deletePromises = [];
+
+  //   for (const relation of relations) {
+  //     // Check if the relation exists on the model
+  //     if (this.model[relation]) {
+  //       deletePromises.push(
+  //         this.model[relation].deleteMany({ where: { userId } })
+  //       );
+  //     }
+  //   }
+
+  //   if (deletePromises.length > 0) {
+  //     await Promise.all(deletePromises);
+  //   }
+  // }
 }
-
-

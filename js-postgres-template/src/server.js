@@ -10,6 +10,7 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 import { connectDB, disconnectDB } from "./utils/Clients/Prisma.js";
 import { redis_connection, disconnectRedis } from "./utils/Clients/Redis.js";
+import passport from "passport";
 
 dotenv.config();
 
@@ -29,8 +30,14 @@ class SERVER {
         allowedHeaders: ["Content-Type", "Authorization"],
       })
     ); // Enable CORS
-
-    this.app.use(express.json()); // Parse JSON bodies
+    this.app.use(passport.initialize())
+    this.app.use(express.json(
+      {
+        verify: (req, res, buf) => {
+          req.rawBody = buf;
+        }
+      }
+    )); // Parse JSON bodies
     this.app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
     this.app.use(helmet()); // Security middleware
 

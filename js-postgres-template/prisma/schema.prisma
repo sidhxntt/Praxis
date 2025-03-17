@@ -10,15 +10,24 @@ datasource db {
 
 model User {
   id       Int      @id @default(autoincrement())
-  name     String
-  username String   @unique
-  email    String   @unique
-  address  Address?
-  phone    String   @unique
-  website  String   @unique
-  Album    Album[]
-  Post     Post[]
-  Todos    Todos[]
+ // Required fields
+  email    String @unique
+  password String
+  role     String @default("admin")
+
+  // Optional fields
+  first_name String?
+  last_name  String?
+  full_name  String?
+  username   String? @unique
+  phone      String? @unique
+  website    String? @unique
+
+  // Relations
+  address Address?
+  albums  Album[]
+  posts   Post[]
+  todos   Todos[]
 }
 
 model Address {
@@ -27,47 +36,39 @@ model Address {
   suite   String
   city    String
   zipcode String
-  user    User   @relation(fields: [userID], references: [id])
-  userID  Int    @unique
+  user    User   @relation(fields: [userId], references: [id])
+  userId  Int    @unique
 }
 
 model Album {
   id     Int     @id @default(autoincrement())
-  userID Int
+  userId Int
   title  String
-  User   User    @relation(fields: [userID], references: [id])
+  User   User    @relation(fields: [userId], references: [id])
   Image  Image[]
 }
 
 model Image {
   id           Int    @id @default(autoincrement())
-  albumID      Int
+  albumId      Int
   title        String
   url          String
   thumbnailUrl String
-  Album        Album  @relation(fields: [albumID], references: [id])
+  Album        Album  @relation(fields: [albumId], references: [id])
 }
 
 model Post {
   id     Int    @id @default(autoincrement())
-  userID Int
+  userId Int
   title  String
   body   String
-  User   User   @relation(fields: [userID], references: [id])
+  User   User   @relation(fields: [userId], references: [id])
 }
 
 model Todos {
   id        Int     @id @default(autoincrement())
-  userID    Int
+  userId    Int
   title     String
   completed Boolean
-  User      User    @relation(fields: [userID], references: [id])
-}
-
-
-model Api_users {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
-  role     String @default("user")
+  User      User    @relation(fields: [userId], references: [id])
 }

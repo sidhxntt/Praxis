@@ -6,10 +6,24 @@ export class PostData extends BaseData {
   }
 
   async create(req, res) {
-    const { userID, title, body } = req.body;
+    const { userId, title, body } = req.body;
+
+    if (!userId || !title || !body) {
+      return this.sendResponse(
+        res,
+        400,
+        "userId, title, and body are required",
+        undefined,
+        "Missing required fields"
+      );
+    }
 
     const post = await this.model.create({
-      data: { userID, title, body },
+      data: {
+        userId: parseInt(userId, 10),
+        title,
+        body,
+      },
     });
 
     await this.clearModelCache();
@@ -19,11 +33,24 @@ export class PostData extends BaseData {
   async update(req, res) {
     const { id } = req.params;
     const { title, body } = req.body;
-    const postID = this.parseIdToNumber(id);
+    const postId = this.parseIdToNumber(id);
+
+    if (!title && !body) {
+      return this.sendResponse(
+        res,
+        400,
+        "At least one field (title or body) must be provided",
+        undefined,
+        "Missing update fields"
+      );
+    }
 
     const post = await this.model.update({
-      where: { id: postID },
-      data: { title, body },
+      where: { id: postId },
+      data: {
+        ...(title && { title }),
+        ...(body && { body }),
+      },
     });
 
     await Promise.all([
@@ -36,9 +63,9 @@ export class PostData extends BaseData {
 
   async delete(req, res) {
     const { id } = req.params;
-    const postID = this.parseIdToNumber(id);
+    const postId = this.parseIdToNumber(id);
 
-    await this.model.delete({ where: { id: postID } });
+    await this.model.delete({ where: { id: postId } });
     await this.clearModelCache();
     return this.sendResponse(res, 200, "Post deleted successfully");
   }

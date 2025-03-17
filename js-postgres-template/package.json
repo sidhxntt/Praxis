@@ -11,9 +11,11 @@
     "dev:worker:email": "nodemon --exec node ./src/utils/workers/email.js",
     "dev:worker:sms": "nodemon --exec node ./src/utils/workers/sms.js",
     "prod:server": "npx prisma generate && pm2-runtime start ecosystem.config.cjs",
-    "dockerise": "docker compose up"
+    "dockerise": "docker compose up",
+    "ngrok": "npx ngrok http 8000"
   },
   "dependencies": {
+    "@faker-js/faker": "^9.6.0",
     "@prisma/client": "^5.18.0",
     "bcrypt": "^5.1.1",
     "bullmq": "^5.34.10",
@@ -25,6 +27,9 @@
     "ioredis": "^5.4.1",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.16",
+    "passport": "^0.7.0",
+    "passport-github2": "^0.1.12",
+    "passport-google-oauth20": "^2.0.0",
     "pm2": "^5.4.3",
     "prisma": "^5.18.0",
     "prom-client": "^15.1.3",
