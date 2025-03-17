@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  // Required fields
+  email    String @unique
+  password String
+  role     String @default("admin")
+
+  // Optional fields
+  first_name String?
+  last_name  String?
+  full_name  String?
+  username   String? @unique
+  phone      String? @unique
+  website    String? @unique
+
+  // Relations
+  address Address?
+  albums  Album[]
+  posts   Post[]
+  todos   Todos[]
+}
+
+model Address {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  street  String
+  suite   String
+  city    String
+  zipcode String
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String @unique @db.ObjectId
+}
+
+model Album {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId String  @db.ObjectId
+  title  String
+  user   User    @relation(fields: [userId], references: [id])
+  images Image[]
+}
+
+model Image {
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  albumId      String @db.ObjectId
+  title        String
+  url          String
+  thumbnailUrl String
+  album        Album  @relation(fields: [albumId], references: [id])
+}
+
+model Post {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  title  String
+  body   String
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Todos {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String  @db.ObjectId
+  title     String
+  completed Boolean
+  user      User    @relation(fields: [userId], references: [id])
+}
