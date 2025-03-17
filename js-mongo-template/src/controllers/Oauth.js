@@ -70,9 +70,9 @@ export class BaseOAuth extends JWT {
   };
 
   setupRoutes(app) {
-    app.get(`/auth/${this.providerName}`, this.authenticate());
-    app.get(`/auth/${this.providerName}/callback`, this.handleCallback);
-    app.get("/auth/success", this.authSuccess);
-    app.get("/auth/logout", this.authLogout);
+    app.get(`/oauth/${this.providerName}`, this.authenticate());
+    app.get(`/oauth/${this.providerName}/callback`, this.handleCallback);
+    app.get("/oauth/success", this.authSuccess);
+    app.get("/oauth/logout", this.authLogout);
   }
 }
