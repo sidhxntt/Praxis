@@ -19,7 +19,7 @@ export class BaseOAuth extends JWT {
           clientID: config.clientID,
           clientSecret: config.clientSecret,
           callbackURL: config.callbackURL,
-          scope: scope,
+          scope: scope
         },
         (accessToken, refreshToken, profile, done) => {
           // save profile to db in user schema.
@@ -44,7 +44,7 @@ export class BaseOAuth extends JWT {
 
         try {
           console.log(user); // user profile (save to db)
-          const token = this.createToken({
+          const token = await this.createToken({
             id: user.id,
             role: "admin", // remove
           });
@@ -61,9 +61,9 @@ export class BaseOAuth extends JWT {
     if (!token) {
       return res.status(400).json({ error: "No token provided" });
     }
-    res.json({
-      message: `${this.providerName} authentication successful`,
-      token,
+    res.json({ 
+      message: `${this.providerName} authentication successful`, 
+      token 
     });
   };
 

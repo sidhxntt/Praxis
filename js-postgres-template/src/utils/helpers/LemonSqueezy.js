@@ -5,10 +5,6 @@ dotenv.config();
 export function payments(app) {
   // Webhook endpoint for LemonSqueezy
   app.post("/webhook/lemonsqueezy", (req, res) => {
-
-    if (!process.env.WEBHOOK_SECRET ) {
-      throw new Error("Missing environment variables WEBHOOK_SECRET");
-    }
     console.log("Webhook received!");
 
     const signature = req.headers["x-signature"];

@@ -5,7 +5,7 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "seed": "node prisma/seeding/data.js",
+    "seed": "npx prisma generate && node prisma/seeding/data.js",
     "sync-db": "npx prisma migrate dev --name migration_1",
     "dev:server": "npx prisma generate && nodemon --exec node ./src/server.js",
     "dev:worker:email": "nodemon --exec node ./src/utils/workers/email.js",

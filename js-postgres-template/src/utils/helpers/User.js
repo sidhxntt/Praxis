@@ -121,7 +121,7 @@ export default class User extends BaseData {
       data: {
         email,
         password: hashedPassword,
-        role: role || "user",
+        role,
         name,
         username,
         phone,
@@ -199,7 +199,10 @@ export default class User extends BaseData {
     }
 
     const jwt = new JWT();
-    const token = await jwt.createToken(existingUser);
+    const token = await jwt.createToken({
+      id: existingUser.id,
+      role: existingUser.role,
+    });
 
     console.info("User logged in");
     return this.sendResponse(res, 200, "Login successful", {

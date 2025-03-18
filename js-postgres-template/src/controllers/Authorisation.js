@@ -1,10 +1,7 @@
 // Purpose: Middleware for authorisation checks
+
 export default class AUTH {
-   static async checkAdmin(
-    req,
-    res,
-    next
-  ) {
+  static async checkAdmin(req, res, next) {
     try {
       // Check if user exists in request
       if (!req.user) {

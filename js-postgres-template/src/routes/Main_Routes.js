@@ -8,7 +8,7 @@ import promClient from "prom-client";
 import JWT from "../controllers/Authentication.js";
 import { setupOAuthRoutes } from "../controllers/google_&_github.js";
 import users from "./users.js";
-import { payments } from "../controllers/LemonSqueezy.js";
+import { payments } from "../utils/helpers/LemonSqueezy.js";
 
 const auth = new JWT()
 // Prometheus metrics
