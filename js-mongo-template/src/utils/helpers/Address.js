@@ -1,5 +1,4 @@
 import { BaseData } from "./BaseData.js";
-
 export class AddressData extends BaseData {
   constructor(model) {
     super(model, "Address");

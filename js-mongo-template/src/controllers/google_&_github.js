@@ -11,11 +11,10 @@ export class GoogleAuth extends BaseOAuth {
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
     };
     const scope = ["profile", "email"];
-    
+
     super("google", GoogleStrategy, config, scope);
   }
 }
-
 
 export class GitHubAuth extends BaseOAuth {
   constructor() {
@@ -25,7 +24,7 @@ export class GitHubAuth extends BaseOAuth {
       callbackURL: process.env.GITHUB_CALLBACK_URL,
     };
     const scope = ["user:email"];
-    
+
     super("github", GitHubStrategy, config, scope);
   }
 }

@@ -1,5 +1,4 @@
 import { BaseData } from "./BaseData.js";
-
 export class TodoData extends BaseData {
   constructor(model) {
     super(model, "Todos");
@@ -7,6 +6,15 @@ export class TodoData extends BaseData {
 
   async create(req, res) {
     const { userId, title, completed } = req.body;
+    if (!userId || !title) {
+      return this.sendResponse(
+        res,
+        400,
+        "userId and title are required",
+        undefined,
+        "Missing required fields"
+      );
+    }
 
     const todo = await this.model.create({
       data: { userId, title, completed },
@@ -20,9 +28,21 @@ export class TodoData extends BaseData {
     const { id } = req.params;
     const { title, completed } = req.body;
 
+    if (!title && completed === undefined) {
+      return this.sendResponse(
+        res,
+        400,
+        "At least one field (title or completed) must be provided",
+        undefined,
+        "Missing update fields"
+      );
+    }
     const todo = await this.model.update({
       where: { id },
-      data: { title, completed },
+      data: {
+        ...(title && { title }),
+        ...(completed !== undefined && { completed: Boolean(completed) }),
+      },
     });
 
     await Promise.all([

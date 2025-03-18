@@ -1,5 +1,4 @@
 import { BaseData } from "./BaseData.js";
-
 export class ImageData extends BaseData {
   constructor(model) {
     super(model, "Image");
@@ -7,6 +6,16 @@ export class ImageData extends BaseData {
 
   async create(req, res) {
     const { albumId, title, url, thumbnailUrl } = req.body;
+
+    if (!albumId) {
+      return this.sendResponse(
+        res,
+        400,
+        "Album Id is required",
+        undefined,
+        "Missing required field"
+      );
+    }
 
     const image = await this.model.create({
       data: { albumId, title, url, thumbnailUrl },

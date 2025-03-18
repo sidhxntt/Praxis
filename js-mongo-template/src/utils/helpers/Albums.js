@@ -10,6 +10,16 @@ export class AlbumData extends BaseData {
   async create(req, res) {
     const { userId, title } = req.body;
 
+    if (!userId || !title) {
+      return this.sendResponse(
+        res,
+        400,
+        "userId and title are required",
+        undefined,
+        "Missing required fields"
+      );
+    }
+
     const album = await this.model.create({
       data: { userId, title },
     });
@@ -22,6 +32,15 @@ export class AlbumData extends BaseData {
     const { id } = req.params;
     const { title } = req.body;
 
+    if (!title) {
+      return this.sendResponse(
+        res,
+        400,
+        "Title is required",
+        undefined,
+        "Missing required field"
+      );
+    }
     const album = await this.model.update({
       where: { id },
       data: { title },

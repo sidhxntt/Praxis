@@ -10,7 +10,7 @@ import { setupOAuthRoutes } from "../controllers/google_&_github.js";
 import users from "./users.js";
 import { payments } from "../utils/helpers/LemonSqueezy.js";
 
-const auth = new JWT()
+const auth = new JWT();
 // Prometheus metrics
 promClient.collectDefaultMetrics();
 const getMetrics = async () => promClient.register.metrics();
@@ -27,7 +27,7 @@ class MainRoutes {
     this.app.use("/", home);
 
     // API routes
-    this.app.use(`${this.path}`, users);
+    this.app.use(this.path, users);
     this.app.use(`${this.path}/posts`, posts);
     this.app.use(`${this.path}/todos`, todos);
     this.app.use(`${this.path}/albums`, albums);
@@ -44,8 +44,9 @@ class MainRoutes {
         next(error);
       }
     });
+
     // OAuth Routes
-    setupOAuthRoutes(this.app)
+    setupOAuthRoutes(this.app);
 
     // JWT PAYLOAD CHECK ROUTE
     this.app.get("/auth/check", auth.decryptJWT, (req, res) => {
@@ -53,13 +54,12 @@ class MainRoutes {
     });
 
     // Payment Route
-    payments(this.app)
+    payments(this.app);
 
     // Catch-all for undefined routes
     this.app.use("*", (_, res) => {
       res.status(404).json({ error: "Route not found" });
     });
-
   }
 }
 

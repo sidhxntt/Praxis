@@ -19,7 +19,7 @@ export class BaseOAuth extends JWT {
           clientID: config.clientID,
           clientSecret: config.clientSecret,
           callbackURL: config.callbackURL,
-          scope: scope
+          scope: scope,
         },
         (accessToken, refreshToken, profile, done) => {
           // save profile to db in user schema.
@@ -34,19 +34,26 @@ export class BaseOAuth extends JWT {
   };
 
   handleCallback = (req, res, next) => {
-    passport.authenticate(this.providerName, { session: false }, async (err, user) => {
-      if (err || !user) {
-        return res.status(400).json({ error: "Authentication failed" });
-      }
+    passport.authenticate(
+      this.providerName,
+      { session: false },
+      async (err, user) => {
+        if (err || !user) {
+          return res.status(400).json({ error: "Authentication failed" });
+        }
 
-      try {
-        console.log(user)
-        const token = await this.createToken(user);
-        res.json({ token });
-      } catch (error) {
-        res.status(500).json({ error: "Failed to generate token" });
+        try {
+          console.log(user); // user profile (save to db)
+          const token = await this.createToken({
+            id: user.id,
+            role: "admin", // remove
+          });
+          res.json({ token });
+        } catch (error) {
+          res.status(500).json({ error: "Failed to generate token" });
+        }
       }
-    })(req, res, next);
+    )(req, res, next);
   };
 
   authSuccess = (req, res) => {
@@ -54,9 +61,9 @@ export class BaseOAuth extends JWT {
     if (!token) {
       return res.status(400).json({ error: "No token provided" });
     }
-    res.json({ 
-      message: `${this.providerName} authentication successful`, 
-      token 
+    res.json({
+      message: `${this.providerName} authentication successful`,
+      token,
     });
   };
 

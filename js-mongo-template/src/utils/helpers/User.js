@@ -11,7 +11,7 @@ import { prisma } from "../Clients/Prisma.js";
 
 dotenv.config();
 
-export default class UserData extends BaseData {
+export default class User extends BaseData {
   constructor(model) {
     super(model, "User");
   }
@@ -33,7 +33,6 @@ export default class UserData extends BaseData {
   signup = async (req, res) => {
     const { email, password, role, name, username, phone, website } = req.body;
 
-    // 1. Initial validation
     if (!email || !password) {
       return this.sendResponse(
         res,
@@ -44,7 +43,8 @@ export default class UserData extends BaseData {
       );
     }
 
-    if (!this.isValidEmail(email)) {
+    const validEmail = this.isValidEmail(email);
+    if (!validEmail) {
       return this.sendResponse(
         res,
         400,
@@ -54,76 +54,94 @@ export default class UserData extends BaseData {
       );
     }
 
-    // 2. Build query conditions for unique fields
-    const uniqueFieldsToCheck = [
-      { email },
-      ...(username ? [{ username }] : []),
-      ...(phone ? [{ phone }] : []),
-      ...(website ? [{ website }] : []),
-    ];
-
-    // 3. Single database query to check all unique fields
-    const existingUser = await this.model.findFirst({
-      where: {
-        OR: uniqueFieldsToCheck,
-      },
-      select: {
-        email: true,
-        username: true,
-        phone: true,
-        website: true,
-      },
+    const existingUser = await this.model.findUnique({
+      where: { email },
     });
 
-    // 4. Check which unique field caused the conflict
     if (existingUser) {
-      const conflictField =
-        existingUser.email === email
-          ? "Email"
-          : existingUser.username === username
-          ? "Username"
-          : existingUser.phone === phone
-          ? "Phone number"
-          : "Website";
-
       return this.sendResponse(
         res,
         400,
-        `${conflictField} already exists`,
+        "Email already exists",
         undefined,
-        `Duplicate ${conflictField.toLowerCase()}`
+        "Duplicate email"
       );
     }
 
-    // 5. Create user with single database operation
+    // Check if username exists if provided
+    if (username) {
+      const existingUsername = await this.model.findUnique({
+        where: { username },
+      });
+      if (existingUsername) {
+        return this.sendResponse(
+          res,
+          400,
+          "Username already exists",
+          undefined,
+          "Duplicate username"
+        );
+      }
+    }
+
+    // Check if phone exists if provided
+    if (phone) {
+      const existingPhone = await this.model.findUnique({
+        where: { phone },
+      });
+      if (existingPhone) {
+        return this.sendResponse(
+          res,
+          400,
+          "Phone number already exists",
+          undefined,
+          "Duplicate phone"
+        );
+      }
+    }
+
+    // Check if website exists if provided
+    if (website) {
+      const existingWebsite = await this.model.findUnique({
+        where: { website },
+      });
+      if (existingWebsite) {
+        return this.sendResponse(
+          res,
+          400,
+          "Website already exists",
+          undefined,
+          "Duplicate website"
+        );
+      }
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await this.model.create({
       data: {
         email,
-        password: await bcrypt.hash(password, 10),
-        role: role || "user",
-        ...(name && { name }),
-        ...(username && { username }),
-        ...(phone && { phone }),
-        ...(website && { website }),
+        password: hashedPassword,
+        role,
+        name,
+        username,
+        phone,
+        website,
       },
     });
 
-    // 6. Queue notifications in parallel
-    const [emailJob, smsJob] = await Promise.all([
-      emailQueue.add("send-email", {
-        email: process.env.SMTP_FROM,
-        message: "New User added to API",
-      }),
-      smsQueue.add("send-sms", {
-        to: process.env.PHONE_NUMBER,
-        message: "New User added to API",
-      }),
-    ]);
+    const emailJob = await emailQueue.add("send-email", {
+      email: process.env.SMTP_FROM,
+      message: "New User added to API",
+    });
+    console.info(`Added job to email queue. Email Job ID: ${emailJob.id}`);
 
-    console.info(
-      `User created - Email Job ID: ${emailJob.id}, SMS Job ID: ${smsJob.id}`
-    );
+    const smsJob = await smsQueue.add("send-sms", {
+      to: process.env.PHONE_NUMBER,
+      message: "New User added to API",
+    });
+    console.info(`Added job to email queue. SMS Job ID: ${smsJob.id}`);
 
+    console.info("New user created");
     return this.sendResponse(res, 201, "User created successfully", {
       id: newUser.id,
       email: newUser.email,
@@ -181,7 +199,10 @@ export default class UserData extends BaseData {
     }
 
     const jwt = new JWT();
-    const token = await jwt.createToken(existingUser);
+    const token = await jwt.createToken({
+      id: existingUser.id,
+      role: existingUser.role,
+    });
 
     console.info("User logged in");
     return this.sendResponse(res, 200, "Login successful", {
@@ -193,90 +214,74 @@ export default class UserData extends BaseData {
 
   async delete(req, res) {
     const { id } = req.params;
-
-    const existingUser = await this.model.findUnique({
-      where: { id },
-    });
-
+  
+    const existingUser = await this.model.findUnique({ where: { id } });
+  
     if (!existingUser) {
-      return this.sendResponse(
-        res,
-        404,
-        "User not found",
-        undefined,
-        "User does not exist"
-      );
+      return this.sendResponse(res, 404, "User not found", undefined, "User does not exist");
     }
-
-    // Check if related records exist before attempting deletion
-    const relatedEntities = await Promise.all([
-      prisma.address.count({ where: { userId: id } }),
-      prisma.album.count({ where: { userId: id } }),
-      prisma.post.count({ where: { userId: id } }),
-      prisma.todos.count({ where: { userId: id } }),
-      prisma.album.findMany({
-        where: { userId: id },
-        select: { id: true },
-      }),
-    ]);
-
-    const [addressCount, albumsCount, postsCount, todosCount, albums] =
-      relatedEntities;
-    const albumIds = albums.map((album) => album.id); // Extract just the album ids
-
-    // Start a transaction for deleting the related records and the user
+  
+    // Fetch related data in a single query
+    const relatedData = await prisma.$transaction(async (tx) => {
+      const addressCount = await tx.address.count({ where: { userId: id } });
+      const albums = await tx.album.findMany({ where: { userId: id }, select: { id: true } });
+      const postsCount = await tx.post.count({ where: { userId: id } });
+      const todosCount = await tx.todos.count({ where: { userId: id } });
+  
+      return { addressCount, albums, postsCount, todosCount };
+    });
+  
+    const albumIds = relatedData.albums.map((album) => album.id);
+  
+    // Execute transaction for deletion
     await prisma.$transaction(async (tx) => {
-      // Use prisma directly here, not this.prisma
-      const deletePromises = [];
-
-      // Delete images first (if any) - related to the albums
-      if (albumIds.length > 0) {
-        deletePromises.push(
-          tx.image.deleteMany({
-            where: {
-              albumId: { in: albumIds },
-            },
-          })
-        );
+      if (albumIds.length) {
+        await tx.image.deleteMany({ where: { albumId: { in: albumIds } } });
       }
-
-      // Delete other related records
-      if (addressCount > 0) {
-        deletePromises.push(tx.address.deleteMany({ where: { userId: id } }));
+      if (relatedData.addressCount) {
+        await tx.address.deleteMany({ where: { userId: id } });
       }
-      if (albumsCount > 0) {
-        deletePromises.push(tx.album.deleteMany({ where: { userId: id } }));
+      if (relatedData.albums.length) {
+        await tx.album.deleteMany({ where: { userId: id } });
       }
-      if (postsCount > 0) {
-        deletePromises.push(tx.post.deleteMany({ where: { userId: id } }));
+      if (relatedData.postsCount) {
+        await tx.post.deleteMany({ where: { userId: id } });
       }
-      if (todosCount > 0) {
-        deletePromises.push(tx.todos.deleteMany({ where: { userId: id } }));
+      if (relatedData.todosCount) {
+        await tx.todos.deleteMany({ where: { userId: id } });
       }
-
-      // Execute the deletion of related records
-      await Promise.all(deletePromises);
-
-      // Finally, delete the user
+  
       await tx.user.delete({ where: { id } });
     });
-
+  
     await this.clearModelCache();
     console.info(`User with ID ${id} and related records deleted`);
-
+  
     return this.sendResponse(res, 200, "User deleted successfully");
   }
 
   async update(req, res) {
     const { id } = req.params;
-    const { email, password, role, name, username, phone, website } = req.body;
+    const {
+      email,
+      password,
+      role,
+      first_name,
+      last_name,
+      full_name,
+      username,
+      phone,
+      website,
+    } = req.body;
 
     let updateData = {};
 
     if (email) updateData.email = email;
     if (password) updateData.password = await bcrypt.hash(password, 10);
     if (role) updateData.role = role;
-    if (name !== undefined) updateData.name = name;
+    if (first_name !== undefined) updateData.first_name = first_name;
+    if (last_name !== undefined) updateData.last_name = last_name;
+    if (full_name !== undefined) updateData.full_name = full_name;
     if (username !== undefined) updateData.username = username;
     if (phone !== undefined) updateData.phone = phone;
     if (website !== undefined) updateData.website = website;
