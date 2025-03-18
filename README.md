@@ -1,1 +1,8 @@
-A **Scaffolding CLI tool** to accelerate the development process and enhance the developer experience with streamlined workflows, automated project setup, and best-practice templates. 🚀
+## CHANGELOG
+- Fronted
+    - user/task- table
+    - data-table-pagination
+    - user-action-dialog
+
+
+    todo:  task and redis update
