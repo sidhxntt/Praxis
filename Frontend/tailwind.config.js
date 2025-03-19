@@ -1,6 +1,8 @@
 const {
   default: flattenColorPalette,
 } = require("tailwindcss/lib/util/flattenColorPalette");
+const typography = require('@tailwindcss/typography');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -93,18 +95,78 @@ module.exports = {
         scroll:
           "scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite",
       },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            color: theme('colors.foreground'),
+            h1: { color: theme('colors.foreground') },
+            h2: { color: theme('colors.foreground') },
+            h3: { color: theme('colors.foreground') },
+            h4: { color: theme('colors.foreground') },
+            h5: { color: theme('colors.foreground') },
+            h6: { color: theme('colors.foreground') },
+            strong: { color: theme('colors.foreground') },
+            blockquote: { color: theme('colors.muted.foreground') },
+            code: { color: theme('colors.foreground') },
+            pre: {
+              backgroundColor: theme('colors.muted.DEFAULT'),
+              color: theme('colors.foreground'),
+            },
+            a: { 
+              color: theme('colors.primary.DEFAULT'),
+              '&:hover': {
+                color: theme('colors.primary.DEFAULT'),
+                opacity: 0.8,
+              },
+            },
+            table: {
+              color: theme('colors.foreground'),
+              borderCollapse: 'collapse',
+              width: '100%',
+              marginTop: theme('spacing.4'),
+              marginBottom: theme('spacing.4'),
+              borderSpacing: '0',
+              border: `1px solid ${theme('colors.border')}`,
+              borderRadius: theme('borderRadius.lg'),
+              th: {
+                border: `1px solid ${theme('colors.border')}`,
+                padding: theme('spacing.2'),
+                textAlign: 'left',
+                fontWeight: theme('fontWeight.bold'),
+              },
+              td: {
+                border: `1px solid ${theme('colors.border')}`,
+                padding: theme('spacing.2'),
+              },
+              thead: {
+                th: {
+                  backgroundColor: theme('colors.muted.DEFAULT'),
+                }
+              },
+              tbody: {
+                tr: {
+                  '&:nth-child(odd)': {
+                    backgroundColor: theme('colors.muted.DEFAULT'),
+                    opacity: 0.8,
+                  },
+                },
+              },
+            },
+          },
+        },
+      }),
     },
   },
-  plugins: [require("tailwindcss-animate"),addVariablesForColors],
+  plugins: [require("tailwindcss-animate"), typography, addVariablesForColors],
 };
 
 function addVariablesForColors({ addBase, theme }) {
-	let allColors = flattenColorPalette(theme("colors"));
-	let newVars = Object.fromEntries(
-	  Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
-	);
-   
-	addBase({
-	  ":root": newVars,
-	});
-  }
+  let allColors = flattenColorPalette(theme("colors"));
+  let newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
+  
+  addBase({
+    ":root": newVars,
+  });
+}

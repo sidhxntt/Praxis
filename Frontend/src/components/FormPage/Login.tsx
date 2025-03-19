@@ -36,7 +36,7 @@ export function LoginForm({
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/v1/login",
+        import.meta.env.VITE_LOGIN_ROUTE,
         data,
         {
           withCredentials: true,
@@ -164,7 +164,7 @@ export function LoginForm({
               variant="outline"
               className="w-full"
               onClick={() => {
-                window.location.href = "http://localhost:3000/oauth/github"; 
+                window.location.href = import.meta.env.VITE_GITHUB_OAUTH_LINK; 
               }}
             >
               <FaGithub />
@@ -174,7 +174,7 @@ export function LoginForm({
               variant="outline"
               className="w-full"
               onClick={() => {
-                window.location.href = "http://localhost:3000/oauth/google"; 
+                window.location.href = import.meta.env.VITE_GOOGLE_OAUTH_LINK; 
               }}
             >
               <FaGoogle />

@@ -39,7 +39,7 @@ export function SignupForm({
     try {
       console.log(data);
       const response = await axios.post(
-        "http://localhost:3000/api/v1/signup",
+        import.meta.env.VITE_SIGNUP_ROUTE,
         data,
         {
           headers: {

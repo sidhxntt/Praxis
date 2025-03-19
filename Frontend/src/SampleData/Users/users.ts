@@ -9,7 +9,7 @@ export const fetchUsers = async (page: number = 1, limit: number = 10): Promise<
     if (!token) {
       throw new Error("No authentication token found.");
     }
-    const response = await axios.get('http://localhost:3000/api/v1/users', {
+    const response = await axios.get(import.meta.env.VITE_USERS_API_ROUTE, {
       params: {
         page,
         limit

@@ -20,10 +20,10 @@ export const onUserSubmit = async (
     let url, method;
 
     if (isEditing && userId) {
-      url = `http://localhost:3000/api/v1/users/${userId}`;
+      url = `${import.meta.env.VITE_USERS_API_ROUTE}/${userId}`;
       method = "PATCH";
     } else {
-      url = "http://localhost:3000/api/v1/signup";
+      url = import.meta.env.VITE_SIGNUP_ROUTE;
       method = "POST";
     }
 
@@ -85,10 +85,10 @@ export const onTaskSubmit = async (
     let url, method;
 
     if (isEditing && taskId) {
-      url = `http://localhost:3000/api/v1/tasks/${taskId}`;
+      url = `${import.meta.env.VITE_TASKS_API_ROUTE}/${taskId}`;
       method = "PATCH";
     } else {
-      url = "http://localhost:3000/api/v1/tasks";
+      url = import.meta.env.VITE_TASKS_API_ROUTE;
       method = "POST";
     }
 
@@ -147,7 +147,7 @@ export const onUserInviteSubmit = async (
       throw new Error("No authentication token found.");
     }
 
-    await axios.post("http://localhost:3000/api/v1/users/invite", data, {
+    await axios.post(`${import.meta.env.VITE_USERS_API_ROUTE}/invite`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

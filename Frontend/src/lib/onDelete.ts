@@ -20,11 +20,10 @@ export const handleUserDelete = async (
     if (!token) {
       throw new Error("No authentication token found");
     }
-    
     // Send DELETE request to server
     const response = await axios({
       method: "DELETE",
-      url: `http://localhost:3000/api/v1/users/${currentRow.id}`,
+      url: `${import.meta.env.VITE_USERS_API_ROUTE}/${currentRow.id}`,
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -62,6 +61,7 @@ export const handleUserDelete = async (
     setIsDeleting(false);
   }
 };
+
 export const handleDeleteTask = async (currentRow: Task, setOpen: any, setCurrentRow: any) => {
   if (!currentRow) return;
 
@@ -74,7 +74,7 @@ export const handleDeleteTask = async (currentRow: Task, setOpen: any, setCurren
     // Make an Axios DELETE request to the backend API
      await axios({
       method: "DELETE",
-      url: `http://localhost:3000/api/v1/tasks/${currentRow.id}`,
+      url: `${import.meta.env.VITE_TASKS_API_ROUTE}/${currentRow.id}`,
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
