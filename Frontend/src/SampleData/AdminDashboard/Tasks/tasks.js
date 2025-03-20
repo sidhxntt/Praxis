@@ -21,8 +21,12 @@ export const fetchTasks = async (page = 1, limit = 10) => {
     });
 
     if (response.data.status === 'success') {
-      const rawTasks = response.data.data.data.map((task) => ({
-        id: String(task.id), // for mongo id
+      // Calculate the starting index for display IDs based on pagination
+      const startIndex = (page - 1) * limit + 1;
+      
+      const rawTasks = response.data.data.data.map((task, index) => ({
+        id: task.id, // Keep original MongoDB ID for internal use
+        displayId: startIndex + index, // Add display ID as ascending number
         title: task.title,
         status: task.status,
         label: task.label,

@@ -1,15 +1,10 @@
 import dotenv from "dotenv";
 import crypto from "crypto";
-import {Request, Response, NextFunction, Application } from "express";
 dotenv.config();
 
-export function payments(app :Application) {
+export function payments(app) {
   // Webhook endpoint for LemonSqueezy
-  app.post("/webhook/lemonsqueezy", (req: Request, res: Response) => {
-
-    if (!process.env.WEBHOOK_SECRET ) {
-      throw new Error("Missing environment variables WEBHOOK_SECRET");
-    }
+  app.post("/webhook/lemonsqueezy", (req, res) => {
     console.log("Webhook received!");
 
     const signature = req.headers["x-signature"];
@@ -26,7 +21,7 @@ export function payments(app :Application) {
     // Verify webhook signature using raw body
     const computedSignature = crypto
       .createHmac("sha256", process.env.WEBHOOK_SECRET)
-      .update(req.rawBody as Buffer)
+      .update(req.rawBody)
       .digest("hex");
 
     console.log("Computed signature:", computedSignature);

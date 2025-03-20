@@ -1,29 +1,26 @@
-import { Request, Response } from "express";
-import { redis_connection } from "../Clients/Redis";
+import { redis_connection } from "../Clients/Redis.js";
 
 const redis = redis_connection();
 
 // Base class with common functionality
 export class BaseData {
-  protected readonly model: any;
-  protected readonly modelName: string;
-
-  constructor(model: any, modelName: string) {
+  constructor(model, modelName) {
     this.model = model;
     this.modelName = modelName;
   }
-  protected parseIdToNumber(id: string): number {
-    return parseInt(id, 10);
-  }
-  protected generateCacheKey = (page?: number, limit?: number, id?: string) =>
-    id ? `${this.modelName}:${id}` : `${this.modelName}:${page}:${limit}`;
 
-  protected async clearModelCache() {
+  generateCacheKey(page, limit, id) {
+    return id
+      ? `${this.modelName}:${id}`
+      : `${this.modelName}:${page}:${limit}`;
+  }
+
+  async clearModelCache() {
     const keys = await redis.keys(`${this.modelName}:*`);
     if (keys.length) await redis.del(keys);
   }
 
-  protected async updateRecordCache(id: string, data: any) {
+  async updateRecordCache(id, data) {
     await redis.setex(
       this.generateCacheKey(undefined, undefined, id),
       3600,
@@ -31,13 +28,7 @@ export class BaseData {
     );
   }
 
-  protected sendResponse<T>(
-    res: Response,
-    statusCode: number,
-    message: string,
-    data?: T,
-    error?: string
-  ) {
+  sendResponse(res, statusCode, message, data, error) {
     return res.status(statusCode).json({
       status: statusCode >= 400 ? "error" : "success",
       message,
@@ -46,14 +37,13 @@ export class BaseData {
     });
   }
 
-  protected generatePagination(req: Request) {
-    const page = parseInt((req.query.page as string) || "1", 10);
-    const limit = parseInt((req.query.limit as string) || "10", 10);
+  generatePagination(req) {
+    const page = parseInt(req.query.page || "1", 10);
+    const limit = parseInt(req.query.limit || "10", 10);
     return { page, limit, offset: (page - 1) * limit };
   }
 
-  // Common GET methods
-  public async getAll(req: Request, res: Response) {
+  async getAll(req, res) {
     const { page, limit, offset } = this.generatePagination(req);
     const cacheKey = this.generateCacheKey(page, limit);
 
@@ -90,12 +80,11 @@ export class BaseData {
     );
   }
 
-  public async getOne(req: Request, res: Response) {
+  async getOne(req, res) {
     const { id } = req.params;
-    const userID = this.parseIdToNumber(id)
-
     const cacheKey = this.generateCacheKey(undefined, undefined, id);
     const cachedData = await redis.get(cacheKey);
+    
     if (cachedData)
       return this.sendResponse(
         res,
@@ -104,7 +93,7 @@ export class BaseData {
         JSON.parse(cachedData)
       );
 
-    const item = await this.model.findUnique({ where: { id: userID } });
+    const item = await this.model.findUnique({ where: { id } });
     if (!item)
       return this.sendResponse(
         res,

@@ -1,12 +1,11 @@
-import { BaseData } from "./BaseData";
-import { Request, Response } from "express";
+import { BaseData } from "./BaseData.js";
 
-export class TodoData extends BaseData {
-  constructor(model: any) {
+export class TaskData extends BaseData {
+  constructor(model) {
     super(model, "Todos");
   }
 
-  public async create(req: Request, res: Response) {
+  async create(req, res) {
     const { title, status, label, priority } = req.body;
     if (!title && !status && !label && !priority) {
       return this.sendResponse(
@@ -25,11 +24,10 @@ export class TodoData extends BaseData {
     await this.clearModelCache();
     return this.sendResponse(res, 201, "Todo created successfully", todo);
   }
-  public async update(req: Request, res: Response) {
+  async update(req, res) {
     const { id } = req.params;
     const { title, status, label, priority } = req.body;
-    const taskId = this.parseIdToNumber(id);
-  
+
     if (!title && !status && !label && !priority) {
       return this.sendResponse(
         res,
@@ -39,9 +37,9 @@ export class TodoData extends BaseData {
         "Missing update fields"
       );
     }
-  
+
     const task = await this.model.update({
-      where: { id: taskId },
+      where: { id },
       data: {
         ...(title && { title }),
         ...(status && { status }),
@@ -49,19 +47,18 @@ export class TodoData extends BaseData {
         ...(priority && { priority }),
       },
     });
-  
+
     await Promise.all([
       this.updateRecordCache(id, task),
       this.clearModelCache(),
     ]);
-  
+
     return this.sendResponse(res, 200, "Task updated successfully", task);
   }
-  public async delete(req: Request, res: Response) {
+  async delete(req, res) {
     const { id } = req.params;
-    const todoId = this.parseIdToNumber(id);
 
-    await this.model.delete({ where: { id: todoId } });
+    await this.model.delete({ where: { id } });
     await this.clearModelCache();
     return this.sendResponse(res, 200, "Todo deleted successfully");
   }

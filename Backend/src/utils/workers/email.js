@@ -1,5 +1,5 @@
 // Description: This file contains the worker for processing email jobs using BullMQ. It uses Nodemailer to send emails.
-import { Worker } from "bullmq";
+import { Worker, Job } from "bullmq";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
@@ -41,47 +41,13 @@ const transporter = nodemailer.createTransport({
 const email_worker = new Worker(
   "user-emails",
   async (job) => {
-    const { email, role, description  } = job.data;
+
       await transporter.sendMail({
         from: SMTP_FROM,
-        to: email,
+        to: job.data.email,
         subject: "Your Email Subject",
-        text: 'Invitation for SaaS',
-        html: 
-        `<div style="max-width: 42rem; padding: 2rem 1.5rem; margin: 0 auto; background-color: white; color: black; font-family: Arial, sans-serif; line-height: 1.5; background-color: #ffffff;">
-
-        <div style="margin-top: 2rem;">
-          <h2 style="color: #374151; font-size: 1.5rem; font-weight: 500; margin-bottom: 1rem;">
-            Hi ${email},
-          </h2>
-      
-          <p style="color: #4b5563; font-size: 1rem; margin-top: 1rem; margin-bottom: 2rem;">
-            A new invite for <strong>${email}</strong> as <strong>${role}</strong> from ${SMTP_FROM} has come. 
-          </p>
-      
-          <a href="http://localhost:5173/" style="text-decoration: none;">
-            <button style="
-                padding: 0.5rem 1.5rem;
-                font-size: 0.875rem;
-                font-weight: 500;
-                text-transform: capitalize;
-                background-color: #2563eb;
-                color: white;
-                border: none;
-                border-radius: 0.375rem;
-                cursor: pointer;
-                transition: background-color 0.3s ease-in-out;
-                display: inline-block;
-              " onmouseover="this.style.backgroundColor='#1e4cb7'" onmouseout="this.style.backgroundColor='#2563eb'">
-            Accept Now
-            </button>
-          </a>
-      
-          <p style="color: #4b5563; font-size: 1rem; margin-top: 2rem;">
-            ${description} <br>
-          </p>
-        </div>
-      </div>`,
+        text: job.data.message,
+        html: `<p>${job.data.message}</p>`,
       });
   },
   {

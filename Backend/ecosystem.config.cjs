@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'server', 
-      script: 'dist/server.js', 
+      script: 'src/server.js', 
       instances: 1,
       autorestart: true, 
       watch: true,
@@ -10,7 +10,7 @@ module.exports = {
     },
     {
       name: 'email_worker', 
-      script: 'dist/utils/workers/email.js', 
+      script: 'src/utils/workers/email.js', 
       instances: 1,
       autorestart: true,
       watch: true,
@@ -18,7 +18,7 @@ module.exports = {
     },
     {
       name: 'sms_worker', 
-      script: 'dist/utils/workers/sms.js', 
+      script: 'src/utils/workers/sms.js', 
       instances: 1,
       autorestart: true,
       watch: true,

@@ -1,6 +1,4 @@
-import { Response } from "express";
-
-function cookie_maker(res: Response, token: string){
+function cookie_maker(res, token){
     res.cookie("access_token", token, {
         // httpOnly: true, // Prevents access from JS (good for security)
         secure: false, // Set `true` in production (HTTPS only)

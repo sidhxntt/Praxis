@@ -1,28 +1,22 @@
-import { Request, Response, NextFunction } from "express";
 import { Prisma } from "@prisma/client";
 
 /**
  * Centralized error handling middleware.
  * Handles Prisma errors, validation errors, and general server errors.
  */
-const error_handling = (
-  err: Error,
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
+const error_handling = (err, req, res, next) => {
   console.error("Error:", err);
 
   // Default response structure
   let statusCode = 500;
   let errorMessage = "Internal Server Error";
-  let errorDetails: any = undefined;
+  let errorDetails = undefined;
 
   // Handle Prisma Errors
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     statusCode = 400;
     errorMessage = "Database error";
-    
+
     switch (err.code) {
       case "P2002":
         errorMessage = "Unique constraint failed. Duplicate entry detected.";
@@ -37,30 +31,24 @@ const error_handling = (
       default:
         errorDetails = err.message;
     }
-  } 
-  else if (err instanceof Prisma.PrismaClientValidationError) {
+  } else if (err instanceof Prisma.PrismaClientValidationError) {
     statusCode = 400;
     errorMessage = "Validation error. Invalid data format.";
-  } 
-  else if (err instanceof Prisma.PrismaClientRustPanicError) {
+  } else if (err instanceof Prisma.PrismaClientRustPanicError) {
     errorMessage = "Database runtime error.";
-  }
-  else if (err instanceof Prisma.PrismaClientInitializationError) {
+  } else if (err instanceof Prisma.PrismaClientInitializationError) {
     errorMessage = "Database connection error.";
-  }
-  else if (err instanceof Prisma.PrismaClientUnknownRequestError) {
+  } else if (err instanceof Prisma.PrismaClientUnknownRequestError) {
     errorMessage = "Unknown database request error.";
   }
   // Handle general errors
   else if (err instanceof SyntaxError) {
     statusCode = 400;
     errorMessage = "Invalid JSON payload.";
-  }
-  else if (err instanceof TypeError) {
+  } else if (err instanceof TypeError) {
     statusCode = 500;
     errorMessage = "Type error occurred.";
-  }
-  else {
+  } else {
     errorDetails = err.message;
   }
 
