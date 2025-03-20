@@ -1,26 +1,11 @@
 import { Tweet } from "react-tweet";
 import MaxWidthWrapper from "../LandingPageLayout/MaxWidthWrapper";
 
+interface Testimonial {
+  id: string;
+}
 
-const tweets = [
-  {
-    id: "1881765010424385902",
-  },
-  {
-    id: "1889727007128244284",
-  },
-  {
-    id: "1881303462597779752",
-  },
-  {
-    id: "1879559021012922761",
-  },
-  {
-    id: "1840212070979313962",
-  },
-];
-
-function Testimonials() {
+function Testimonials({ tweets }:{tweets: Testimonial[]}) {
   return (
     <MaxWidthWrapper>
       <div className="text-center space-y-5 my-14" id="testimonials">
@@ -31,30 +16,12 @@ function Testimonials() {
         </h2>
       </div>
 
-      <ul className="mx-auto md:columns-2 lg:columns-3 space-y-4 md:space-y-6 md:gap-6">
-        <li className="break-inside-avoid">
-          <Tweet id={tweets[0].id} />
-        </li>
-
-        <li className="break-inside-avoid">
-          <Tweet id={tweets[1].id} />
-        </li>
-
-        <li className="break-inside-avoid">
-          <Tweet id={tweets[2].id} />
-        </li>
-
-        <li className="break-inside-avoid">
-          <Tweet id={tweets[3].id} />
-        </li>
-
-        <li className="break-inside-avoid">
-          <Tweet id={tweets[4].id} />
-        </li>
-
-        <li className="break-inside-avoid">
-          <Tweet id={tweets[0].id} />
-        </li>
+      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {tweets.map((tweet) => (
+          <li key={tweet.id} className="break-inside-avoid">
+            <Tweet id={tweet.id} />
+          </li>
+        ))}
       </ul>
     </MaxWidthWrapper>
   );

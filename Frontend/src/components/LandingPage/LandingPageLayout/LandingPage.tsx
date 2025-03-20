@@ -6,17 +6,20 @@ import FeatureDisplay from "../LandingPageComponents/FeatureDisplay";
 import HeroSection from "../LandingPageComponents/HeroSection";
 import BeforeAfter from "../LandingPageComponents/BeforeAfter";
 import Testimonials from "../LandingPageComponents/Testimonials";
+import { pricingPlans } from "@/SampleData/LandingPage/pricing-data";
+import { faqs } from "@/SampleData/LandingPage/faq-data";
+import { sampleTweets } from "@/SampleData/LandingPage/sample-tweets";
 
 function LandingPage() {
   return (
     <>
-      <HeroSection />
+      <HeroSection highlighted_text="your cool product"/>
       <BeforeAfter />
-      <FeatureDisplay />
+      <FeatureDisplay highlighted_text="Random shit"/>
       <DemoSection />
-      <PricingSection /> 
-      <FaqSection />
-      <Testimonials />
+      <PricingSection plans={pricingPlans}/> 
+      <FaqSection faqs={faqs}/>
+      <Testimonials tweets={sampleTweets} />
       <FinalPush />
     </>
   );

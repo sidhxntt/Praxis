@@ -6,14 +6,18 @@ import { buttonVariants } from "@/components/ui/button";
 import { AnimatedTooltipPreview } from "../AceternityComponents/AnimatedTooltip";
 import { HeroHighlightDemo } from "../AceternityComponents/HeroHighlight";
 
-function HeroSection() {
+interface HeroSectionProps {
+  highlighted_text: string;
+}
+
+const HeroSection: React.FC<HeroSectionProps> = ({ highlighted_text }) => {
   return (
     <section className="bg-slate-50 dark:bg-[#020817]" id="about">
       <MaxWidthWrapper className="pt-10 !px-2 lg:!px-10 lg:grid lg:grid-cols-2 lg:gap-x-0 lg:pt-24 lg:pb-20">
         <div className="col-span-1 px-2 lg:px-0">
           <div className="relative mx-auto text-center lg:text-left flex flex-col items-center lg:items-start">
             <h1 className="relative w-fit tracking-tighter text-balance font-bold !leading-tight text-gray-900 dark:text-white text-5xl md:text-6xl">
-            Your tagline here for <HeroHighlightDemo text=" your cool product"/>
+            Your tagline here for <HeroHighlightDemo text={highlighted_text}/>
             </h1>
 
             <p className="mt-8 text-balance text-lg max-w-prose text-center font-semibold lg:pr-10 md:text-wrap lg:text-left">

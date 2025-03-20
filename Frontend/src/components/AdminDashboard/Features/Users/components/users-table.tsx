@@ -24,8 +24,8 @@ import {
 } from "@/components/ui/table";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
-import { User } from "@/SampleData/Users/schema";
-import { fetchUsers } from "@/SampleData/Users/users";
+import { User } from "@/SampleData/AdminDashboard/Users/schema";
+import { fetchUsers } from "@/SampleData/AdminDashboard/Users/users";
 
 declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends RowData, TValue> {

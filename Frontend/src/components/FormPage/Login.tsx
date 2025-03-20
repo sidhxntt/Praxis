@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import isEmail from "validator/lib/isEmail";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
 import { FaGoogle, FaGithub } from "react-icons/fa";
+import { onLogin } from "@/lib/onFormSubmit";
 
 interface LoginFormInputs {
   email: string;
@@ -31,35 +31,13 @@ export function LoginForm({
     mode: "onChange",
   });
 
-  const onLogin: SubmitHandler<LoginFormInputs> = async (data) => {
-    setServerError(null); // Clear previous errors
-
-    try {
-      const response = await axios.post(
-        import.meta.env.VITE_LOGIN_ROUTE,
-        data,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log("Login Success:", response.data);
-      reset();
-      navigate("/dashboard");
-    } catch (error: any) {
-      console.error("Login Error:", error.response?.data || error.message);
-      setServerError(
-        error.response?.data?.error || "An unexpected error occurred."
-      );
-      reset();
-    }
-  };
-
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <form onSubmit={handleSubmit(onLogin)}>
+      <form
+        onSubmit={handleSubmit((data) =>
+          onLogin(data, setServerError, reset, navigate)
+        )}
+      >
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
             <Link
@@ -164,7 +142,7 @@ export function LoginForm({
               variant="outline"
               className="w-full"
               onClick={() => {
-                window.location.href = import.meta.env.VITE_GITHUB_OAUTH_LINK; 
+                window.location.href = import.meta.env.VITE_GITHUB_OAUTH_LINK;
               }}
             >
               <FaGithub />
@@ -174,7 +152,7 @@ export function LoginForm({
               variant="outline"
               className="w-full"
               onClick={() => {
-                window.location.href = import.meta.env.VITE_GOOGLE_OAUTH_LINK; 
+                window.location.href = import.meta.env.VITE_GOOGLE_OAUTH_LINK;
               }}
             >
               <FaGoogle />

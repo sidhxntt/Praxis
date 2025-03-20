@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useTasks } from "@/Context/TasksContext";
-import { taskSchema } from "@/SampleData/Tasks/schema";
+import { taskSchema } from "@/SampleData/AdminDashboard/Tasks/schema";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;

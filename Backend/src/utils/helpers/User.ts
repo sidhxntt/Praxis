@@ -102,6 +102,7 @@ export default class User extends BaseData {
     });
   
     console.info("New user created");
+    this.clearModelCache();
     return this.sendResponse(res, 201, "User created successfully", {
       id: newUser.id,
       email: newUser.email,

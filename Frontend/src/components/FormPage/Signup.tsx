@@ -5,10 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import validatePassword from "@/lib/validatePassword";
 import isEmail from "validator/lib/isEmail";
-import { useForm, SubmitHandler } from "react-hook-form";
-import axios from "axios";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { onSignup } from "@/lib/onFormSubmit";
 
 interface SignupFormInputs {
   username: string;
@@ -34,37 +34,19 @@ export function SignupForm({
   const [serverError, setServerError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<SignupFormInputs> = async (data) => {
-    setServerError(null); // Clear previous errors
-    try {
-      console.log(data);
-      const response = await axios.post(
-        import.meta.env.VITE_SIGNUP_ROUTE,
-        data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log("Server Response:", response.data);
-      if (response) {
-        reset(); // Reset form fields after successful signup
-        navigate("/dashboard");
-      }
-    } catch (error: any) {
-      console.error("Signup Error:", error.response?.data || error.message);
-      setServerError(error.response?.data?.message || "An unexpected error occurred.");
-      reset()
-    }
-  };
-
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form
+        onSubmit={handleSubmit((data) =>
+          onSignup(data, setServerError, reset, navigate)
+        )}
+      >
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
-            <a href="/" className="flex flex-col items-center gap-2 font-medium">
+            <a
+              href="/"
+              className="flex flex-col items-center gap-2 font-medium"
+            >
               <div className="flex h-8 w-8 items-center justify-center rounded-md">
                 <GalleryVerticalEnd className="size-6" />
               </div>
@@ -88,7 +70,9 @@ export function SignupForm({
                 })}
               />
               {errors.username && (
-                <p className="text-red-500 text-sm mt-1">{errors.username.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.username.message}
+                </p>
               )}
             </div>
 
@@ -101,11 +85,14 @@ export function SignupForm({
                 type="email"
                 {...register("email", {
                   required: "*Email is required.",
-                  validate: (value) => isEmail(value) || "*Please enter a valid email.",
+                  validate: (value) =>
+                    isEmail(value) || "*Please enter a valid email.",
                 })}
               />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -124,7 +111,9 @@ export function SignupForm({
                 })}
               />
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
@@ -139,11 +128,14 @@ export function SignupForm({
                 onPaste={(e) => e.preventDefault()}
                 {...register("confirmPassword", {
                   required: "*Confirming the password is required.",
-                  validate: (value) => value === watch("password") || "*Passwords do not match.",
+                  validate: (value) =>
+                    value === watch("password") || "*Passwords do not match.",
                 })}
               />
               {errors.confirmPassword && (
-                <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.confirmPassword.message}
+                </p>
               )}
             </div>
 
@@ -157,8 +149,19 @@ export function SignupForm({
                     fill="none"
                     viewBox="0 0 24 24"
                   >
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Signing up...
                 </span>
@@ -168,9 +171,11 @@ export function SignupForm({
                 <span>Signup &rarr;</span>
               )}
             </Button>
-         
+
             <p className="text-xs text-center text-muted-foreground">
-              By clicking continue, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+              By clicking continue, you agree to our{" "}
+              <a href="#">Terms of Service</a> and{" "}
+              <a href="#">Privacy Policy</a>.
             </p>
           </div>
         </div>
