@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "./data-table-view-options";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
-import { statuses, priorities } from "@/SampleData/Tasks/data";
+import { statuses, priorities } from "@/SampleData/AdminDashboard/Tasks/data";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;

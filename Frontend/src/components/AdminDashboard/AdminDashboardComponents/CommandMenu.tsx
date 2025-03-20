@@ -19,7 +19,7 @@ import { ScrollArea } from "../../ui/scroll-area";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/Context/ThemeContext";
 import { useSearch } from "@/Context/SearchContext";
-import { sidebarData } from "@/SampleData/SidebarData";
+import { sidebarData } from "@/SampleData/AdminDashboard/SidebarData";
 
 export function CommandMenu() {
   const navigate = useNavigate();

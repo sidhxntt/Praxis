@@ -21,7 +21,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { SelectDropdown } from "@/components/AdminDashboard/AdminDashboardComponents/SelectDropdown";
-import { Task, formSchema, TasksForm } from "@/SampleData/Tasks/schema";
+import { Task, formSchema, TasksForm } from "@/SampleData/AdminDashboard/Tasks/schema";
 import { useEffect, useState } from "react";
 import { onTaskSubmit } from "@/lib/onSubmit";
 

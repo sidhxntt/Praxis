@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { chartConfig, chartData } from "@/SampleData/Charts/Interactivity";
+import { chartConfig, chartData } from "@/SampleData/AdminDashboard/Charts/Interactivity-data";
 
 export function Interactivity() {
   const [timeRange, setTimeRange] = React.useState("90d");

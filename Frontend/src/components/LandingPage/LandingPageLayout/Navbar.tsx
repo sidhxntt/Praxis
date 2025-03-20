@@ -1,11 +1,22 @@
+import React from "react";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { Menu } from "lucide-react";
 import { Link } from "react-router-dom";
 import ScrollLink from "./ScrollLink";
-import { ModeToggle } from "@/components/AdminDashboard/AdminDashboardComponents/ModeToggle";
 
-function Navbar() {
+interface NavLink {
+  id: string;
+  label: string;
+  href: string;
+}
 
+interface NavbarProps {
+  logo: React.ReactNode;
+  links?: NavLink[];
+  optionalElements?: (React.ReactNode | string)[];
+}
+
+const Navbar: React.FC<NavbarProps> = ({ logo, links = [], optionalElements }) => {
   return (
     <nav className="sticky h-16 inset-x-0 top-0 z-30 w-full border-b backdrop-blur-3xl transition-all">
       <MaxWidthWrapper>
@@ -13,39 +24,23 @@ function Navbar() {
           {/* Left Side - Logo & Links */}
           <div className="flex items-center gap-14">
             <Link to="/" className="flex z-40 font-bold text-lg">
-              <span>Your App</span>
+              <span>{logo}</span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-8 lg:gap-14">
-              <ScrollLink
-                to="/"
-                id="pricing"
-                className="font-semibold hover:underline hover:underline-offset-1"
-              >
-                Pricing
-              </ScrollLink>
-              <ScrollLink
-                to="/"
-                id="demo"
-                className="font-semibold hover:underline hover:underline-offset-1"
-              >
-                Demo
-              </ScrollLink>
-              <ScrollLink
-                to="/"
-                id="faq"
-                className="font-semibold hover:underline hover:underline-offset-1"
-              >
-                FAQ
-              </ScrollLink>
-              <ScrollLink
-                to="/"
-                id="about"
-                className="font-semibold hover:underline hover:underline-offset-1"
-              >
-                About
-              </ScrollLink>
-            </div>
+            {links.length > 0 && (
+              <div className="hidden md:flex items-center gap-8 lg:gap-14">
+                {links.map(({ id, label, href }) => (
+                  <ScrollLink
+                    key={id}
+                    to={href}
+                    id={id}
+                    className="font-semibold hover:underline hover:underline-offset-1"
+                  >
+                    {label}
+                  </ScrollLink>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Mobile Menu Icon */}
@@ -53,14 +48,20 @@ function Navbar() {
             <Menu className="h-6 w-6 cursor-pointer" />
           </div>
 
-          {/* Right Side - Theme Toggle & Auth */}
+          {/* Right Side - Custom Elements */}
           <div className="hidden md:flex items-center space-x-3">
-            <ModeToggle />
+            {optionalElements?.map((element, index) =>
+              typeof element === "string" ? (
+                <span key={index}>{element}</span>
+              ) : (
+                <React.Fragment key={index}>{element}</React.Fragment>
+              )
+            )}
           </div>
         </div>
       </MaxWidthWrapper>
     </nav>
   );
-}
+};
 
 export default Navbar;

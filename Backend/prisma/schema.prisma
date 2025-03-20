@@ -45,7 +45,7 @@ model Profile {
   id        Int      @id @default(autoincrement())
   userId    Int      @unique
   username  String?
-  bio       String
+  bio       String?
   urls      String[]
   user      User     @relation(fields: [userId], references: [id])
   createdAt  DateTime @default(now())

@@ -3,7 +3,7 @@ import { SubRoutes } from "./Sub_Routes";
 import JWT from "../controllers/Authentication";
 import limiter from "../controllers/rate_limitter";
 import { prisma } from "../utils/Clients/Prisma";
-import { TodoData } from "../utils/helpers/Tasks";
+import { TodoData } from "../utils/helpers/Todo";
 
 const createUserRoutes = () => {
   

@@ -4,9 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
-import { userTypes, callTypes } from "@/SampleData/Users/data";
+import { userTypes, callTypes } from "@/SampleData/AdminDashboard/Users/data";
 import LongText from "@/components/AdminDashboard/AdminDashboardComponents/LongText";
-import { User } from "@/SampleData/Users/schema";
+import { User } from "@/SampleData/AdminDashboard/Users/schema";
 
 export const columns: ColumnDef<User>[] = [
   {

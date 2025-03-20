@@ -15,11 +15,11 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Search } from "@/components/AdminDashboard/AdminDashboardComponents/Search";
-import { apps } from "@/SampleData/Apps";
 import { ModeToggle } from "@/components/AdminDashboard/AdminDashboardComponents/ModeToggle";
 import { ProfileDropdown } from "@/components/AdminDashboard/AdminDashboardComponents/ProfileDropdown";
 import { Main } from "@/components/AdminDashboard/AdminDashboard_Layout/Main";
 import { Header } from "@/components/AdminDashboard/AdminDashboard_Layout/Header";
+import { apps } from "@/SampleData/AdminDashboard/Apps";
 
 const appText = new Map<string, string>([
   ["all", "All Apps"],

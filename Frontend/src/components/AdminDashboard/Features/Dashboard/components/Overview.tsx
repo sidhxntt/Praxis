@@ -13,7 +13,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { chartConfig, chartData } from "@/SampleData/Charts/Overview";
+import { chartConfig, chartData } from "@/SampleData/AdminDashboard/Charts/Overview-data";
 
 export function Overview() {
   return (
