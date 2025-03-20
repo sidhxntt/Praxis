@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  // Required fields
+  email    String @unique
+  password String
+
+  // Optional fields
+  first_name String?
+  last_name  String?
+  username   String? @unique
+  phone      String? @unique
+  role       String? @default("superadmin")
+  status     String? @default("active")
+
+  // DateTine Fields
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  account Account?
+  profile Profile?
+}
+
+model Account {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @unique
+  first_name String
+  dob        DateTime
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Profile {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  username  String?
+  bio       String?
+  urls      String[]
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Task {
+  id        Int      @id @default(autoincrement())
+  title     String
+  status    String
+  label     String
+  priority  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
