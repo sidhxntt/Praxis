@@ -22,7 +22,7 @@ export const fetchTasks = async (page: number = 1, limit: number = 10): Promise<
 
     if (response.data.status === 'success') {
       const rawTasks = response.data.data.data.map((task: any) => ({
-        id: task.id.toString(),
+        id: "", // for mongo id
         title: task.title,
         status: task.status,
         label: task.label,

@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 
 export class TodoData extends BaseData {
   constructor(model: any) {
-    super(model, "Todos");
+    super(model, "Tasks");
   }
 
   public async create(req: Request, res: Response) {
@@ -18,17 +18,16 @@ export class TodoData extends BaseData {
       );
     }
 
-    const todo = await this.model.create({
+    const task = await this.model.create({
       data: { title, status, label, priority },
     });
 
     await this.clearModelCache();
-    return this.sendResponse(res, 201, "Todo created successfully", todo);
+    return this.sendResponse(res, 201, "task created successfully", task);
   }
   public async update(req: Request, res: Response) {
     const { id } = req.params;
     const { title, status, label, priority } = req.body;
-    const taskId = this.parseIdToNumber(id);
   
     if (!title && !status && !label && !priority) {
       return this.sendResponse(
@@ -41,7 +40,7 @@ export class TodoData extends BaseData {
     }
   
     const task = await this.model.update({
-      where: { id: taskId },
+      where: { id },
       data: {
         ...(title && { title }),
         ...(status && { status }),
@@ -59,10 +58,9 @@ export class TodoData extends BaseData {
   }
   public async delete(req: Request, res: Response) {
     const { id } = req.params;
-    const todoId = this.parseIdToNumber(id);
 
-    await this.model.delete({ where: { id: todoId } });
+    await this.model.delete({ where: { id } });
     await this.clearModelCache();
-    return this.sendResponse(res, 200, "Todo deleted successfully");
+    return this.sendResponse(res, 200, "task deleted successfully");
   }
 }

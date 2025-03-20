@@ -78,7 +78,6 @@ async function main() {
       }
     });
     
-    userIds.push(user.id);
     console.log(`👤 Created user: ${sampleUser.firstName} ${sampleUser.lastName} (${sampleUser.role})`);
   }
   

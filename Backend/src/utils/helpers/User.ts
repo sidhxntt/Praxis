@@ -166,10 +166,9 @@ export default class User extends BaseData {
 
   async delete(req: Request, res: Response) {
     const { id } = req.params;
-    const userId = this.parseIdToNumber(id);
 
     const existingUser = await this.model.findUnique({
-      where: { id: userId },
+      where: { id },
     });
 
     if (!existingUser) {
@@ -186,15 +185,15 @@ export default class User extends BaseData {
     await prisma.$transaction([
       // Delete related profile if exists
       prisma.profile.deleteMany({
-        where: { userId },
+        where: { userId: id },
       }),
       // Delete related account if exists
       prisma.account.deleteMany({
-        where: { userId },
+        where: { userId: id },
       }),
       // Finally delete the user
       prisma.user.delete({
-        where: { id: userId },
+        where: { id },
       }),
     ]);
 
@@ -207,7 +206,6 @@ export default class User extends BaseData {
   async update(req: Request, res: Response) {
     const { id } = req.params;
     const { email, password, role, firstName, lastName, phoneNumber, username } = req.body;
-    const userId = this.parseIdToNumber(id);
 
     let updateData: {
       email?: string;
@@ -240,7 +238,7 @@ export default class User extends BaseData {
     if (phoneNumber !== undefined) updateData.phone = phoneNumber;
 
     const updatedUser = await this.model.update({
-      where: { id: userId },
+      where: { id },
       data: updateData,
     });
 

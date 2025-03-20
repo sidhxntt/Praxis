@@ -6,13 +6,13 @@
   "scripts": {
     "seed": "npx prisma generate && ts-node prisma/seeding/data.ts",
     "build": "tsc",
-    "sync-db": "npm prisma migrate dev --name migration_1",
+    "sync-db": "npx prisma migrate dev --name migration_1",
     "dev:server": "prisma generate && nodemon --exec ts-node ./src/server.ts",
     "dev:worker:email": "nodemon --exec ts-node ./src/utils/workers/email.ts",
     "dev:worker:sms": "nodemon --exec ts-node ./src/utils/workers/sms.ts",
     "prod:server": "prisma generate && pm2-runtime start ecosystem.config.js",
     "dockerise": "docker compose up",
-    "ngrok": "npx ngrok http 8000"
+    "ngrok": "npx ngrok http 3000"
   },
   "dependencies": {
     "@faker-js/faker": "^9.5.1",

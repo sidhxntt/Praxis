@@ -1,10 +1,9 @@
-import tasks from "./tasks";
-import home from "./home";
+import tasks from "./tasks";import home from "./home";
 import promClient from "prom-client";
 import JWT from "../controllers/Authentication";
 import { setupOAuthRoutes } from "../controllers/google_&_github";
 import users from "./users";
-import { payments } from "../controllers/LemonSqueezy";
+import { payments } from "../utils/helpers/LemonSqueezy";
 import { Application, Request, Response, NextFunction } from "express";
 
 const auth = new JWT();
@@ -30,32 +29,25 @@ class MainRoutes {
     // API routes
     this.app.use(this.path, users);
     this.app.use(`${this.path}/tasks`, tasks);
-
+ 
     // Metrics route
-    this.app.get(
-      "/metrics",
-      async (_: Request, res: Response, next: NextFunction) => {
-        try {
-          const metrics = await getMetrics();
-          res.set("Content-Type", promClient.register.contentType);
-          res.send(metrics);
-        } catch (error) {
-          next(error);
-        }
+    this.app.get("/metrics", async (_: Request, res: Response, next: NextFunction) => {
+      try {
+        const metrics = await getMetrics();
+        res.set("Content-Type", promClient.register.contentType);
+        res.send(metrics);
+      } catch (error) {
+        next(error);
       }
-    );
+    });
 
     // OAuth Routes
     setupOAuthRoutes(this.app);
 
     // JWT PAYLOAD CHECK ROUTE
-    this.app.get(
-      "/auth/check",
-      auth.decryptJWT,
-      (req: Request, res: Response) => {
-        res.json({ message: "You have access!", JWT_payload: req.user });
-      }
-    );
+    this.app.get("/auth/check", auth.decryptJWT, (req: Request, res: Response) => {
+      res.json({ message: "You have access!", JWT_payload: req.user });
+    });
 
     // Payment Route
     payments(this.app);

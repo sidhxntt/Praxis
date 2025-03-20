@@ -12,7 +12,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-  RowData
+  RowData,
 } from "@tanstack/react-table";
 import {
   Table,
@@ -39,10 +39,13 @@ interface DataTableProps {
 
 export function TasksTable({ columns }: DataTableProps) {
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  
+
   // State for pagination and tasks
   const [tasks, setTasks] = React.useState<Task[]>([]);
   const [totalTasks, setTotalTasks] = React.useState(0);
@@ -55,14 +58,19 @@ export function TasksTable({ columns }: DataTableProps) {
     const loadTasks = async () => {
       setIsLoading(true);
       try {
-        const { tasks: fetchedTasks, total, page: fetchedPage, limit: fetchedLimit } = await fetchTasks(page, limit);
+        const {
+          tasks: fetchedTasks,
+          total,
+          page: fetchedPage,
+          limit: fetchedLimit,
+        } = await fetchTasks(page, limit);
         setTasks(fetchedTasks);
         setTotalTasks(total);
         // Update page and limit based on the API response
         setPage(fetchedPage);
         setLimit(fetchedLimit);
       } catch (error) {
-        console.error('Failed to fetch tasks:', error);
+        console.error("Failed to fetch tasks:", error);
         setTasks([]);
         setTotalTasks(0);
       } finally {
@@ -104,7 +112,7 @@ export function TasksTable({ columns }: DataTableProps) {
     setPage(newPage); // Update one-based page
     setLimit(newLimit);
   };
-  
+
   if (isLoading) {
     return <div>Loading...</div>;
   }

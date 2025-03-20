@@ -6,7 +6,7 @@ import { JwtPayload } from "jsonwebtoken";
 dotenv.config();
 
 interface UserPayload {
-  id: number;
+  id: string;
   role: string;
 }
 
