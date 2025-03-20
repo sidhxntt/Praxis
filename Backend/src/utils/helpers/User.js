@@ -3,28 +3,26 @@
 // The class also contains methods for sending email and SMS notifications using Bull queues.
 
 import bcrypt from "bcrypt";
-import JWT from "../../controllers/Authentication";
+import JWT from "../../controllers/Authentication.js";
 import dotenv from "dotenv";
-import { prisma } from "../Clients/Prisma";
-import { Request, Response } from "express";
-import { BaseData } from "./BaseData";
-import cookie_maker from "../../controllers/Cookie_Maker";
-import { emailQueue, smsQueue } from "../Clients/Queues";
-
+import { prisma } from "../Clients/Prisma.js";
+import { BaseData } from "./BaseData.js";
+import cookie_maker from "../../controllers/Cookie_Maker.js";
+import { emailQueue, smsQueue } from "../Clients/Queues.js";
 
 dotenv.config();
 
 export default class User extends BaseData {
-  constructor(model: any) {
+  constructor(model) {
     super(model, "User");
   }
 
-  isValidEmail(email: string): boolean {
+  isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
 
-  signupPage = (req: Request, res: Response) => {
+  signupPage = (req, res) => {
     console.info("Signup page accessed");
     return this.sendResponse(
       res,
@@ -33,9 +31,17 @@ export default class User extends BaseData {
     );
   };
 
-  signup = async (req: Request, res: Response) => {
-    const { email, password, role, firstName, lastName, phoneNumber, username } = req.body;
-    
+  signup = async (req, res) => {
+    const {
+      email,
+      password,
+      role,
+      firstName,
+      lastName,
+      phoneNumber,
+      username,
+    } = req.body;
+
     // Missing password parameter in destructuring
     if (!password || !email) {
       return this.sendResponse(
@@ -46,7 +52,7 @@ export default class User extends BaseData {
         "Missing password and email."
       );
     }
-  
+
     // Data object was declared but not properly populated
     const user = {
       email,
@@ -55,13 +61,13 @@ export default class User extends BaseData {
       first_name: firstName,
       last_name: lastName,
       username,
-      phone: phoneNumber
+      phone: phoneNumber,
     };
-  
+
     const existingUser = await this.model.findUnique({
       where: { email },
     });
-  
+
     if (existingUser) {
       return this.sendResponse(
         res,
@@ -71,7 +77,7 @@ export default class User extends BaseData {
         "Duplicate email"
       );
     }
-  
+
     // Check if username exists if provided
     if (username) {
       const existingUsername = await this.model.findUnique({
@@ -87,7 +93,7 @@ export default class User extends BaseData {
         );
       }
     }
-  
+
     // Using the data object instead of individual parameters
     const newUser = await this.model.create({
       data: {
@@ -97,12 +103,12 @@ export default class User extends BaseData {
         last_name: user.last_name,
         username: user.username,
         role: user.role,
-        phone: user.phone
+        phone: user.phone,
       },
     });
-  
+
     console.info("New user created");
-    this.clearModelCache();
+    await this.clearModelCache();
     return this.sendResponse(res, 201, "User created successfully", {
       id: newUser.id,
       email: newUser.email,
@@ -111,7 +117,7 @@ export default class User extends BaseData {
     });
   };
 
-  loginPage = (req: Request, res: Response) => {
+  loginPage = (req, res) => {
     console.info("Login Page Accessed");
     return this.sendResponse(
       res,
@@ -120,7 +126,7 @@ export default class User extends BaseData {
     );
   };
 
-  login = async (req: Request, res: Response) => {
+  login = async (req, res) => {
     const { email, password } = req.body;
 
     const existingUser = await this.model.findUnique({
@@ -156,16 +162,16 @@ export default class User extends BaseData {
     });
 
     // Set the token as an HTTP-only cookie
-    cookie_maker(res,token)
-    
+    cookie_maker(res, token);
+
     console.info("User logged in");
     return this.sendResponse(res, 200, "Login successful", {
       message: "You are now logged in. Authentication cookie has been set.",
-      token: token
+      token: token,
     });
   };
 
-  async delete(req: Request, res: Response) {
+  async delete(req, res) {
     const { id } = req.params;
     const userId = this.parseIdToNumber(id);
 
@@ -205,20 +211,20 @@ export default class User extends BaseData {
     return this.sendResponse(res, 200, "User deleted successfully");
   }
 
-  async update(req: Request, res: Response) {
+  async update(req, res) {
     const { id } = req.params;
-    const { email, password, role, firstName, lastName, phoneNumber, username } = req.body;
+    const {
+      email,
+      password,
+      role,
+      firstName,
+      lastName,
+      phoneNumber,
+      username,
+    } = req.body;
     const userId = this.parseIdToNumber(id);
 
-    let updateData: {
-      email?: string;
-      password?: string;
-      role?: string;
-      first_name?: string;
-      last_name?: string;
-      username?: string;
-      phone?: string;
-    } = {};
+    let updateData = {};
 
     if (email) {
       if (!this.isValidEmail(email)) {
@@ -232,7 +238,7 @@ export default class User extends BaseData {
       }
       updateData.email = email;
     }
-    
+
     if (password) updateData.password = await bcrypt.hash(password, 10);
     if (role) updateData.role = role;
     if (firstName !== undefined) updateData.first_name = firstName;
@@ -258,9 +264,9 @@ export default class User extends BaseData {
     );
   }
 
-  invite = async (req: Request, res: Response) => {
+  invite = async (req, res) => {
     const { email, role, description } = req.body;
-    
+
     // Missing password parameter in destructuring
     if (!email) {
       return this.sendResponse(
@@ -271,10 +277,12 @@ export default class User extends BaseData {
         "Missing Email."
       );
     }
-  
+
     const emailJob = await emailQueue.add("send-email", {
       email: process.env.SMTP_FROM,
-      message: email, role, description,
+      message: email,
+      role,
+      description,
     });
     console.info(`Added job to email queue. Email Job ID: ${emailJob.id}`);
 
@@ -283,6 +291,6 @@ export default class User extends BaseData {
     //   message: email, role, description,
     // });
     // console.info(`Added job to email queue. SMS Job ID: ${smsJob.id}`);
-    return this.sendResponse(res, 201, "Invite Email send successfully", null)
-  }
+    return this.sendResponse(res, 201, "Invite Email send successfully", null);
+  };
 }

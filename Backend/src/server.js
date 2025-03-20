@@ -1,33 +1,19 @@
 // Description: This file is the entry point of the application. It starts the server, connects to the database & Redis, and initializes the routes.
 // It also handles graceful shutdown of the server and database connections.
 
-import express, { Application, Request, Response } from "express";
-import AllRoutes from "./routes/Main_Routes";
-import error_handling from "./controllers/error";
+import express from "express";
+import AllRoutes from "./routes/Main_Routes.js";
+import error_handling from "./controllers/error.js";
 import cors from "cors";
 import GracefulShutdown from "http-graceful-shutdown";
 import helmet from "helmet";
 import dotenv from "dotenv";
-import { connectDB, disconnectDB } from "./utils/Clients/Prisma";
-import { redis_connection, disconnectRedis } from "./utils/Clients/Redis";
+import { connectDB, disconnectDB } from "./utils/Clients/Prisma.js";
+import { redis_connection, disconnectRedis } from "./utils/Clients/Redis.js";
 
 dotenv.config();
 
-// Extend Express Request type to include rawBody
-declare global {
-  namespace Express {
-    interface Request {
-      rawBody?: Buffer;
-    }
-  }
-}
-
 export default class SERVER {
-  private app: Application;
-  private port: string | number;
-  private httpServer: any; // Explicitly typed as Server
-  private serverUrl: string;
-
   constructor() {
     this.app = express();
     this.port = process.env.MAIN_SERVER_PORT || 8000;
@@ -35,7 +21,7 @@ export default class SERVER {
     this.initializeRoutesAndMiddlewares();
   }
 
-  private initializeRoutesAndMiddlewares(): void {
+   initializeRoutesAndMiddlewares() {
     this.app.use(
       cors({
         origin: process.env.CLIENT || "http://localhost:5173", // ✅ Allow frontend origin
@@ -47,7 +33,7 @@ export default class SERVER {
     
     this.app.use(
       express.json({
-        verify: (req: Request, res: Response, buf: Buffer) => {
+        verify: (req, res, buf) => {
           req.rawBody = buf; 
         },
       })
@@ -60,7 +46,7 @@ export default class SERVER {
     this.app.use(error_handling); // Global error handling middleware
   }
 
-  public async start(): Promise<void> {
+   async start() {
     try {
       await connectDB(); // Connect to database
       redis_connection(); // Connect to Redis
