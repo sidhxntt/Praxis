@@ -56,7 +56,15 @@ export function TasksTable({ columns }: DataTableProps) {
       setIsLoading(true);
       try {
         const { tasks: fetchedTasks, total, page: fetchedPage, limit: fetchedLimit } = await fetchTasks(page, limit);
-        setTasks(fetchedTasks);
+        
+        // Process tasks to ensure they have displayId
+        const processedTasks = fetchedTasks.map((task, index) => ({
+          ...task,
+          // Use displayId if it exists from the API, otherwise generate it
+          displayId: task.displayId || ((fetchedPage - 1) * fetchedLimit + index + 1)
+        }));
+        
+        setTasks(processedTasks);
         setTotalTasks(total);
         // Update page and limit based on the API response
         setPage(fetchedPage);
@@ -73,9 +81,23 @@ export function TasksTable({ columns }: DataTableProps) {
     loadTasks();
   }, [page, limit]);
 
+  // Modify your columns to use displayId for presentation
+  const enhancedColumns = React.useMemo(() => {
+    return columns.map(column => {
+      // Type-safe way to check for accessorKey property
+      if ('accessorKey' in column && column.accessorKey === 'id') {
+        return {
+          ...column,
+          accessorFn: (row: Task) => row.displayId || 'N/A',
+        };
+      }
+      return column;
+    });
+  }, [columns]);
+
   const table = useReactTable({
     data: tasks,
-    columns,
+    columns: enhancedColumns, // Use the enhanced columns
     state: {
       sorting,
       columnVisibility,

@@ -7,6 +7,11 @@ import { useTasks } from "@/Context/TasksContext";
 export function TasksDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useTasks();
 
+  // Use displayId if available, otherwise fall back to id
+  const getDisplayId = (row: any) => {
+    return row?.displayId || row?.id || 'N/A';
+  };
+
   return (
     <>
       <TasksMutateDrawer
@@ -47,11 +52,11 @@ export function TasksDialogs() {
             }}
             handleConfirm={() => handleDeleteTask(currentRow, setOpen, setCurrentRow)}
             className="max-w-md"
-            title={`Delete this task: ${currentRow.id} ?`}
+            title={`Delete Task ${getDisplayId(currentRow)} ?`}
             desc={
               <>
                 You are about to delete a task with the ID{" "}
-                <strong>{currentRow.id}</strong>. <br />
+                <strong>Task {getDisplayId(currentRow)}</strong>. <br />
                 This action cannot be undone.
               </>
             }

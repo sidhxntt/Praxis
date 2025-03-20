@@ -23,6 +23,7 @@ const taskPrioritySchema = z.union([
 
 export const taskSchema = z.object({
   id: z.string(),
+  displayId: z.number().optional(), 
   title: z.string().min(1, "Title cannot be empty"),
   status: taskStatusSchema,
   label: taskLabelSchema,
