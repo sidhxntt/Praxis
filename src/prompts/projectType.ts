@@ -2,6 +2,7 @@ import * as p from "@clack/prompts";
 import { cancelOperation } from "../controllers/cancelOperation";
 import frontend_technology from "./frontend/frontend_technology";
 import backend_language from "./backend/backend_language";
+import fullstack_language from "./fullstack/fullstack_language";
 
 export default async function selectProjectType(projectName: string) {
   const projectType = await p.select({
@@ -9,7 +10,7 @@ export default async function selectProjectType(projectName: string) {
     options: [
       { value: "frontend", label: "Frontend" },
       { value: "backend", label: "Backend" },
-      { value: "both", label: "Both", hint: "recommended" },
+      { value: "both", label: "Fullstack", hint: "recommended" },
     ],
   });
 
@@ -22,5 +23,7 @@ export default async function selectProjectType(projectName: string) {
   else if (projectType === "frontend") {
     await frontend_technology(projectName);
   }
- 
+  else {
+    await fullstack_language(projectName);
+  }
 }
