@@ -16,7 +16,6 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,8 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-import { NavCollapsible, NavItem, NavLink, type NavGroup } from "./types";
+import { NavCollapsible, NavItem, NavLink, type NavGroup } from "@/lib/types";
 import { Link } from "react-router-dom";
 
 export function NavGroup({ title, items }: NavGroup) {

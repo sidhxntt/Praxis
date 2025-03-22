@@ -1,20 +1,7 @@
 import { CircleCheck } from "lucide-react";
 import MaxWidthWrapper from "../LandingPageLayout/MaxWidthWrapper";
 import { Link } from "react-router-dom";
-import { ReactNode } from "react";
-
-interface PricingPlan {
-  name: string;
-  price?: string;
-  period?: string;
-  description: string;
-  features: string[];
-  buttonText: string;
-  buttonLink: string;
-  highlight?: boolean;
-  icon?: ReactNode;
-}
-
+import { PricingPlan } from "@/lib/types";
 interface PricingCardProps {
   plan: PricingPlan;
 }

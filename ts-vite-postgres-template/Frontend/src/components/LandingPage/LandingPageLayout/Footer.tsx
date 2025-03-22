@@ -1,23 +1,6 @@
 import { Link } from "react-router-dom";
 import MaxWidthWrapper from "./MaxWidthWrapper";
-import React from "react";
-
-interface FooterLinkItem {
-  label: string | React.ReactNode;
-  href: string;
-}
-
-interface FooterLinkSection {
-  title?: string;
-  items: FooterLinkItem[];
-}
-
-interface FooterProps {
-  logo: string;
-  description: string;
-  links?: FooterLinkSection[];
-  additionalContent?: React.ReactNode;
-}
+import { FooterProps } from "@/lib/types";
 
 function Footer({
   logo,

@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/Hooks/use-toast";
@@ -16,19 +15,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Link } from "react-router-dom";
-
-const notificationsFormSchema = z.object({
-  type: z.enum(["all", "mentions", "none"], {
-    required_error: "You need to select a notification type.",
-  }),
-  mobile: z.boolean().default(false).optional(),
-  communication_emails: z.boolean().default(false).optional(),
-  social_emails: z.boolean().default(false).optional(),
-  marketing_emails: z.boolean().default(false).optional(),
-  security_emails: z.boolean(),
-});
-
-type NotificationsFormValues = z.infer<typeof notificationsFormSchema>;
+import { notificationsFormSchema, NotificationsFormValues } from "@/SampleData/AdminDashboard/Settings/schema";
 
 // This can come from your database or API.
 const defaultValues: Partial<NotificationsFormValues> = {

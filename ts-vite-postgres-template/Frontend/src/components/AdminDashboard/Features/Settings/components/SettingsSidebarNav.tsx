@@ -1,4 +1,4 @@
-import { useState, type JSX } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -10,14 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-
-interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
-  items: {
-    href: string;
-    title: string;
-    icon: JSX.Element;
-  }[];
-}
+import { SidebarNavProps } from "@/lib/types";
 
 export default function SidebarNav({
   className,

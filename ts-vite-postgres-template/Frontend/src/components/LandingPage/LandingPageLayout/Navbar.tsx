@@ -3,18 +3,7 @@ import MaxWidthWrapper from "./MaxWidthWrapper";
 import { Menu } from "lucide-react";
 import { Link } from "react-router-dom";
 import ScrollLink from "./ScrollLink";
-
-interface NavLink {
-  id: string;
-  label: string;
-  href: string;
-}
-
-interface NavbarProps {
-  logo: React.ReactNode;
-  links?: NavLink[];
-  optionalElements?: (React.ReactNode | string)[];
-}
+import { NavbarProps } from "@/lib/types";
 
 const Navbar: React.FC<NavbarProps> = ({ logo, links = [], optionalElements }) => {
   return (

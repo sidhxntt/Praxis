@@ -6,7 +6,6 @@ import { DataTableRowActions } from "./data-table-row-actions";
 import { labels, priorities, statuses } from "@/SampleData/AdminDashboard/Tasks/data";
 import { Task } from "@/SampleData/AdminDashboard/Tasks/schema";
 
-
 export const columns: ColumnDef<Task>[] = [
   {
     id: "select",
