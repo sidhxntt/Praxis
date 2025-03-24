@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 4s  # collect data after 4s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['app:8000']  # Use app as the service name in the Docker network also change port number if changed.
