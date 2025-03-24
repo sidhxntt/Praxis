@@ -1,21 +1,38 @@
-import { spawn } from "child_process";
+import fs from 'fs/promises';
+import path from 'path';
 
 export default async function refineProject(
-  branchName: string|null,
+  branchName: string | null,
 ): Promise<void> {
-  if(!branchName) {
-    
+  if (!branchName) {
+    throw new Error("Branch name is required");
   }
-  return new Promise((resolve, reject) => {
-    const command = `rm -rf .git && rm -f .DS_Store && cp -rf ${branchName}-template/ . && rm -rf ${branchName}-template/`;
-    const refineProcess = spawn(command, { stdio: "inherit", shell: true });
 
-    refineProcess.on("close", (refineCode) => {
-      if (refineCode === 0) {
-        resolve();
-      } else {
-        reject(new Error("Refining process failed."));
-      }
+  const currentDir = process.cwd();
+  const templateDir = path.join(currentDir, `${branchName}-template`);
+
+  try {
+    // Remove .git directory
+    await fs.rm(path.join(currentDir, '.git'), { 
+      recursive: true, 
+      force: true 
+    }).catch(() => {}); // Ignore if .git doesn't exist
+
+    // Remove .DS_Store
+    await fs.unlink(path.join(currentDir, '.DS_Store')).catch(() => {});
+
+    // Copy template contents
+    await fs.cp(templateDir, currentDir, { 
+      recursive: true, 
+      force: true 
     });
-  });
+
+    // Remove template directory
+    await fs.rm(templateDir, { 
+      recursive: true, 
+      force: true 
+    });
+  } catch (error) {
+    throw new Error(`Refining process failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 }

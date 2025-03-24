@@ -1,22 +1,20 @@
-import { spawn } from "child_process";
+import { exec } from 'child_process';
 import * as p from "@clack/prompts";
-import chalk from 'chalk'
-
+import chalk from 'chalk';
 
 export function runCommand(command: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, {
-      stdio: "inherit",
-      shell: true,
-    });
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        p.log.error(chalk.red(`Error: ${error.message}`));
+        return reject(error);
+      }
 
-    child.on("error", (err) => {
-      p.log.error(chalk.red(`Error: ${err.message}`));
-      reject(err);
-    });
+      if (stderr) {
+        p.log.warn(chalk.yellow(stderr));
+      }
 
-    child.on("close", (code) => {
-      code === 0 ? resolve() : reject(new Error(`Process exited with code ${code}`));
+      resolve();
     });
   });
 }

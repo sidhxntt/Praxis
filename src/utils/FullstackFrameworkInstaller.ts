@@ -1,49 +1,69 @@
 import BaseFrameworkInstaller from "./BaseFrameworkInstaller";
 
-class ViteFullstackFrameworkInstaller extends BaseFrameworkInstaller {
-  constructor(
-    packageName: "mongo" | "postgres",
-    projectName: string,
-    isTypescript: boolean = false
-  ) {
-    const frameworks = {
+type DatabaseType = "mongo" | "postgres";
+
+interface FrameworkConfig {
+  branch: string;
+  message: string;
+}
+
+abstract class FullstackFrameworkInstaller extends BaseFrameworkInstaller {
+  protected createFrameworkConfigs(
+    isTypescript: boolean,
+    framework: string
+  ): Record<DatabaseType, FrameworkConfig> {
+    return {
       mongo: {
-        branch: isTypescript ? "ts-vite-mongo" : "js-vite-mongo",
-        message: `Installing ${
-          isTypescript ? "TypeScript" : "JavaScript"
-        } Vite MongoDB framework...`,
+        branch: isTypescript
+          ? `ts-${framework}-mongo`
+          : `js-${framework}-mongo`,
+        message: `Installing ${isTypescript ? "TypeScript" : "JavaScript"} ${
+          framework.charAt(0).toUpperCase() + framework.slice(1)
+        } MongoDB framework...`,
       },
       postgres: {
-        branch: isTypescript ? "ts-vite-postgres" : "js-vite-postgres",
-        message: `Installing ${
-          isTypescript ? "TypeScript" : "JavaScript"
-        } Vite Postgres framework...`,
+        branch: isTypescript
+          ? `ts-${framework}-postgres`
+          : `js-${framework}-postgres`,
+        message: `Installing ${isTypescript ? "TypeScript" : "JavaScript"} ${
+          framework.charAt(0).toUpperCase() + framework.slice(1)
+        } Postgres framework...`,
       },
     };
+  }
+
+  constructor(
+    packageName: DatabaseType,
+    projectName: string,
+    framework: string,
+    isTypescript: boolean = false
+  ) {
+    const frameworks =
+      FullstackFrameworkInstaller.prototype.createFrameworkConfigs(
+        isTypescript,
+        framework
+      );
     super(packageName, projectName, frameworks);
   }
 }
-class NextFullstackFrameworkInstaller extends BaseFrameworkInstaller {
+
+class ViteFullstackFrameworkInstaller extends FullstackFrameworkInstaller {
   constructor(
-    packageName: "mongo" | "postgres",
+    packageName: DatabaseType,
     projectName: string,
     isTypescript: boolean = false
   ) {
-    const frameworks = {
-      mongo: {
-        branch: isTypescript ? "ts-next-mongo" : "js-next-mongo",
-        message: `Installing ${
-          isTypescript ? "TypeScript" : "JavaScript"
-        } Next MongoDB framework...`,
-      },
-      postgres: {
-        branch: isTypescript ? "ts-next-postgres" : "js-next-postgres",
-        message: `Installing ${
-          isTypescript ? "TypeScript" : "JavaScript"
-        } Next Postgres framework...`,
-      },
-    };
-    super(packageName, projectName, frameworks);
+    super(packageName, projectName, "vite", isTypescript);
+  }
+}
+
+class NextFullstackFrameworkInstaller extends FullstackFrameworkInstaller {
+  constructor(
+    packageName: DatabaseType,
+    projectName: string,
+    isTypescript: boolean = false
+  ) {
+    super(packageName, projectName, "next", isTypescript);
   }
 }
 
