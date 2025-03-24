@@ -5,7 +5,6 @@ import {
   IconMoon,
   IconSun,
 } from "@tabler/icons-react";
-
 import {
   CommandDialog,
   CommandEmpty,
@@ -40,9 +39,9 @@ export function CommandMenu() {
       <CommandList>
         <ScrollArea type="hover" className="h-72 pr-1">
           <CommandEmpty>No results found.</CommandEmpty>
-          {sidebarData.navGroups.map((group) => (
+          {sidebarData.navGroups.map((group: any) => (
             <CommandGroup key={group.title} heading={group.title}>
-              {group.items.map((navItem, i) => {
+              {group.items.map((navItem: any, i: any) => {
                 if (navItem.url)
                   return (
                     <CommandItem
@@ -59,7 +58,7 @@ export function CommandMenu() {
                     </CommandItem>
                   );
 
-                return navItem.items?.map((subItem, i) => (
+                return navItem.items?.map((subItem: any, i: any) => (
                   <CommandItem
                     key={`${subItem.url}-${i}`}
                     value={subItem.title}

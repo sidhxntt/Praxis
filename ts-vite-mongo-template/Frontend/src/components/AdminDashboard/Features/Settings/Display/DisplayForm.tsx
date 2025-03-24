@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/Hooks/use-toast";
@@ -13,41 +12,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
-const items = [
-  {
-    id: "recents",
-    label: "Recents",
-  },
-  {
-    id: "home",
-    label: "Home",
-  },
-  {
-    id: "applications",
-    label: "Applications",
-  },
-  {
-    id: "desktop",
-    label: "Desktop",
-  },
-  {
-    id: "downloads",
-    label: "Downloads",
-  },
-  {
-    id: "documents",
-    label: "Documents",
-  },
-] as const;
-
-const displayFormSchema = z.object({
-  items: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: "You have to select at least one item.",
-  }),
-});
-
-type DisplayFormValues = z.infer<typeof displayFormSchema>;
+import { DisplayFormValues, displayFormSchema } from "@/SampleData/AdminDashboard/Settings/schema";
+import { display_items } from "@/SampleData/AdminDashboard/Settings/data";
 
 // This can come from your database or API.
 const defaultValues: Partial<DisplayFormValues> = {
@@ -85,7 +51,7 @@ export function DisplayForm() {
                   Select the items you want to display in the sidebar.
                 </FormDescription>
               </div>
-              {items.map((item) => (
+              {display_items.map((item) => (
                 <FormField
                   key={item.id}
                   control={form.control}

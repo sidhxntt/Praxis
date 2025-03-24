@@ -7,7 +7,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 import { RecentSales } from "./components/RecentSales";
 import { Header } from "../../AdminDashboard_Layout/Header";
 import { Main } from "../../AdminDashboard_Layout/Main";

@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/Hooks/use-toast";
@@ -14,15 +13,7 @@ import {
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useTheme } from "@/Context/ThemeContext";
-
-// Define schema correctly
-const appearanceFormSchema = z.object({
-  theme: z.enum(["light", "dark"], {
-    required_error: "Please select a theme.",
-  }),
-});
-
-type AppearanceFormValues = z.infer<typeof appearanceFormSchema>;
+import { appearanceFormSchema, AppearanceFormValues  } from "@/SampleData/AdminDashboard/Settings/schema";
 
 export function AppearanceForm() {
   const { theme, setTheme } = useTheme();

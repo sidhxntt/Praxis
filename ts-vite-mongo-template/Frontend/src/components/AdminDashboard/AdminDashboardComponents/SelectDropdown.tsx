@@ -8,17 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-interface SelectDropdownProps {
-  onValueChange?: (value: string) => void;
-  defaultValue: string | undefined;
-  placeholder?: string;
-  isPending?: boolean;
-  items: { label: string; value: string }[] | undefined;
-  disabled?: boolean;
-  className?: string;
-  isControlled?: boolean;
-}
+import { SelectDropdownProps } from "@/lib/types";
 
 export function SelectDropdown({
   defaultValue,

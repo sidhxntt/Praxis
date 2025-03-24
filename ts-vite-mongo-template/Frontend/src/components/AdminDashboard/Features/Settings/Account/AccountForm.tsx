@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { CalendarIcon, CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
@@ -30,39 +29,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { languages } from "@/SampleData/AdminDashboard/Settings/data";
+import { AccountFormValues, accountFormSchema } from "@/SampleData/AdminDashboard/Settings/schema";
 
-const languages = [
-  { label: "English", value: "en" },
-  { label: "French", value: "fr" },
-  { label: "German", value: "de" },
-  { label: "Spanish", value: "es" },
-  { label: "Portuguese", value: "pt" },
-  { label: "Russian", value: "ru" },
-  { label: "Japanese", value: "ja" },
-  { label: "Korean", value: "ko" },
-  { label: "Chinese", value: "zh" },
-] as const;
-
-const accountFormSchema = z.object({
-  name: z
-    .string()
-    .min(2, {
-      message: "Name must be at least 2 characters.",
-    })
-    .max(30, {
-      message: "Name must not be longer than 30 characters.",
-    }),
-  dob: z.date({
-    required_error: "A date of birth is required.",
-  }),
-  language: z.string({
-    required_error: "Please select a language.",
-  }),
-});
-
-type AccountFormValues = z.infer<typeof accountFormSchema>;
-
-// This can come from your database or API.
 const defaultValues: Partial<AccountFormValues> = {
   name: "",
 };

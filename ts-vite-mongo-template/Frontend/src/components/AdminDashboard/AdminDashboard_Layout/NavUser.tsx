@@ -23,7 +23,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
-
 export function NavUser({
   user,
 }: {
