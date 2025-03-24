@@ -1,0 +1,43 @@
+{
+  "name": "js-mongo-template",
+  "version": "1.0.0",
+  "main": ".src/server.js",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "seed": "npx prisma generate && node prisma/seeding/data.js",
+    "sync-db": "npx prisma migrate dev --name migration_1",
+    "dev:server": "npx prisma generate && nodemon --exec node ./src/server.js",
+    "dev:worker:email": "nodemon --exec node ./src/utils/workers/email.js",
+    "dev:worker:sms": "nodemon --exec node ./src/utils/workers/sms.js",
+    "prod:server": "npx prisma generate && pm2-runtime start ecosystem.config.cjs",
+    "dockerise": "docker compose up",
+    "ngrok": "npx ngrok http 8000"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.6.0",
+    "@prisma/client": "^5.18.0",
+    "bcrypt": "^5.1.1",
+    "bullmq": "^5.34.10",
+    "crypto-js": "^4.2.0",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "http-graceful-shutdown": "^3.1.14",
+    "ioredis": "^5.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.16",
+    "passport": "^0.7.0",
+    "passport-github2": "^0.1.12",
+    "passport-google-oauth20": "^2.0.0",
+    "pm2": "^5.4.3",
+    "prisma": "^5.18.0",
+    "prom-client": "^15.1.3",
+    "twilio": "^5.4.2"
+  },
+  "devDependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "nodemon": "^3.1.4"
+  }
+}
