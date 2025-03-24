@@ -1,10 +1,3 @@
-import {
-  IconBrowserCheck,
-  IconNotification,
-  IconPalette,
-  IconTool,
-  IconUser,
-} from "@tabler/icons-react";
 import { Separator } from "@/components/ui/separator";
 import { Outlet } from "react-router-dom";
 import SidebarNav from "../Features/Settings/components/SettingsSidebarNav";
@@ -13,6 +6,7 @@ import { Header } from "./Header";
 import { ModeToggle } from "../AdminDashboardComponents/ModeToggle";
 import { Search } from "../AdminDashboardComponents/Search";
 import { ProfileDropdown } from "../AdminDashboardComponents/ProfileDropdown";
+import { sidebarNavItems } from "@/SampleData/AdminDashboard/side-bar-nav-items";
 
 export default function SettingsLayout() {
   return (
@@ -48,31 +42,3 @@ export default function SettingsLayout() {
     </>
   );
 }
-
-const sidebarNavItems = [
-  {
-    title: "Profile",
-    icon: <IconUser size={18} />,
-    href: "/dashboard/settings/profile",
-  },
-  {
-    title: "Account",
-    icon: <IconTool size={18} />,
-    href: "/dashboard/settings/account",
-  },
-  {
-    title: "Appearance",
-    icon: <IconPalette size={18} />,
-    href: "/dashboard/settings/appearance",
-  },
-  {
-    title: "Notifications",
-    icon: <IconNotification size={18} />,
-    href: "/dashboard/settings/notifications",
-  },
-  {
-    title: "Display",
-    icon: <IconBrowserCheck size={18} />,
-    href: "/dashboard/settings/display",
-  },
-];

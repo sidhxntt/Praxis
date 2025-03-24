@@ -16,6 +16,7 @@ import { Search } from "../../AdminDashboardComponents/Search";
 import { ModeToggle } from "../../AdminDashboardComponents/ModeToggle";
 import { Overview } from "./components/Overview";
 import { Interactivity } from "./components/Interactivity";
+import { topNav } from "@/SampleData/AdminDashboard/TopNavData";
 
 export default function Dashboard() {
   return (
@@ -186,30 +187,3 @@ export default function Dashboard() {
     </>
   );
 }
-
-const topNav = [
-  {
-    title: "Overview",
-    href: "dashboard/overview",
-    isActive: true,
-    disabled: false,
-  },
-  {
-    title: "Customers",
-    href: "dashboard/customers",
-    isActive: false,
-    disabled: true,
-  },
-  {
-    title: "Products",
-    href: "dashboard/products",
-    isActive: false,
-    disabled: true,
-  },
-  {
-    title: "Settings",
-    href: "dashboard/settings",
-    isActive: false,
-    disabled: true,
-  },
-];
