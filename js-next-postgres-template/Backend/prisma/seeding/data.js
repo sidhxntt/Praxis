@@ -44,7 +44,7 @@ async function generateSampleUser() {
 async function main() {
   console.log('🌱 Starting database seeding...');
   
-  const userIds: number[] = [];
+  const userIds= [];
 
   // Generate 20 users
   for (let i = 0; i < 93; i++) {

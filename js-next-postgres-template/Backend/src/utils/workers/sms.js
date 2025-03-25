@@ -22,7 +22,7 @@ const twilioClient = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 // Create a BullMQ Worker for processing SMS jobs
 const sms_worker = new Worker(
   "user-sms",
-  async (job: Job<{ to: string; message: string }>) => {
+  async (job) => {
 
       await twilioClient.messages.create({
         body: job.data.message,

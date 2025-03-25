@@ -3,13 +3,13 @@ import Redis from "ioredis";
 import dotenv from "dotenv";
 dotenv.config();
 
-let redis: Redis | null = null; // Singleton instance
+let redis = null; // Singleton instance
 
-export const redis_connection = (): Redis => {
+export const redis_connection = () => {
   if (!redis) {
     redis = new Redis({
       host: process.env.REDIS_HOST,
-      port: parseInt(process.env.REDIS_PORT!),
+      port: parseInt(process.env.REDIS_PORT,),
       username: process.env.REDIS_USERNAME,
       password: process.env.REDIS_PASSWORD,
     });
@@ -31,7 +31,7 @@ export const disconnectRedis = async () => {
       await redis.quit();
       console.info("Successfully disconnected from Redis 💯");
       redis = null; 
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to disconnect from Redis:", error.message || error);
     }
   }

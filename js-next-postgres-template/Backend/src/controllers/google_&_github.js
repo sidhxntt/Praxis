@@ -1,8 +1,7 @@
 // GoogleAuth.js
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as GitHubStrategy } from "passport-github2";
-import { Application } from "express";
-import { BaseOAuth } from "./Oauth";
+import { BaseOAuth } from "./Oauth.js";
 
 export class GoogleAuth extends BaseOAuth {
   constructor() {
@@ -12,11 +11,10 @@ export class GoogleAuth extends BaseOAuth {
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
     };
     const scope = ["profile", "email"];
-    
+
     super("google", GoogleStrategy, config, scope);
   }
 }
-
 
 export class GitHubAuth extends BaseOAuth {
   constructor() {
@@ -26,13 +24,13 @@ export class GitHubAuth extends BaseOAuth {
       callbackURL: process.env.GITHUB_CALLBACK_URL,
     };
     const scope = ["user:email"];
-    
+
     super("github", GitHubStrategy, config, scope);
   }
 }
 
 // routes.js
-export function setupOAuthRoutes(app: Application) {
+export function setupOAuthRoutes(app) {
   const googleAuth = new GoogleAuth();
   const githubAuth = new GitHubAuth();
 

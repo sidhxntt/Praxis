@@ -1,36 +1,28 @@
 // BaseOAuth.js
 import passport from "passport";
 import dotenv from "dotenv";
-import { Request, Response, NextFunction, Application } from "express";
-import JWT from "./Authentication";
-import cookie_maker from "./Cookie_Maker";
-
+import JWT from "./Authentication.js";
+import cookie_maker from "./Cookie_Maker.js";
 dotenv.config();
 
 export class BaseOAuth extends JWT {
-  private readonly providerName: string;
-
-  constructor(providerName: string, Strategy: any, config: any, scope: any) {
+  constructor(providerName, Strategy, config, scope) {
     super();
     this.providerName = providerName.toLowerCase();
     this.initStrategy(Strategy, config, scope);
+    this.callback_url = process.env.CLIENT;
   }
 
-  private initStrategy(Strategy: any, config: any, scope: any) {
+  initStrategy(Strategy, config, scope) {
     passport.use(
       new Strategy(
         {
           clientID: config.clientID,
           clientSecret: config.clientSecret,
           callbackURL: config.callbackURL,
-          scope: scope,
+          scope: scope
         },
-        (
-          accessToken: string,
-          refreshToken: string,
-          profile: object,
-          done: Function
-        ) => {
+        (accessToken, refreshToken, profile, done) => {
           // save profile to db in user schema.
           return done(null, profile);
         }
@@ -38,33 +30,28 @@ export class BaseOAuth extends JWT {
     );
   }
 
-  private authenticate = (scope?: any) => {
+  authenticate = (scope) => {
     return passport.authenticate(this.providerName, { scope });
   };
 
-  private handleCallback = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  handleCallback = (req, res, next) => {
     passport.authenticate(
       this.providerName,
       { session: false },
-      async (err: any, user: any) => {
+      async (err, user) => {
         if (err || !user) {
           return res.status(400).json({ error: "Authentication failed" });
         }
 
         try {
+          console.log(user); // user profile (save to db)
           const token = await this.createToken({
             id: user.id,
-            role: user.role,
+            role: "admin", // remove
           });
-          // Set the token as an HTTP-only cookie
           cookie_maker(res, token)
-          console.log({user: user, token: token})
           // res.json({ token });
-          res.redirect("http://localhost:3000/dashboard");
+          res.redirect(`${this.callback_url}/dashboard`);
         } catch (error) {
           res.status(500).json({ error: "Failed to generate token" });
         }
@@ -72,19 +59,19 @@ export class BaseOAuth extends JWT {
     )(req, res, next);
   };
 
-  private authSuccess = (req: Request, res: Response) => {
+  authSuccess = (req, res) => {
     const token = req.query.token;
     if (!token) {
       return res.status(400).json({ error: "No token provided" });
     }
-    res.json({
-      message: `${this.providerName} authentication successful`,
-      token,
+    res.json({ 
+      message: `${this.providerName} authentication successful`, 
+      token 
     });
   };
 
-  private authLogout = (req: Request, res: Response) => {
-    req.logout((err: any) => {
+  authLogout = (req, res) => {
+    req.logout((err) => {
       if (err) {
         return res.status(500).json({ error: "Logout failed" });
       }
@@ -92,7 +79,7 @@ export class BaseOAuth extends JWT {
     });
   };
 
-  public setupRoutes(app: Application) {
+  setupRoutes(app) {
     app.get(`/oauth/${this.providerName}`, this.authenticate());
     app.get(`/oauth/${this.providerName}/callback`, this.handleCallback);
     app.get("/oauth/success", this.authSuccess);

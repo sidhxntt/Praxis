@@ -1,21 +1,21 @@
 {
-  "name": "ts_template",
+  "name": "js-mongo-template",
   "version": "1.0.0",
-  "main": "server.ts",
+  "main": ".src/server.js",
+  "type": "module",
   "license": "MIT",
   "scripts": {
-    "seed": "ts-node prisma/seeding/data.ts",
-    "build": "tsc",
-    "sync-db": "npm prisma migrate dev --name migration_1",
-    "dev:server": "prisma generate && nodemon --exec ts-node ./src/server.ts",
-    "dev:worker:email": "nodemon --exec ts-node ./src/utils/workers/email.ts",
-    "dev:worker:sms": "nodemon --exec ts-node ./src/utils/workers/sms.ts",
-    "prod:server": "prisma generate && pm2-runtime start ecosystem.config.js",
+    "seed": "npx prisma generate && node prisma/seeding/data.js",
+    "sync-db": "npx prisma migrate dev --name migration_1",
+    "dev:server": "npx prisma generate && nodemon --exec node ./src/server.js",
+    "dev:worker:email": "nodemon --exec node ./src/utils/workers/email.js",
+    "dev:worker:sms": "nodemon --exec node ./src/utils/workers/sms.js",
+    "prod:server": "npx prisma generate && pm2-runtime start ecosystem.config.cjs",
     "dockerise": "docker compose up",
-    "ngrok": "npx ngrok http 3000"
+    "ngrok": "npx ngrok http 8000"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.5.1",
+    "@faker-js/faker": "^9.6.0",
     "@prisma/client": "^5.18.0",
     "bcrypt": "^5.1.1",
     "bullmq": "^5.34.10",
@@ -30,24 +30,14 @@
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",
     "passport-google-oauth20": "^2.0.0",
+    "pm2": "^5.4.3",
     "prisma": "^5.18.0",
     "prom-client": "^15.1.3",
     "twilio": "^5.4.2"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
-    "@types/cors": "^2.8.17",
-    "@types/crypto-js": "^4.2.2",
-    "@types/express": "^4.17.21",
-    "@types/jsonwebtoken": "^9.0.6",
-    "@types/nodemailer": "^6.4.17",
-    "@types/passport": "^1.0.17",
-    "@types/passport-github2": "^1.2.9",
-    "@types/passport-google-oauth20": "^2.0.16",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "nodemon": "^3.1.4",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
+    "nodemon": "^3.1.4"
   }
 }
