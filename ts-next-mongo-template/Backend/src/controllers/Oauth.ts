@@ -9,11 +9,13 @@ dotenv.config();
 
 export class BaseOAuth extends JWT {
   private readonly providerName: string;
+  private readonly callback_url: string;
 
   constructor(providerName: string, Strategy: any, config: any, scope: any) {
     super();
     this.providerName = providerName.toLowerCase();
     this.initStrategy(Strategy, config, scope);
+    this.callback_url = process.env.CLIENT!
   }
 
   private initStrategy(Strategy: any, config: any, scope: any) {
@@ -64,7 +66,7 @@ export class BaseOAuth extends JWT {
           cookie_maker(res, token)
           console.log({user: user, token: token})
           // res.json({ token });
-          res.redirect("http://localhost:3000/dashboard");
+          res.redirect(`${this.callback_url}/dashboard`);
         } catch (error) {
           res.status(500).json({ error: "Failed to generate token" });
         }
