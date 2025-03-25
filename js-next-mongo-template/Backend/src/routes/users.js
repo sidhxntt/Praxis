@@ -21,6 +21,8 @@ const createUserRoutes = () => {
   userRoutes.endpoint("delete", "/users/:id", userController.delete.bind(userController), [auth.decryptJWT, AUTH.checkAdmin, limiter]);
   userRoutes.endpoint("patch", "/users/:id", userController.update.bind(userController), [auth.decryptJWT, AUTH.checkAdmin, limiter]);
 
+  userRoutes.endpoint("post", "/users/invite", userController.invite.bind(userController), [auth.decryptJWT]);
+
   return userRoutes.getRouter();
 };
 

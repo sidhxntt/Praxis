@@ -16,18 +16,18 @@ dotenv.config();
 export default class SERVER {
   constructor() {
     this.app = express();
-    this.port = process.env.MAIN_SERVER_PORT || 8000;
-    this.serverUrl = process.env.MAIN_SERVER_URL || "http://localhost:8000";
+    this.port = process.env.MAIN_SERVER_PORT;
+    this.serverUrl = process.env.MAIN_SERVER_URL;
     this.initializeRoutesAndMiddlewares();
   }
 
    initializeRoutesAndMiddlewares() {
     this.app.use(
       cors({
-        origin: process.env.CLIENT || "http://localhost:5173", // ✅ Allow frontend origin
-        credentials: true, // ✅ Required for cookies to be saved
+        origin: process.env.CLIENT,
+        credentials: true,
         methods: ["GET", "POST", "PATCH", "DELETE"],
-        allowedHeaders: ["Content-Type", "Authorization"], // ✅ Remove `WithCredentials` (not a valid header)
+        allowedHeaders: ["Content-Type", "Authorization"], 
       })
     );
     
