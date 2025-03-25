@@ -16,10 +16,10 @@ const createUserRoutes = () => {
   userRoutes.endpoint("get", "/login", userController.loginPage, [limiter]);
   userRoutes.endpoint("post", "/login", userController.login, [limiter]);
 
-  userRoutes.endpoint("get", "/users", userController.getAll.bind(userController), [auth.decryptJWT]);
-  userRoutes.endpoint("get", "/users/:id", userController.getOne.bind(userController), [auth.decryptJWT, ]);
-  userRoutes.endpoint("delete", "/users/:id", userController.delete.bind(userController), [auth.decryptJWT, ]);
-  userRoutes.endpoint("patch", "/users/:id", userController.update.bind(userController), [auth.decryptJWT]);
+  userRoutes.endpoint("get", "/users", userController.getAll.bind(userController), [auth.decryptJWT, limiter]);
+  userRoutes.endpoint("get", "/users/:id", userController.getOne.bind(userController), [auth.decryptJWT,limiter ]);
+  userRoutes.endpoint("delete", "/users/:id", userController.delete.bind(userController), [auth.decryptJWT,limiter]);
+  userRoutes.endpoint("patch", "/users/:id", userController.update.bind(userController), [auth.decryptJWT, limiter]);
 
   userRoutes.endpoint("post", "/users/invite", userController.invite.bind(userController), [auth.decryptJWT]);
 
