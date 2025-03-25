@@ -9,8 +9,8 @@ export class BaseOAuth extends JWT {
   constructor(providerName, Strategy, config, scope) {
     super();
     this.providerName = providerName.toLowerCase();
-    this.initStrategy(Strategy, config, scope);
-  }
+    this.callback_url = process.env.CLIENT;
+    this.initStrategy(Strategy, config, scope);  }
 
   initStrategy(Strategy, config, scope) {
     passport.use(
@@ -50,7 +50,7 @@ export class BaseOAuth extends JWT {
           });
           cookie_maker(res, token)
           // res.json({ token });
-          res.redirect("http://localhost:5173/dashboard");
+          res.redirect(`${this.callback_url}/dashboard`);
         } catch (error) {
           res.status(500).json({ error: "Failed to generate token" });
         }
