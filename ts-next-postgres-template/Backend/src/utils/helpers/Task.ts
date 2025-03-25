@@ -1,7 +1,7 @@
 import { BaseData } from "./BaseData";
 import { Request, Response } from "express";
 
-export class TodoData extends BaseData {
+export class TaskData extends BaseData {
   constructor(model: any) {
     super(model, "Todos");
   }
