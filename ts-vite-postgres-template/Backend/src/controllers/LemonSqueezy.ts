@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import crypto from "crypto";
-import {Request, Response, NextFunction, Application } from "express";
+import {Request, Response, Application } from "express";
 dotenv.config();
 
 export function payments(app :Application) {
