@@ -7,7 +7,7 @@ export function payments(app :Application) {
   // Webhook endpoint for LemonSqueezy
   app.post("/webhook/lemonsqueezy", (req: Request, res: Response) => {
 
-    if (!process.env.WEBHOOK_SECRET ) {
+    if (!process.env.WEBHOOK_SECRET) {
       throw new Error("Missing environment variables WEBHOOK_SECRET");
     }
     console.log("Webhook received!");
