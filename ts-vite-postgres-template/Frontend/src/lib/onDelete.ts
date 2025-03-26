@@ -1,8 +1,8 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "@/Hooks/use-toast";
-import { User } from "@/SampleData/Users/schema";
-import { Task } from "@/SampleData/Tasks/schema";
+import { User } from "@/SampleData/AdminDashboard/Users/schema";
+import { Task } from "@/SampleData/AdminDashboard/Tasks/schema";
 
 export const handleUserDelete = async (
   value: string, 
