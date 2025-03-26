@@ -15,7 +15,7 @@ export class BaseOAuth extends JWT {
     super();
     this.providerName = providerName.toLowerCase();
     this.initStrategy(Strategy, config, scope);
-    this.callback_url = process.env.JWT_SECRET!
+    this.callback_url = process.env.CLIENT!
   }
 
   private initStrategy(Strategy: any, config: any, scope: any) {

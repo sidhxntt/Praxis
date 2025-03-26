@@ -1,8 +1,8 @@
-import { UserForm, EditUserForm } from "@/SampleData/Users/schema";
+import { UserForm, EditUserForm } from "@/SampleData/AdminDashboard/Users/schema";
 import { toast } from "@/Hooks/use-toast";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { TasksForm } from "@/SampleData/Tasks/schema";
+import { TasksForm } from "@/SampleData/AdminDashboard/Tasks/schema";
 
 export const onUserSubmit = async (
   data: UserForm | EditUserForm,
