@@ -2,7 +2,7 @@
   "name": "praxiflow",
   "version": "1.0.0",
   "bin": {
-    "jolt_sid": "./dist/index.js"
+    "praxiflow": "./dist/index.js"
   },
   "license": "MIT",
   "scripts": {
