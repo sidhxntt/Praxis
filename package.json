@@ -1,8 +1,8 @@
 {
-  "name": "jolt",
+  "name": "praxiflow",
   "version": "1.0.0",
   "bin": {
-    "jolt": "./dist/index.js"
+    "jolt_sid": "./dist/index.js"
   },
   "license": "MIT",
   "scripts": {
@@ -10,6 +10,9 @@
     "prod": "node ./dist/index.js",
     "build": "tsc"
   },
+  "files": [
+    "dist/"
+  ],
   "dependencies": {
     "@clack/prompts": "^0.7.0",
     "chalk": "^5.4.1",

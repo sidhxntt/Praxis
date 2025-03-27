@@ -10,7 +10,7 @@ export default async function cloneRepository(
     throw new Error('Branch name is required');
   }
 
-  const repoUrl = 'https://github.com/sidhxntt/Jolt.git';
+  const repoUrl = 'https://github.com/sidhxntt/PraxiFlow.git';
 
   return new Promise((resolve, reject) => {
     try {
