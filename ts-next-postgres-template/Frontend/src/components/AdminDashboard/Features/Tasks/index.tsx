@@ -14,7 +14,7 @@ import { columns } from "./components/columns";
 import { TasksTable } from "./components/task-table";
 
 export default function Tasks() {
-  const [taskList, setTaskList] = useState<Task[]>([]);
+  const [_, setTaskList] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -72,10 +72,9 @@ export default function Tasks() {
           <TasksPrimaryButtons />
         </div>
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
-          <TasksTable data={taskList} columns={columns} />
+          <TasksTable columns={columns} />
         </div>
       </Main>
-
       <TasksDialogs />
     </TasksProvider>
   );

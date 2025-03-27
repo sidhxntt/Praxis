@@ -14,7 +14,7 @@ import { Main } from "../../AdminDashboard_Layout/Main";
 import { useState, useEffect } from "react";
 
 export default function Users() {
-  const [userList, setUserList] = useState<User[]>([]);
+  const [_, setUserList] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,7 +24,7 @@ export default function Users() {
         setIsLoading(true);
         const fetchedUsers = await initializeUsers();
         // console.log('Fetched Users:', fetchedUsers) // Debug log
-        setUserList(fetchedUsers);
+        setUserList(fetchedUsers.users);
       } catch (err) {
         console.error("Error loading users:", err);
         setError("Failed to load users");
@@ -73,7 +73,7 @@ export default function Users() {
           <UsersPrimaryButtons />
         </div>
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
-          <UsersTable data={userList} columns={columns} />
+          <UsersTable columns={columns} />
         </div>
       </Main>
 

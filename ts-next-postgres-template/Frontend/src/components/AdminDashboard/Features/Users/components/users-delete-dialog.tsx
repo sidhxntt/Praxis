@@ -41,7 +41,7 @@ export function UsersDeleteDialog({ open, onOpenChange, currentRow }: Props) {
             <br />
             This action will permanently remove the user with the role of{" "}
             <span className="font-bold">
-              {currentRow.role.toUpperCase()}
+              {currentRow?.role?.toUpperCase()}
             </span>{" "}
             from the system. This cannot be undone.
           </p>
