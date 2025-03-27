@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/sidebar"
 import { SearchForm } from "./search-form"
 import { VersionSwitcher } from "./version-switcher"
-import { data } from "@/SampleData/Documentation/app-sidebar-data"
+import { data } from "@/SampleData/Documentation/App-sidebar-data"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
