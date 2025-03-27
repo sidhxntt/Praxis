@@ -6,16 +6,21 @@ import fs from "fs";
 import path from "path";
 import selectProjectType from "./prompts/projectType";
 import { cancelOperation_onlyforProjectName } from "./controllers/cancelOperation";
-import { getUserName, getTimeBasedGreeting, isGitInstalled , showRandomAnimation} from "./controllers/user_touch";
+import { getUserName, getTimeBasedGreeting, isGitInstalled , showRandomAnimation, isNodeInstalled} from "./controllers/user_touch";
 
 async function main() {
   const userName = getUserName();
   const greeting = getTimeBasedGreeting();
-  await showRandomAnimation('Welcome to Jolt ⚡️🚀')
+  await showRandomAnimation('Welcome to Praxis ⚡️🚀')
 
   // Check for Git installation
   if (!isGitInstalled()) {
     p.log.error(chalk.blue("❌ Git is not installed. Please install Git and try again."));
+    process.exit(1);
+  }
+    // Check for Node installation
+  if (!isNodeInstalled()) {
+    p.log.error(chalk.blue("❌ Node is not installed. Please install Node and try again."));
     process.exit(1);
   }
 

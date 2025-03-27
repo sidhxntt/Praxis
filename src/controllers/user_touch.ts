@@ -33,6 +33,16 @@ function isGitInstalled(): boolean {
   }
 }
 
+// Function to check if Node.js is installed
+function isNodeInstalled(): boolean {
+  try {
+    execSync("node --version", { stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 // Function to display a random ASCII animation
 async function showRandomAnimation(message: string): Promise<void> {
   const animation = chalkAnimation.karaoke(message);
@@ -40,7 +50,7 @@ async function showRandomAnimation(message: string): Promise<void> {
   animation.stop();
 }
 
-// string modification
+// String modification - capitalize the first letter
 function capitalizeFirstLetter(str: string): string {
   if (!str) return "";
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -50,6 +60,7 @@ export {
   getUserName,
   getTimeBasedGreeting,
   isGitInstalled,
+  isNodeInstalled,
   showRandomAnimation,
   capitalizeFirstLetter,
 };
