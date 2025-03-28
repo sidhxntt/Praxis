@@ -48,9 +48,9 @@ export function LoginForm({
               <div className="flex h-8 w-8 items-center justify-center rounded-md">
                 <GalleryVerticalEnd className="size-6" />
               </div>
-              <span className="sr-only">Jolt.</span>
+              <span className="sr-only">Praxis.</span>
             </Link>
-            <h1 className="text-xl font-bold">Welcome to Jolt ⚡️</h1>
+            <h1 className="text-xl font-bold">Welcome to Praxis ⚡️</h1>
             <div className="text-center text-sm">
               Don&apos;t have an account?{" "}
               <Link href="/signup" className="underline underline-offset-4">
