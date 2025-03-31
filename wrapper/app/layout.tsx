@@ -8,9 +8,9 @@ import { Footer } from "@/components/footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Crypto Landing Page Template | Aceternity Template",
+  title: "Praxis CLI",
   description:
-    "Crypto landing is a simple one page landing page for startups and agencies. Built with Next.js, Tailwind CSS, TypeScript and framer motion.",
+    "Build Saas in days not in months with Praxis",
 };
 
 export default function RootLayout({

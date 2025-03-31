@@ -171,7 +171,7 @@ export default function CTA() {
               "px-4 md:px-8"
             )}
           >
-            Develop your SaaS website in days not months
+            Develop your SaaS in days not months
           </h2>
           <p className="max-w-lg text-xs sm:text-sm md:text-base text-neutral-400 text-center mx-auto my-4 md:my-6 lg:my-8 px-4">
             Praxis — the lightning-fast scaffolding tool that transforms
