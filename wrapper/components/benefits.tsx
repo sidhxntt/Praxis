@@ -53,7 +53,7 @@ export function Benefits() {
             True Tech Independence
             </CardTitle>
             <CardDescription>
-            Clean frontend/backend separation guarantees tech independence. Modular architecture with standard interfaces means no painful rebuilds when technology evolves. Your stack stays future-proof because you control it, not us.            </CardDescription>
+            Clean frontend & backend separation guarantees tech independence. Modular architecture with standard interfaces means no painful rebuilds when technology evolves. Your stack stays future-proof because you control it, not us.            </CardDescription>
           </CardContent>
           <div className=" inset-0">
             {/* <MapView /> */}

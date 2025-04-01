@@ -111,7 +111,7 @@ function FeaturesSectionDemo() {
     {
       title: "Dockerised production ready scalable backend",
       description:
-        "With Praxis get dockerised backend with docker-compose added with prometheius and grafana for monitoring.",
+        "With Praxis get dockerised backend with docker-compose added with prometheus and grafana for monitoring.",
       icon1: <SiPrometheus size={"30px"} />,
       icon2: <SiGrafana size={"30px"} />,
     },
@@ -124,13 +124,13 @@ function FeaturesSectionDemo() {
     {
       title: "OAuth",
       description:
-        "Praxis currently supports Google and Github Oauth integrations. You can add as many as you want",
+        "Praxis currently supports Google and Github Oauth integrations. You can add as many as you want.",
       icon1: <FaGoogle size={"30px"} />,
       icon2: <FaGithub size={"30px"} />,
     },
     {
       title: "Contentful and Admin Dashboard",
-      description: "Praxis fullstack templates comes with Contentful CMS for your saas documentation and fully functioning Shadcn Admin Dashboard.",
+      description: "Praxis fullstack templates comes with Contentful CMS for your SaaS documentation and fully functioning Shadcn Admin Dashboard.",
       icon1: <SiContentful size={"30px"} />,
       icon2: <SiShadcnui size={"30px"} />,
     },

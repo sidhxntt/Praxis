@@ -50,7 +50,7 @@ export function FrequentlyAskedQuestions() {
         </h2>
       </div>
       <p className="max-w-lg text-sm  text-center mx-auto mt-4 text-neutral-400 px-4 md:px-0">
-       With these importatnt faqs we aim to provide maximum clarifciation.
+       With these importatnt faqs we aim to provide maximum clarification.
       </p>
       <div className="mt-10 md:mt-20 max-w-3xl mx-auto divide-y divide-neutral-800">
         {FAQs.map((faq, index) => (
