@@ -3,17 +3,18 @@ import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { IconArrowRight } from "@/icons/arrow-right";
+import Link from "next/link";
 
 const FAQs = [
   {
     question: "Is Praxis just another boilerplate generator?",
     answer:
-      "No, Praxis goes beyond traditional boilerplate generators. While standard boilerplates provide pre-configured starter code, Praxis offers a guided, interactive development experience with advanced customization options. For more details, refer to our documentation.",
+      "No, Praxis goes beyond traditional boilerplate generators. While standard boilerplates provide pre-configured starter code, Praxis offers a guided, interactive development experience with advanced customization options. For more details, refer to our documentation. Learn more in the docmentation.",
   },
   {
     question: "Why shouldn't I rely solely on Next.js for fullstack development?",
     answer:
-      "While Next.js can handle basic backend needs, it lacks the scalability and flexibility required for complex applications. As your project grows, you'll need proper microservices, stateful processes, background jobs, and real-time capabilities—features best supported by a dedicated, independent backend. Praxis provides this separation while maintaining seamless integration.",
+      "While Next.js can handle basic backend needs, it lacks the scalability and flexibility required for complex applications. As your project grows, you'll need proper microservices, stateful processes, background jobs, and real-time capabilities—features best supported by a dedicated, independent backend. Praxis provides this separation while maintaining seamless integration. Learn more in the docmentation." ,
   },
   {
     question: "Can I use Praxis without a frontend template?",
