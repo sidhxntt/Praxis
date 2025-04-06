@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "@/temp_hooks/use-toast";
+import { toast } from "@/Hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
