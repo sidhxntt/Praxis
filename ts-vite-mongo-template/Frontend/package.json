@@ -60,7 +60,8 @@
     "recoil": "^0.7.7",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "validator": "^13.15.0"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
