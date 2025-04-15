@@ -91,7 +91,7 @@ function WobbleCardDemo() {
           </h2>
           <p className="mt-4 text-left  text-base/6 text-neutral-200">
             More premium templates on the way, featuring integrations with
-            frameworks like Vue, Angular, and Astro. Stay tuned!
+            frameworks like Vue, Angular, and Astro.
           </p>
         </div>
         <Image
@@ -108,8 +108,7 @@ function WobbleCardDemo() {
         </h2>
         <p className="mt-4 max-w-[26rem] text-left  text-base/6 text-neutral-200">
           Everything upcoming for frontend and backend, plus Sanity CMS
-          integration, Google Analytics, and enhanced SEO optimization. Stay
-          tuned!{" "}
+          integration, Google Analytics, and enhanced SEO optimization.
         </p>
       </WobbleCard>
       <WobbleCard containerClassName="col-span-1 lg:col-span-3 bg-blue-900 min-h-[500px] lg:min-h-[600px] xl:min-h-[300px]">
@@ -121,8 +120,8 @@ function WobbleCardDemo() {
             Exciting upgrades are on the way! Soon, we’re integrating GraphQL,
             MailChimp, Memcached, Elasticsearch, GraphDB, and more payment
             options like Stripe. AI-powered features via OpenAI and
-            Kubernetes-Terraform support for microservices are also coming. Stay
-            tuned!
+            Kubernetes-Terraform support for microservices are also coming.
+            Stay tuned!
           </p>
         </div>
         <Image
