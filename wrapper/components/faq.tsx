@@ -24,7 +24,7 @@ const FAQs = [
   {
     question: "Which Praxis setup is right for my project?",
     answer:
-      "Praxis adapts to your workflow. Whether you need a production-ready backend, a frontend landing page, or a complete fullstack solution, Praxis provides tailored setups to match your requirements. The choice depends on your project's scope and development preferences.",
+      "Praxis adapts to your workflow. Whether you need a production-ready backend, a frontend landing page, or a complete end-to-end solution, Praxis provides tailored setups to match your requirements. The choice depends on your project's scope and development preferences.",
   },
   {
     question: "Is Praxis only for SaaS development?",
