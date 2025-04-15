@@ -124,7 +124,7 @@ function FeaturesSectionDemo() {
     {
       title: "OAuth",
       description:
-        "Praxis currently supports Google and Github Oauth integrations. You can add as many as you want.",
+        "Praxis currently supports Google and Github Oauth integrations. You can add as many as you want and its super easy. Refer Documentation",
       icon1: <FaGoogle size={"30px"} />,
       icon2: <FaGithub size={"30px"} />,
     },
