@@ -9,7 +9,7 @@ const FAQs = [
   {
     question: "Is Praxis just another boilerplate generator?",
     answer:
-      "No, Praxis goes beyond traditional boilerplate generators. While standard boilerplates provide pre-configured starter code, Praxis offers a guided, interactive development experience with advanced customization options. For more details, refer to our documentation. Learn more in the documentation.",
+      "No, Praxis goes beyond traditional boilerplate generators. While standard boilerplates provide pre-configured starter code, Praxis offers a guided, interactive development experience with advanced customization options. For more details, refer to our documentation.",
   },
   {
     question: "Why shouldn't I rely solely on Next.js for fullstack development?",
