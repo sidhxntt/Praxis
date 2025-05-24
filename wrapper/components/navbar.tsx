@@ -56,7 +56,7 @@ export const Navbar = () => {
   });
 
   return (
-    <motion.div ref={ref} className="w-full fixed top-2 inset-x-0 z-50">
+    <motion.div ref={ref} className="w-full fixed top-2 inset-x-0 z-40 ">
       <DesktopNav visible={visible} navItems={navItems} />
       <MobileNav visible={visible} navItems={navItems} />
     </motion.div>

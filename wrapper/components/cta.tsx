@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { motion, useAnimation, useInView } from "framer-motion";
 import Link from "next/link";
 import { Copy } from "lucide-react";
+import { badgeVariants } from "@/components/ui/badge";
 
 const BackgroundGrid = ({ className }: { className?: string }) => {
   const controls = useAnimation();
@@ -153,7 +154,6 @@ export default function CTA() {
   };
 
   return (
-    
     <div className="bg-black w-full max-w-7xl mx-auto min-h-[100vh] md:min-h-[120dvh] flex items-center justify-center px-4 sm:px-6 lg:px-8 relative">
       <LineGradient position="left" />
       <motion.div
@@ -162,6 +162,16 @@ export default function CTA() {
         animate={controls}
         className="w-full max-w-4xl mx-auto text-center py-8 md:py-12 lg:py-20 pb-16 md:pb-32 lg:pb-48 relative z-10"
       >
+        <div className="relative bottom-3 sm:relative sm:bottom-5">
+          <Link
+            href={"pro"}
+            target="__blank"
+            className={badgeVariants({ variant: "secondary" })}
+          >
+            Introducting Praxis Pro
+          </Link>
+        </div>
+
         <div className="relative z-20">
           <h2
             className={cn(

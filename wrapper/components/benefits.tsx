@@ -59,15 +59,6 @@ export function Benefits() {
             {/* <MapView /> */}
           <CardDemo/>
           </div>
-          <h1
-            className={cn(
-              "inline-block p-6 text-2xl md:text-6xl bg-[radial-gradient(61.17%_178.53%_at_38.83%_-13.54%,#3B3B3B_0%,#888787_12.61%,#FFFFFF_50%,#888787_80%,#3B3B3B_100%)]  bg-clip-text text-transparent"
-            )}
-          >
-            100+
-            <br />
-            Countries
-          </h1>
         </Card>
         <Card className="flex flex-col relative justify-between lg:col-span-3">
           <h1
@@ -80,7 +71,7 @@ export function Benefits() {
             Options
           </h1>
           <CardSkeletonBody>
-            <div className="relative flex h-[300px] w-full flex-col items-start top-20 md:top-10 overflow-hidden rounded-lg bg-background md:shadow-xl">
+            <div className="relative flex h-[300px] w-full flex-col items-start top-20 md:top-10 overflow-hidden rounded-lg md:shadow-xl">
               <IconsList />
             </div>
           </CardSkeletonBody>
