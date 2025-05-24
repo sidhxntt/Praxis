@@ -7,20 +7,24 @@ import { SpotlightLogoCloud } from "@/components/logos-cloud";
 import { Upcoming } from "@/components/wobble-card";
 // import { Pricing } from "@/components/pricing";
 // import { Testimonials } from "@/components/testimonials";
+import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar";
 
 export default function Home() {
   return (
     <div>
-         {/* <Hero /> */}
-      <CTA/>
+      <Navbar />
+      {/* <Hero /> */}
+      <CTA />
       <SpotlightLogoCloud />
       <Benefits />
-      <Features/>
+      <Features />
       {/* <Testimonials /> */}
       {/* <Pricing /> */}
       <FrequentlyAskedQuestions />
-      <Upcoming/>
+      <Upcoming />
       {/* <Hero /> */}
+      <Footer />
     </div>
   );
 }

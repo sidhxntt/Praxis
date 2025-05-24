@@ -1,14 +1,14 @@
 import Link from "next/link";
 import React from "react";
-import { Logo } from "./logo";
 import {
   IconBrandLinkedin,
   IconBrandMedium,
   IconBrandTwitter,
   IconBrandGithub
 } from "@tabler/icons-react";
+import { LogoPro } from "./logo2";
 
-export function Footer() {
+export function FooterPro() {
   // const documentation = [
   //   { title: "Getting Started", href: "#" },
   //   { title: "API Reference", href: "#" },
@@ -55,7 +55,7 @@ export function Footer() {
       <div className="max-w-7xl my-28 mx-auto text-sm text-neutral-400 flex flex-col justify-between md:px-8">
         <div className="flex flex-col md:flex-row justify-between">
           <div className="mb-10 md:mb-0">
-            <Logo />
+            <LogoPro />
             <div className="flex gap-3 mt-6">
               {socials.map((social, idx) => (
                 <SocialIcon key={`social-${idx}`} href={social.href}>

@@ -33,7 +33,7 @@ const FAQs = [
 
 ];
 
-export function FrequentlyAskedQuestions() {
+export function FrequentlyAskedQuestionsPro() {
   const [open, setOpen] = React.useState<string | null>(null);
 
   return (

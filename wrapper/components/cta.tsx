@@ -164,7 +164,7 @@ export default function CTA() {
       >
         <div className="relative bottom-3 sm:relative sm:bottom-5">
           <Link
-            href={"pro"}
+            href={"/pro"}
             target="__blank"
             className={badgeVariants({ variant: "secondary" })}
           >

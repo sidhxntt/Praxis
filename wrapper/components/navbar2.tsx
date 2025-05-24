@@ -10,7 +10,8 @@ import {
 import Link from "next/link";
 import React, { useRef, useState } from "react";
 import { Button } from "./button";
-import { Logo } from "./logo";
+import { LogoPro } from "./logo2";
+LogoPro
 
 interface NavbarProps {
   navItems: {
@@ -20,7 +21,7 @@ interface NavbarProps {
   visible: boolean;
 }
 
-export const Navbar = () => {
+export const NavbarPro = () => {
   const navItems = [
     {
       name: "Home",
@@ -86,7 +87,7 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
         "hidden lg:flex flex-row self-center items-center justify-between py-2 mx-auto px-6 rounded-full relative z-[60] backdrop-saturate-[1.8]"
       )}
     >
-      <Logo />
+      <LogoPro/>
       <motion.div
         className="lg:flex flex-row flex-1 items-center justify-center space-x-1 text-sm"
         animate={{
@@ -201,7 +202,7 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
         )}
       >
         <div className="flex flex-row justify-between items-center w-full">
-          <Logo />
+          <LogoPro />
           {open ? (
             <IconX className="text-white/90" onClick={() => setOpen(!open)} />
           ) : (

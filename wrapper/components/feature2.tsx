@@ -179,7 +179,7 @@ function FeaturesSectionDemo() {
   );
 }
 
-export function Features() {
+export function FeaturesPro() {
   return (
     <div
       id="features"
