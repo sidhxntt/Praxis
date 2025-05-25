@@ -25,15 +25,15 @@ export const NavbarPro = () => {
   const navItems = [
     {
       name: "Home",
-      link: "/#home",
+      link: "/#home2",
     },
     {
       name: "Features",
-      link: "/#features",
+      link: "/#features2",
     },
     {
       name: "FAQ",
-      link: "/#faqs",
+      link: "/#faqs2",
     },
   ];
 

@@ -38,7 +38,7 @@ export function FrequentlyAskedQuestionsPro() {
 
   return (
     <div 
-    id="faqs"
+    id="faqs2"
     className="w-full max-w-7xl mx-auto my-10 md:my-20 py-10 md:py-20 px-4 md:px-8">
       <div className="text-balance relative z-20 mx-auto mb-4 max-w-4xl text-center">
         <h2

@@ -31,6 +31,7 @@ export function HeroPro() {
 
   return (
     <div
+    id="home2"
       ref={parentRef}
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 pt-20 md:px-8 md:pt-40 bg-black"
     >

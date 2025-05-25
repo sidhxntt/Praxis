@@ -182,7 +182,7 @@ function FeaturesSectionDemo() {
 export function FeaturesPro() {
   return (
     <div
-      id="features"
+      id="features2"
       className="w-full max-w-7xl mx-auto py-4 px-4 md:px-8 md:my-20 md:py-20"
     >
       <div className="text-balance relative z-20 mx-auto mb-4 max-w-4xl text-center text-lg font-semibold tracking-tight text-neutral-300 md:text-3xl">

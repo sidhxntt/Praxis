@@ -24,6 +24,7 @@ const BackgroundGrid = ({ className }: { className?: string }) => {
 
   return (
     <div
+
       ref={ref}
       className={cn("absolute inset-0 overflow-hidden", className)}
     >
@@ -154,7 +155,9 @@ export default function CTA() {
   };
 
   return (
-    <div className="bg-black w-full max-w-7xl mx-auto min-h-[100vh] md:min-h-[120dvh] flex items-center justify-center px-4 sm:px-6 lg:px-8 relative">
+    <div 
+      id="home"
+    className="bg-black w-full max-w-7xl mx-auto min-h-[100vh] md:min-h-[120dvh] flex items-center justify-center px-4 sm:px-6 lg:px-8 relative">
       <LineGradient position="left" />
       <motion.div
         ref={ref}
