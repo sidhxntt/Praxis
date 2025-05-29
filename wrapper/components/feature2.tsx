@@ -10,13 +10,14 @@ import {
   SiSwagger,
   SiKibana,
   SiElasticsearch,
+  SiNginx,
+  SiKubernetes
 } from "react-icons/si";
 import {
   FaDollarSign,
   FaSms,
   FaGoogle,
   FaGithub,
-  FaAws,
   FaDocker,
 } from "react-icons/fa";
 import { FaInfinity } from "react-icons/fa6";
@@ -158,16 +159,16 @@ function FeaturesSectionDemo() {
       icon1: <SiSentry size={"30px"} />,
     },
     {
-      title: "Storage",
+      title: "Production Ready",
       description:
-        "Get Django-storages (e.g., S3, Azure) for managing media/static files remotely.",
-      icon1: <FaAws size={"30px"} />,
+        "Get Production ready features such as Gunicorn & Nginx to host your API. Also get sample Schema, database seeder, django_filters, health_check, OOPS based Approach and custom pdm scripts etc.",
+      icon1: <SiNginx size={"30px"} />,
     },
     {
-      title: "And everything else",
+      title: "Kubernetes",
       description:
-        "Get sample Schema, database seeder, django_filters, health_check, OOPS based Approach and custom pdm scripts etc. ",
-      icon1: <FaInfinity size={"30px"} />,
+        "Provides a starter Kubernetes implementation on Minikube using kubectl, including all essential YAML manifests for microservices such as Deployments, Pods, PersistentVolumeClaims (PVCs), ConfigMaps, and Services.",
+      icon1: <SiKubernetes size={"30px"} />,
     },
   ];
   return (

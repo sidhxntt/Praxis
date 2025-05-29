@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   motion,
   useMotionTemplate,
@@ -8,13 +8,14 @@ import {
 } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Balancer from "react-wrap-balancer";
-import Link from "next/link";
-import { Button } from "./button";
 import { GlowingEffect } from "./ui/glowing-effect";
 import Image from "next/image";
-
+import { Badge } from "@/components/ui/badge";
+import { Copy } from "lucide-react";
+import { Button } from "./button";
 
 export function HeroPro() {
+  const [copied, setCopied] = useState(false);
   const containerRef = useRef<HTMLDivElement>(
     null
   ) as React.RefObject<HTMLDivElement>;
@@ -31,12 +32,21 @@ export function HeroPro() {
   const blurPx = useTransform(scrollY, [0, 100], [0, 5]);
   const filterBlurPx = useMotionTemplate`blur(${blurPx}px)`;
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(
+      "git clone --single-branch --branch pro  https://github.com/sidhxntt/Praxis.git"
+    );
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div
-    id="home2"
+      id="home2"
       ref={parentRef}
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 pt-20 md:px-8 md:pt-40 bg-black"
     >
+      <Badge variant="secondary">Refining Process Ongoing for V2</Badge>
       <div className="text-balance relative z-20 mx-auto mb-4 mt-4 max-w-4xl text-center text-4xl font-semibold tracking-tight text-neutral-300 md:text-7xl">
         <Balancer>
           <motion.h2
@@ -53,7 +63,8 @@ export function HeroPro() {
               "bg-clip-text text-transparent"
             )}
           >
-            Elevate your SaaS backend with <span className="text-green-500">Django</span>
+            Elevate your SaaS backend with{" "}
+            <span className="text-green-500">Django</span>
           </motion.h2>
         </Balancer>
       </div>
@@ -63,7 +74,9 @@ export function HeroPro() {
         transition={{ duration: 0.2, delay: 0.5 }}
         className="relative z-20 mx-auto mt-4 max-w-xl px-4 text-center text-base/6 text-gray-500  sm:text-base"
       >
-        Elevate your SaaS platform with Django – a robust, scalable, and secure backend framework that accelerates development without compromising on power or flexibility.
+        Elevate your SaaS platform with Django – a robust, scalable, and secure
+        backend framework that accelerates development without compromising on
+        power or flexibility.
       </motion.p>
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -72,14 +85,16 @@ export function HeroPro() {
         className="mb-8 mt-6 sm:mb-10 sm:mt-8 flex w-full flex-col items-center justify-center gap-4 px-4 sm:px-8 sm:flex-row md:mb-20"
       >
         <Button
-          as={Link}
-          href="/login"
-          variant="primary"
-          className="w-full sm:w-40 h-12 rounded-full flex items-center justify-center"
+          onClick={handleCopy}
+          className="h-10 md:h-12 lg:h-16 w-32 md:w-40 lg:w-48 rounded-full text-xs sm:text-sm md:text-base font-medium"
         >
-          Get Started
+          <div className="flex items-center gap-2">
+            <Copy className="w-4 h-4 text-neutral-400 hover:text-white" />
+            <span>{copied ? "Copied!" : "Copy Command"}</span>
+          </div>
         </Button>
       </motion.div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
