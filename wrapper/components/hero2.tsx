@@ -11,6 +11,8 @@ import Balancer from "react-wrap-balancer";
 import Link from "next/link";
 import { Button } from "./button";
 import { GlowingEffect } from "./ui/glowing-effect";
+import Image from "next/image";
+
 
 export function HeroPro() {
   const containerRef = useRef<HTMLDivElement>(
@@ -96,13 +98,13 @@ export function HeroPro() {
             blur={10}
           />
           {/* <Pricing/> */}
-          {/* <Image
-            src="/dashboard.webp"
+          <Image
+            src="/api_home.png"
             alt="header"
             width={1920}
             height={1080}
-            className="rounded-[20px]  h-auto object-cover  w-full"
-          /> */}
+            className="rounded-[20px]  h-auto object-cover w-full"
+          />
           <div
             className="absolute inset-0 rounded-[20px]"
             style={{
