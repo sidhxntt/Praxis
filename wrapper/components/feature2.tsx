@@ -137,7 +137,7 @@ function FeaturesSectionDemo() {
     {
       title: "ELK Stack",
       description:
-        "With Praxis Pro get ELK stack for centralised logging using filebeat and faster searching of data using Elasticsearch.",
+        "With Praxis Pro get ELK stack for centralised logging using filebeat and faster searching of data using Elasticsearch. Get custom script as well and avoid all hassle to setup ELK",
       icon1: <SiElasticsearch size={"30px"} />,
       icon2: <SiKibana size={"30px"} />,
     },
