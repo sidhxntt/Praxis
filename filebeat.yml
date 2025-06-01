@@ -15,7 +15,7 @@ output.elasticsearch:
   protocol: "https"
   ssl.verification_mode: "none"
   username: "elastic"
-  password: "GQ49a3yNdw6P=iQ55XA5"
+  password: "+YTQDmL5HFhfB*5f1EJU"
 
 setup.kibana:
   host: "https://kib01:5601"

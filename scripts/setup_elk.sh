@@ -17,12 +17,11 @@ docker compose up -d
 sleep 10
 
 # Step 2 & 3: Manual password/token steps
-echo -e "\n${MAGENTA}🖥️  Step 2 & 3: In a new terminal, run the following to reset password and get Kibana token:${RESET}"
+echo -e "\n${MAGENTA}🖥️  Step 2 : In a new terminal, run the following to reset password and get Kibana token:${RESET}"
 echo -e "${YELLOW}---------------------------------------------------------------------${RESET}"
 echo -e "${GREEN}docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic${RESET}"
-echo -e "${GREEN}docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana${RESET}"
 echo -e "${YELLOW}---------------------------------------------------------------------${RESET}"
-echo -e "${BOLD}⚠️  Save the generated password and token for later steps!${RESET}"
+echo -e "${BOLD}⚠️  Save the generated password for later steps!${RESET}"
 read -p "$(echo -e ${CYAN}Press ENTER once done...${RESET})"
 
 echo -e "${YELLOW}📌 Then update .env with your latest elastic password:${RESET}"
@@ -67,15 +66,19 @@ EOF
 
 echo -e "${CYAN}♻️  Restarting all containers...${RESET}"
 docker compose restart
-sleep 5
-
-# Final output and Kibana info
-echo -e "\n${BOLD}${GREEN}✅ All done! Elasticsearch + Kibana + Django integration is ready!${RESET}"
-echo -e "${BOLD}${CYAN}🌐 Access Kibana at: ${YELLOW}http://localhost:5601${RESET}"
+sleep 20
 
 # Kibana verification code
 echo -e "\n${CYAN}🔐 Retrieving Kibana verification code...${RESET}"
 docker exec -it kib01 /usr/share/kibana/bin/kibana-verification-code || echo -e "${YELLOW}⚠️  Unable to fetch verification code — check logs using 'docker logs kib01'${RESET}"
+
+# Kibana verification code
+echo -e "\n${CYAN}🔐 Retrieving Kibana Enrollement Token...${RESET}"
+docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana || echo -e "${YELLOW}⚠️  Unable to fetch Enrollemnt Token — check logs using 'docker logs kib01'${RESET}"
+
+# Final output and Kibana info
+echo -e "\n${BOLD}${GREEN}✅ All done! Elasticsearch + Kibana + Django integration is ready!${RESET}"
+echo -e "${BOLD}${CYAN}🌐 Access Kibana at: ${YELLOW}http://localhost:5601${RESET}"
 
 # Reminder
 echo -e "\n${BOLD}${MAGENTA}💡 1. Run pdm run elasti.${RESET}"

@@ -124,7 +124,7 @@ spec:
             memory: "1Gi"
             cpu: "500m"
           limits:
-            memory: "2Gi"
+            memory: "1Gi"
             cpu: "1000m"
         volumeMounts:
         - name: elasticsearch-storage
@@ -268,9 +268,9 @@ data:
       scrape_interval: 15s
     
     scrape_configs:
-      - job_name: 'django-app'
+      - job_name: 'praxis-app'
         static_configs:
-          - targets: ['app:4000']
+          - targets: ['praxis-app:4000']
         metrics_path: /metrics
         scrape_interval: 30s
 ---
@@ -377,39 +377,39 @@ spec:
         image: busybox:1.28
         command: ['sh', '-c', 'until nc -z prometheus 9090; do echo waiting for prometheus; sleep 2; done;']
 ---
-# App Service
+# Praxis App Service
 apiVersion: v1
 kind: Service
 metadata:
-  name: app
+  name: praxis-app
   namespace: monitoring-stack
 spec:
   selector:
-    app: django-app
+    app: praxis-app
   ports:
     - port: 4000
       targetPort: 4000
   type: NodePort
 ---
-# App Deployment (You'll need to build and push your Docker image first)
+# Praxis App Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: django-app
+  name: praxis-app
   namespace: monitoring-stack
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: django-app
+      app: praxis-app
   template:
     metadata:
       labels:
-        app: django-app
+        app: praxis-app
     spec:
       containers:
-      - name: django-app
-        image: django-app:latest  # Replace with your actual image
+      - name: praxis-app
+        image: praxis-app:latest
         ports:
         - containerPort: 4000
         env:
@@ -447,3 +447,159 @@ spec:
       - name: wait-for-elasticsearch
         image: busybox:1.28
         command: ['sh', '-c', 'until nc -z es01 9200; do echo waiting for elasticsearch; sleep 2; done;']
+---
+# Praxis Celery Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: praxis-celery
+  namespace: monitoring-stack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: praxis-celery
+  template:
+    metadata:
+      labels:
+        app: praxis-celery
+    spec:
+      containers:
+      - name: praxis-celery
+        image: praxis-celery:latest
+        env:
+        - name: REDIS_URL
+          value: "redis://redis:6379/0"
+        - name: CELERY_BROKER_URL
+          value: "redis://redis:6379/0"
+        command: ["sh", "-c", "pdm run mail"]
+        volumeMounts:
+        - name: app-logs-error
+          mountPath: /app/error_logs
+        - name: app-logs-request
+          mountPath: /app/request_logs
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "400m"
+      volumes:
+      - name: app-logs-error
+        hostPath:
+          path: /tmp/logs/error_logs
+          type: DirectoryOrCreate
+      - name: app-logs-request
+        hostPath:
+          path: /tmp/logs/request_logs
+          type: DirectoryOrCreate
+      initContainers:
+      - name: wait-for-redis
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nc -z redis 6379; do echo waiting for redis; sleep 2; done;']
+---
+# Nginx ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: monitoring-stack
+data:
+  nginx.conf: |
+    events {
+        worker_connections 1024;
+    }
+    
+    http {
+        upstream app {
+            server praxis-app:4000;
+        }
+        
+        server {
+            listen 80;
+            
+            location / {
+                proxy_pass http://app;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+            }
+            
+            location /static/ {
+                alias /app/static/;
+            }
+            
+            location /media/ {
+                alias /app/media/;
+            }
+        }
+    }
+---
+# Nginx Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: monitoring-stack
+spec:
+  selector:
+    app: nginx
+  ports:
+    - port: 80
+      targetPort: 80
+  type: NodePort
+---
+# Nginx Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: monitoring-stack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+        - name: static-files
+          mountPath: /app/static
+        - name: media-files
+          mountPath: /app/media
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-config
+      - name: static-files
+        hostPath:
+          path: /tmp/static
+          type: DirectoryOrCreate
+      - name: media-files
+        hostPath:
+          path: /tmp/media
+          type: DirectoryOrCreate
+      initContainers:
+      - name: wait-for-app
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nc -z praxis-app 4000; do echo waiting for praxis-app; sleep 2; done;']
