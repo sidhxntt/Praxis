@@ -159,7 +159,7 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
             >
               <Button
                 as={Link}
-                href="https://github.com/sidhxntt/Praxis"
+                href="https://github.com/sidhxntt/Praxis/tree/pro"
                 variant="primary"
                 className="hidden md:block rounded-full bg-white/20 hover:bg-white/30 text-white border-0"
                 target="_blank"
