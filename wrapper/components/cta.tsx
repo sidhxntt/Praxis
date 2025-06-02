@@ -5,7 +5,8 @@ import { cn } from "@/lib/utils";
 import { motion, useAnimation, useInView } from "framer-motion";
 import Link from "next/link";
 import { Copy } from "lucide-react";
-import { badgeVariants } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge"
+import { AlertCircleIcon } from "lucide-react"
 
 const BackgroundGrid = ({ className }: { className?: string }) => {
   const controls = useAnimation();
@@ -169,9 +170,14 @@ export default function CTA() {
           <Link
             href={"/pro"}
             target="__blank"
-            className={badgeVariants({ variant: "secondary" })}
-          >
-            Introducting Praxis Pro
+           >
+          <Badge
+          variant="secondary"
+          className="bg-blue-600 text-white gap-2 hover:bg-blue-700"
+        >
+          <AlertCircleIcon />
+          Introducing Praxis Pro
+        </Badge>
           </Link>
         </div>
 
