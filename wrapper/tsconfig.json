@@ -25,4 +25,3 @@
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }
-// https://www.youtube.com/watch?v=ardtvdR28SQ

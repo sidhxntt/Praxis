@@ -222,6 +222,11 @@ export default function CTA() {
             <Copy className="w-4 h-4 text-neutral-400 hover:text-white" />
             {copied && <span className="text-green-500 text-xs">Copied!</span>}
           </div>
+          <div
+            className=" font-bold max-w-lg text-xs sm:text-sm md:text-base text-neutral-400 text-center mx-auto my-4 md:my-6 lg:my-8 px-4 flex items-center justify-center gap-2 cursor-pointer"
+          >
+          <a href="https://www.producthunt.com/products/praxis-4?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-praxis&#0045;4" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1007579&theme=light&t=1755718896191" alt="Praxis&#0032; - Ship&#0032;your&#0032;SaaS&#0032;in&#0032;days&#0032;not&#0032;in&#0032;months&#0046; | Product Hunt" style={{width: "250px", height: "54px"}} width="250" height="54" /></a>
+          </div>
         </motion.div>
       </motion.div>
       <LineGradient position="right" />
