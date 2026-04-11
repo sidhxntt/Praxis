@@ -13,7 +13,7 @@
 ## Overview
 
 <video width="600" controls>
-  <source src="./praxis demo.mp4" type="video/mp4">
+  <source src="./praxis_demo.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
