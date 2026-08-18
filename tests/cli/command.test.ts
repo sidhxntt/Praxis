@@ -29,6 +29,46 @@ describe("parseCommand", () => {
     });
   });
 
+  it("parses custom mode without the create alias", () => {
+    expect(parseCommand(["--custom"])).toEqual({
+      kind: "create",
+      projectName: undefined,
+      mode: "custom",
+      configPath: undefined,
+      installDependencies: true,
+    });
+  });
+
+  it("parses a positional project name without the create alias", () => {
+    expect(parseCommand(["my-app"])).toEqual({
+      kind: "create",
+      projectName: "my-app",
+      mode: "custom",
+      configPath: undefined,
+      installDependencies: true,
+    });
+  });
+
+  it("parses quick mode without the create alias", () => {
+    expect(parseCommand(["--quick"])).toEqual({
+      kind: "create",
+      projectName: undefined,
+      mode: "quick",
+      configPath: undefined,
+      installDependencies: true,
+    });
+  });
+
+  it("parses config mode without the create alias", () => {
+    expect(parseCommand(["--config", "team.praxis.json"])).toEqual({
+      kind: "create",
+      projectName: undefined,
+      mode: "config",
+      configPath: "team.praxis.json",
+      installDependencies: true,
+    });
+  });
+
   it("parses a quick create command", () => {
     expect(parseCommand(["create", "acme", "--quick"])).toEqual({
       kind: "create",

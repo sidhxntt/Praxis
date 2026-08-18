@@ -28,7 +28,7 @@ export function parseCommand(args: string[]): ParsedCommand {
     return { kind: "help" };
   }
 
-  if (args[0] !== "create") {
+  if (["legacy", "destroy"].includes(args[0])) {
     throw new Error(
       `Unknown command "${args[0]}". Run "praxiflow help" for usage.`,
     );
@@ -39,7 +39,9 @@ export function parseCommand(args: string[]): ParsedCommand {
   let mode: "quick" | "custom" | "config" = "custom";
   let installDependencies = true;
 
-  for (let index = 1; index < args.length; index += 1) {
+  const firstArgumentIndex = args[0] === "create" ? 1 : 0;
+
+  for (let index = firstArgumentIndex; index < args.length; index += 1) {
     const argument = args[index];
     if (argument === "--quick") {
       mode = "quick";
