@@ -4,10 +4,16 @@ export function createShutdown(tasks, closeServer) {
   return function shutdown() {
     shutdownPromise ??= (async () => {
       const pendingTasks = tasks.splice(0);
-      const results = await Promise.allSettled([
-        closeServer(),
-        ...pendingTasks.map((task) => task()),
-      ]);
+      let closeError;
+      try {
+        await closeServer();
+      } catch (error) {
+        closeError = error;
+      }
+      const results = await Promise.allSettled(
+        pendingTasks.map((task) => task()),
+      );
+      if (closeError) throw closeError;
       const failure = results.find((result) => result.status === "rejected");
       if (failure?.status === "rejected") throw failure.reason;
     })();

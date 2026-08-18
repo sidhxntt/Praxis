@@ -2,32 +2,22 @@
   "id": "database.mongo",
   "overlays": [
     { "scope": "backend", "source": "files/common" },
-    {
-      "scope": "backend",
-      "source": "files/typescript",
-      "language": "typescript"
+    { "scope": "backend", "source": "files/typescript", "language": "typescript" },
+    { "scope": "backend", "source": "files/javascript", "language": "javascript" }
+  ],
+  "packages": [{
+    "scope": "backend",
+    "dependencies": {
+      "@prisma/client": "6.12.0"
     },
-    {
-      "scope": "backend",
-      "source": "files/javascript",
-      "language": "javascript"
+    "devDependencies": {
+      "prisma": "6.12.0"
+    },
+    "scripts": {
+      "db:generate": "prisma generate",
+      "db:push": "prisma db push"
     }
-  ],
-  "packages": [
-    {
-      "scope": "backend",
-      "dependencies": {
-        "@prisma/client": "6.12.0"
-      },
-      "devDependencies": {
-        "prisma": "6.12.0"
-      },
-      "scripts": {
-        "db:generate": "prisma generate",
-        "db:push": "prisma db push"
-      }
-    }
-  ],
+  }],
   "env": [{ "scope": "backend", "keys": ["DATABASE_URL"] }],
   "patches": [
     {

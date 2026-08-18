@@ -4,13 +4,18 @@ const client = Client.create(process.env.CACHE_URL ?? "localhost:11211");
 let disconnected = false;
 
 export async function connectCache() {
-  await new Promise((resolve, reject) => {
-    client.set("praxis:readiness", "ready", { expires: 5 }, (error) => {
-      if (error) reject(error);
-      else resolve();
+  try {
+    await new Promise((resolve, reject) => {
+      client.set("praxis:readiness", "ready", { expires: 5 }, (error) => {
+        if (error) reject(error);
+        else resolve();
+      });
     });
-  });
-  await cacheGet("praxis:readiness");
+    await cacheGet("praxis:readiness");
+  } catch (error) {
+    await disconnectCache();
+    throw error;
+  }
 }
 
 export function cacheGet(key) {
