@@ -15,17 +15,34 @@ import {
   validateConfig,
 } from "../config/schema";
 import { generateProject } from "../generator/generate";
+import { showRandomAnimation } from "../controllers/user_touch";
 import { answersToConfig } from "./answers";
 
 type CreateCommand = Extract<ParsedCommand, { kind: "create" }>;
 
-export async function runCreate(command: CreateCommand): Promise<void> {
+interface CreateDependencies {
+  showSplash: (message: string) => Promise<void>;
+  resolveConfig: (command: CreateCommand) => Promise<PraxisConfig>;
+  generate: (config: PraxisConfig) => Promise<string>;
+}
+
+const defaultCreateDependencies: CreateDependencies = {
+  showSplash: showRandomAnimation,
+  resolveConfig: resolveCreateConfig,
+  generate: generateProject,
+};
+
+export async function runCreate(
+  command: CreateCommand,
+  dependencies: CreateDependencies = defaultCreateDependencies,
+): Promise<void> {
+  await dependencies.showSplash("Welcome to Praxis ⚡️🚀");
   p.intro("Praxis Flow composable builder");
-  const config = await resolveCreateConfig(command);
+  const config = await dependencies.resolveConfig(command);
   const spinner = p.spinner();
   spinner.start(`Generating ${config.name}`);
   try {
-    const destination = await generateProject(config);
+    const destination = await dependencies.generate(config);
     spinner.stop("Project generated");
     p.note(nextSteps(config, destination), "Next steps");
     p.outro("Happy building ✨");

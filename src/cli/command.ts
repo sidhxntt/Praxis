@@ -19,10 +19,12 @@ export function parseCommand(args: string[]): ParsedCommand {
     };
   }
 
-  if (["help", "--help", "-h"].includes(args[0])) {
-    if (args.length > 1) {
+  const createArguments = args[0] === "create" ? args.slice(1) : args;
+
+  if (["help", "--help", "-h"].includes(createArguments[0])) {
+    if (createArguments.length > 1) {
       throw new Error(
-        `Unexpected argument "${args[1]}". Run "praxiflow help" for usage.`,
+        `Unexpected argument "${createArguments[1]}". Run "praxiflow help" for usage.`,
       );
     }
     return { kind: "help" };
@@ -36,27 +38,35 @@ export function parseCommand(args: string[]): ParsedCommand {
 
   let projectName: string | undefined;
   let configPath: string | undefined;
-  let mode: "quick" | "custom" | "config" = "custom";
+  let selectedMode: "quick" | "custom" | "config" | undefined;
   let installDependencies = true;
 
-  const firstArgumentIndex = args[0] === "create" ? 1 : 0;
+  const chooseMode = (candidate: "quick" | "custom" | "config"): void => {
+    if (selectedMode && selectedMode !== candidate) {
+      throw new Error(
+        'Choose only one of "--custom", "--quick", or "--config".',
+      );
+    }
+    selectedMode = candidate;
+  };
 
-  for (let index = firstArgumentIndex; index < args.length; index += 1) {
-    const argument = args[index];
+  for (let index = 0; index < createArguments.length; index += 1) {
+    const argument = createArguments[index];
     if (argument === "--quick") {
-      mode = "quick";
+      chooseMode("quick");
     } else if (argument === "--custom") {
-      mode = "custom";
+      chooseMode("custom");
     } else if (argument === "--no-install") {
       installDependencies = false;
     } else if (argument === "--config") {
-      configPath = args[index + 1];
-      if (!configPath || configPath.startsWith("--")) {
+      const candidatePath = createArguments[index + 1];
+      if (!candidatePath || candidatePath.startsWith("-")) {
         throw new Error("--config requires a file path");
       }
-      mode = "config";
+      chooseMode("config");
+      configPath = candidatePath;
       index += 1;
-    } else if (argument.startsWith("--")) {
+    } else if (argument.startsWith("-")) {
       throw new Error(
         `Unknown option "${argument}". Run "praxiflow help" for usage.`,
       );
@@ -70,7 +80,7 @@ export function parseCommand(args: string[]): ParsedCommand {
   return {
     kind: "create",
     projectName,
-    mode,
+    mode: selectedMode ?? "custom",
     configPath,
     installDependencies,
   };

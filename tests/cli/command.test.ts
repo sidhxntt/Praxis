@@ -19,6 +19,13 @@ describe("parseCommand", () => {
     },
   );
 
+  it.each([["create", "help"], ["create", "--help"], ["create", "-h"]])(
+    "parses %s %s as help",
+    (...args) => {
+      expect(parseCommand(args)).toEqual({ kind: "help" });
+    },
+  );
+
   it("keeps create --custom as a compatibility alias", () => {
     expect(parseCommand(["create", "acme", "--custom"])).toEqual({
       kind: "create",
@@ -105,6 +112,25 @@ describe("parseCommand", () => {
   it("rejects the removed legacy command with a help pointer", () => {
     expect(() => parseCommand(["legacy"])).toThrow(
       'Unknown command "legacy". Run "praxiflow help" for usage.',
+    );
+  });
+
+  it.each([
+    ["--quick", "--custom"],
+    ["--custom", "--quick"],
+    ["--quick", "--config", "team.praxis.json"],
+    ["--config", "team.praxis.json", "--quick"],
+    ["--custom", "--config", "team.praxis.json"],
+    ["--config", "team.praxis.json", "--custom"],
+  ])("rejects conflicting create modes: %s", (...args) => {
+    expect(() => parseCommand(args)).toThrow(
+      'Choose only one of "--custom", "--quick", or "--config".',
+    );
+  });
+
+  it("rejects an unknown single-dash flag", () => {
+    expect(() => parseCommand(["-x"])).toThrow(
+      'Unknown option "-x". Run "praxiflow help" for usage.',
     );
   });
 });
