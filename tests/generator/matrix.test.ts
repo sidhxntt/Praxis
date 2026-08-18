@@ -149,7 +149,7 @@ describe("bundled template matrix", () => {
     const server = await readFile(path.join(output, "src/server.ts"), "utf8");
     expect(server).toContain('from "./lib/cache.js"');
     expect(server).toContain("await connectCache()");
-    expect(server).toContain("shutdownTasks.push(closeCache)");
+    expect(server).toContain("shutdownTasks.push(disconnectCache)");
     expect(server).toContain('app.get("/api/cache"');
     expect(server).toContain('await cacheSet("praxis:example"');
   });
@@ -173,11 +173,12 @@ describe("bundled template matrix", () => {
     expect(packageJson.devDependencies?.["@types/memjs"]).toBeUndefined();
     expect(await readFile(path.join(output, ".env.example"), "utf8"))
       .toContain("CACHE_URL=localhost:11211");
-    expect(await readFile(path.join(output, "src/lib/cache.js"), "utf8"))
-      .toContain("Client.create");
+    const cacheHelper = await readFile(path.join(output, "src/lib/cache.js"), "utf8");
+    expect(cacheHelper).toContain("Client.create");
+    expect(cacheHelper).toContain("{ expires: 5 }");
     const server = await readFile(path.join(output, "src/server.js"), "utf8");
     expect(server).toContain("await connectCache()");
-    expect(server).toContain("shutdownTasks.push(closeCache)");
+    expect(server).toContain("shutdownTasks.push(disconnectCache)");
     expect(server).toContain('app.get("/api/cache"');
     expect(server).toContain('await cacheSet("praxis:example"');
   });

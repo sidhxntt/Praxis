@@ -18,7 +18,7 @@
       "language": "typescript",
       "cache": "memcached",
       "find": "// @praxis:imports",
-      "replace": "// @praxis:imports\nimport { cacheGet, cacheSet, closeCache, connectCache } from \"./lib/cache.js\";"
+      "replace": "// @praxis:imports\nimport { cacheGet, cacheSet, connectCache, disconnectCache } from \"./lib/cache.js\";"
     },
     {
       "scope": "backend",
@@ -34,7 +34,7 @@
       "language": "typescript",
       "cache": "memcached",
       "find": "  // @praxis:startup",
-      "replace": "  // @praxis:startup\n  await connectCache();\n  shutdownTasks.push(closeCache);"
+      "replace": "  // @praxis:startup\n  await connectCache();\n  shutdownTasks.push(disconnectCache);"
     },
     {
       "scope": "backend",
@@ -42,7 +42,7 @@
       "language": "javascript",
       "cache": "memcached",
       "find": "// @praxis:imports",
-      "replace": "// @praxis:imports\nimport { cacheGet, cacheSet, closeCache, connectCache } from \"./lib/cache.js\";"
+      "replace": "// @praxis:imports\nimport { cacheGet, cacheSet, connectCache, disconnectCache } from \"./lib/cache.js\";"
     },
     {
       "scope": "backend",
@@ -58,7 +58,7 @@
       "language": "javascript",
       "cache": "memcached",
       "find": "  // @praxis:startup",
-      "replace": "  // @praxis:startup\n  await connectCache();\n  shutdownTasks.push(closeCache);"
+      "replace": "  // @praxis:startup\n  await connectCache();\n  shutdownTasks.push(disconnectCache);"
     }
   ]
 }

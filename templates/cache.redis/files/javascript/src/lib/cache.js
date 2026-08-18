@@ -20,6 +20,6 @@ export async function cacheSet(key, value) {
   await client.set(key, value);
 }
 
-export async function closeCache() {
+export async function disconnectCache() {
   if (client.isOpen) await client.quit();
 }

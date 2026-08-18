@@ -3,7 +3,12 @@ import { Client } from "memjs";
 const client = Client.create(process.env.CACHE_URL ?? "localhost:11211");
 
 export async function connectCache(): Promise<void> {
-  await cacheSet("praxis:readiness", "ready");
+  await new Promise<void>((resolve, reject) => {
+    client.set("praxis:readiness", "ready", { expires: 5 }, (error) => {
+      if (error) reject(error);
+      else resolve();
+    });
+  });
   await cacheGet("praxis:readiness");
 }
 
@@ -25,6 +30,6 @@ export function cacheSet(key: string, value: string): Promise<void> {
   });
 }
 
-export async function closeCache(): Promise<void> {
+export async function disconnectCache(): Promise<void> {
   client.quit();
 }

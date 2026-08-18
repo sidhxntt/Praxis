@@ -20,6 +20,6 @@ export async function cacheSet(key: string, value: string): Promise<void> {
   await client.set(key, value);
 }
 
-export async function closeCache(): Promise<void> {
+export async function disconnectCache(): Promise<void> {
   if (client.isOpen) await client.quit();
 }
