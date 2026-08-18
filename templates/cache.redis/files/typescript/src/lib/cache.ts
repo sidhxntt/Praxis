@@ -7,9 +7,14 @@ const client = createClient({
 client.on("error", (error) => console.error("Redis error", error));
 
 export async function connectCache(): Promise<void> {
-  if (!client.isOpen) await client.connect();
-  await client.set("praxis:readiness", "ready");
-  await client.get("praxis:readiness");
+  try {
+    if (!client.isOpen) await client.connect();
+    await client.set("praxis:readiness", "ready");
+    await client.get("praxis:readiness");
+  } catch (error) {
+    if (client.isOpen) await client.quit().catch(() => undefined);
+    throw error;
+  }
 }
 
 export async function cacheGet(key: string): Promise<string | null> {

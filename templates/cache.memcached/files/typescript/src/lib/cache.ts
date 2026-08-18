@@ -1,6 +1,7 @@
 import { Client } from "memjs";
 
 const client = Client.create(process.env.CACHE_URL ?? "localhost:11211");
+let disconnected = false;
 
 export async function connectCache(): Promise<void> {
   await new Promise<void>((resolve, reject) => {
@@ -31,5 +32,7 @@ export function cacheSet(key: string, value: string): Promise<void> {
 }
 
 export async function disconnectCache(): Promise<void> {
+  if (disconnected) return;
+  disconnected = true;
   client.quit();
 }
