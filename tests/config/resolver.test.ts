@@ -44,4 +44,21 @@ describe("resolveModules", () => {
       "vercel requires a frontend project",
     );
   });
+
+  it.each([
+    ["redis", "cache.redis"],
+    ["memcached", "cache.memcached"],
+  ] as const)("appends the %s cache module after auth", (cache, moduleId) => {
+    const config = quickConfig("acme");
+    config.backend!.cache = cache;
+    const modules = resolveModules(config);
+
+    expect(modules.indexOf(moduleId)).toBe(
+      modules.indexOf("auth.self-hosted") + 1,
+    );
+  });
+
+  it("does not append a cache module when cache is none", () => {
+    expect(resolveModules(quickConfig("acme"))).not.toContain("cache.none");
+  });
 });

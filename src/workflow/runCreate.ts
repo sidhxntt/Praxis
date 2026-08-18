@@ -4,6 +4,7 @@ import { ParsedCommand } from "../cli/command";
 import { loadConfigFile } from "../config/load";
 import {
   AuthProvider,
+  CacheProvider,
   Database,
   DeploymentTarget,
   FrontendFramework,
@@ -103,6 +104,13 @@ async function resolveCreateConfig(command: CreateCommand): Promise<PraxisConfig
   const auth = projectType === "frontend"
     ? undefined
     : await select<AuthProvider>("Authentication", authOptions);
+  const cache = projectType === "frontend"
+    ? undefined
+    : await select<CacheProvider>("Cache", [
+        ["redis", "Redis"],
+        ["memcached", "Memcached"],
+        ["none", "None"],
+      ]);
   const deployment = await selectDeployments(projectType);
   const packageManager = await select<PackageManager>("Package manager", [
     ["npm", "npm"],
@@ -122,6 +130,7 @@ async function resolveCreateConfig(command: CreateCommand): Promise<PraxisConfig
     frontendFramework,
     database,
     auth,
+    cache,
     deployment,
     packageManager,
     installDependencies,

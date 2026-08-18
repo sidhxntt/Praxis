@@ -46,7 +46,12 @@ describe("bundled template matrix", () => {
       name: "api",
       projectType: "backend",
       language: "typescript",
-      backend: { framework: "express", database: "postgres", auth: "self-hosted" },
+      backend: {
+        framework: "express",
+        database: "postgres",
+        auth: "self-hosted",
+        cache: "none",
+      },
       deployment: ["railway", "docker"],
     });
     expect(await readFile(path.join(output, "src/server.ts"), "utf8"))
@@ -65,7 +70,12 @@ describe("bundled template matrix", () => {
       projectType: "fullstack",
       language: "typescript",
       frontend: { framework: "next", styling: "tailwind-shadcn" },
-      backend: { framework: "express", database: "mongo", auth: "clerk" },
+      backend: {
+        framework: "express",
+        database: "mongo",
+        auth: "clerk",
+        cache: "none",
+      },
       deployment: ["vercel", "render", "docker"],
     }, "pnpm");
     expect(JSON.parse(await readFile(path.join(output, "package.json"), "utf8")).scripts.build)
@@ -94,7 +104,12 @@ describe("bundled template matrix", () => {
       projectType: "fullstack",
       language: "javascript",
       frontend: { framework: "vite", styling: "tailwind-shadcn" },
-      backend: { framework: "express", database: "none", auth: "supabase" },
+      backend: {
+        framework: "express",
+        database: "none",
+        auth: "supabase",
+        cache: "none",
+      },
       deployment: ["render"],
     });
     expect(await readFile(path.join(output, "backend/src/server.js"), "utf8"))

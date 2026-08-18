@@ -32,6 +32,9 @@ export function resolveModules(config: PraxisConfig): string[] {
     if (config.backend.auth !== "none") {
       modules.push(`auth.${config.backend.auth}`);
     }
+    if (config.backend.cache !== "none") {
+      modules.push(`cache.${config.backend.cache}`);
+    }
   }
   modules.push(...config.deployment.map((target) => `deployment.${target}`));
   return modules;

@@ -13,6 +13,7 @@ describe("PraxisConfig", () => {
         framework: "express",
         database: "postgres",
         auth: "self-hosted",
+        cache: "none",
       },
       deployment: ["vercel", "railway", "docker"],
       packageManager: "npm",
@@ -52,6 +53,22 @@ describe("PraxisConfig", () => {
     expect(() => validateConfig(config)).toThrow(
       'unknown backend configuration key "unsafe"',
     );
+  });
+
+  it("requires a cache choice for backend projects", () => {
+    const config = quickConfig("acme") as unknown as Record<string, unknown>;
+    const { cache: _cache, ...backend } = config.backend as Record<
+      string,
+      unknown
+    >;
+    config.backend = backend;
+    expect(() => validateConfig(config)).toThrow("backend cache is unsupported");
+  });
+
+  it("rejects unsupported cache providers", () => {
+    const config = quickConfig("acme");
+    config.backend!.cache = "varnish" as never;
+    expect(() => validateConfig(config)).toThrow("backend cache is unsupported");
   });
 
   it("rejects duplicate deployment targets", () => {

@@ -3,6 +3,7 @@ export type Language = "typescript" | "javascript";
 export type FrontendFramework = "next" | "vite";
 export type Database = "postgres" | "mongo" | "none";
 export type AuthProvider = "self-hosted" | "clerk" | "supabase" | "none";
+export type CacheProvider = "redis" | "memcached" | "none";
 export type DeploymentTarget = "vercel" | "railway" | "render" | "docker";
 export type PackageManager = "npm" | "pnpm" | "yarn" | "bun";
 
@@ -19,6 +20,7 @@ export interface PraxisConfig {
     framework: "express";
     database: Database;
     auth: AuthProvider;
+    cache: CacheProvider;
   };
   deployment: DeploymentTarget[];
   packageManager: PackageManager;
@@ -50,6 +52,7 @@ export function quickConfig(name: string): PraxisConfig {
       framework: "express",
       database: "postgres",
       auth: "self-hosted",
+      cache: "none",
     },
     deployment: ["vercel", "railway", "docker"],
     packageManager: "npm",
@@ -160,7 +163,11 @@ function validateBackend(value: unknown): void {
     throw new Error("backend must be an object");
   }
   const backend = value as Record<string, unknown>;
-  assertKnownKeys(backend, ["framework", "database", "auth"], "backend");
+  assertKnownKeys(
+    backend,
+    ["framework", "database", "auth", "cache"],
+    "backend",
+  );
   if (backend.framework !== "express") {
     throw new Error("backend framework must be express");
   }
@@ -173,6 +180,13 @@ function validateBackend(value: unknown): void {
     )
   ) {
     throw new Error("backend auth is unsupported");
+  }
+  if (
+    !(["redis", "memcached", "none"] as const).includes(
+      backend.cache as CacheProvider,
+    )
+  ) {
+    throw new Error("backend cache is unsupported");
   }
 }
 

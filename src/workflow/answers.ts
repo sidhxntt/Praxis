@@ -1,5 +1,6 @@
 import {
   AuthProvider,
+  CacheProvider,
   Database,
   DeploymentTarget,
   FrontendFramework,
@@ -17,6 +18,7 @@ export interface CreateAnswers {
   frontendFramework?: FrontendFramework;
   database?: Database;
   auth?: AuthProvider;
+  cache?: CacheProvider;
   deployment: DeploymentTarget[];
   packageManager: PackageManager;
   installDependencies: boolean;
@@ -40,6 +42,7 @@ export function answersToConfig(answers: CreateAnswers): PraxisConfig {
         framework: "express",
         database: answers.database,
         auth: answers.auth,
+        cache: answers.cache,
       },
     }),
     deployment: answers.deployment,

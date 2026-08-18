@@ -36,6 +36,7 @@ describe("answersToConfig", () => {
         frontendFramework: "next",
         database: "mongo",
         auth: "clerk",
+        cache: "redis",
         deployment: ["vercel", "render"],
         packageManager: "npm",
         installDependencies: false,
@@ -43,7 +44,12 @@ describe("answersToConfig", () => {
       }),
     ).toMatchObject({
       frontend: { framework: "next" },
-      backend: { framework: "express", database: "mongo", auth: "clerk" },
+      backend: {
+        framework: "express",
+        database: "mongo",
+        auth: "clerk",
+        cache: "redis",
+      },
     });
   });
 });

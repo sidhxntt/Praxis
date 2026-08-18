@@ -28,4 +28,19 @@ describe("loadConfigFile", () => {
       `Unable to load configuration ${file}`,
     );
   });
+
+  it("normalizes schema v1 configurations created before cache selection", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "praxis-config-"));
+    roots.push(root);
+    const file = path.join(root, "praxis.config.json");
+    const legacy = quickConfig("acme") as unknown as Record<string, unknown>;
+    const { cache: _cache, ...backend } = legacy.backend as Record<
+      string,
+      unknown
+    >;
+    legacy.backend = backend;
+    await writeFile(file, JSON.stringify(legacy));
+
+    expect((await loadConfigFile(file)).backend?.cache).toBe("none");
+  });
 });
