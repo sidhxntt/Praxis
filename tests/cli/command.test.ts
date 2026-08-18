@@ -2,12 +2,31 @@ import { describe, expect, it } from "vitest";
 import { parseCommand } from "../../src/cli/command";
 
 describe("parseCommand", () => {
-  it("preserves the existing workflow when no command is supplied", () => {
-    expect(parseCommand([])).toEqual({ kind: "legacy" });
+  it("starts the custom create workflow when no command is supplied", () => {
+    expect(parseCommand([])).toEqual({
+      kind: "create",
+      projectName: undefined,
+      mode: "custom",
+      configPath: undefined,
+      installDependencies: true,
+    });
   });
 
-  it("supports an explicit legacy command", () => {
-    expect(parseCommand(["legacy"])).toEqual({ kind: "legacy" });
+  it.each([["help"], ["--help"], ["-h"]])(
+    "parses %s as help",
+    (...args) => {
+      expect(parseCommand(args)).toEqual({ kind: "help" });
+    },
+  );
+
+  it("keeps create --custom as a compatibility alias", () => {
+    expect(parseCommand(["create", "acme", "--custom"])).toEqual({
+      kind: "create",
+      projectName: "acme",
+      mode: "custom",
+      configPath: undefined,
+      installDependencies: true,
+    });
   });
 
   it("parses a quick create command", () => {
@@ -39,7 +58,13 @@ describe("parseCommand", () => {
 
   it("rejects unsupported commands", () => {
     expect(() => parseCommand(["destroy"])).toThrow(
-      'Unknown command "destroy"',
+      'Unknown command "destroy". Run "praxiflow help" for usage.',
+    );
+  });
+
+  it("rejects the removed legacy command with a help pointer", () => {
+    expect(() => parseCommand(["legacy"])).toThrow(
+      'Unknown command "legacy". Run "praxiflow help" for usage.',
     );
   });
 });

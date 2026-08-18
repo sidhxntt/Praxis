@@ -1,15 +1,17 @@
 import { ParsedCommand, parseCommand } from "./command";
+import { formatHelp } from "./help";
 
 export interface CliDependencies {
-  legacy: () => Promise<void>;
   create: (command: Extract<ParsedCommand, { kind: "create" }>) => Promise<void>;
+  write?: (message: string) => void;
 }
 
 export async function runCli(args: string[], dependencies: CliDependencies): Promise<void> {
   const command = parseCommand(args);
-  if (command.kind === "legacy") {
-    await dependencies.legacy();
-  } else {
-    await dependencies.create(command);
+  if (command.kind === "help") {
+    (dependencies.write ?? console.log)(formatHelp());
+    return;
   }
+
+  await dependencies.create(command);
 }

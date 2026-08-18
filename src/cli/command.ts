@@ -1,5 +1,5 @@
 export type ParsedCommand =
-  | { kind: "legacy" }
+  | { kind: "help" }
   | {
       kind: "create";
       projectName?: string;
@@ -9,12 +9,29 @@ export type ParsedCommand =
     };
 
 export function parseCommand(args: string[]): ParsedCommand {
-  if (args.length === 0 || args[0] === "legacy") {
-    return { kind: "legacy" };
+  if (args.length === 0) {
+    return {
+      kind: "create",
+      projectName: undefined,
+      mode: "custom",
+      configPath: undefined,
+      installDependencies: true,
+    };
+  }
+
+  if (["help", "--help", "-h"].includes(args[0])) {
+    if (args.length > 1) {
+      throw new Error(
+        `Unexpected argument "${args[1]}". Run "praxiflow help" for usage.`,
+      );
+    }
+    return { kind: "help" };
   }
 
   if (args[0] !== "create") {
-    throw new Error(`Unknown command "${args[0]}"`);
+    throw new Error(
+      `Unknown command "${args[0]}". Run "praxiflow help" for usage.`,
+    );
   }
 
   let projectName: string | undefined;
@@ -38,7 +55,9 @@ export function parseCommand(args: string[]): ParsedCommand {
       mode = "config";
       index += 1;
     } else if (argument.startsWith("--")) {
-      throw new Error(`Unknown option "${argument}"`);
+      throw new Error(
+        `Unknown option "${argument}". Run "praxiflow help" for usage.`,
+      );
     } else if (!projectName) {
       projectName = argument;
     } else {
