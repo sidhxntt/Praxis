@@ -182,4 +182,95 @@ describe("bundled template matrix", () => {
     expect(server).toContain('app.get("/api/cache"');
     expect(server).toContain('await cacheSet("praxis:example"');
   });
+
+  it.each([
+    {
+      label: "Redis for a backend-only project",
+      name: "redis-docker-api",
+      projectType: "backend" as const,
+      language: "typescript" as const,
+      cache: "redis" as const,
+      expectedImage: "redis:7-alpine",
+      expectedUrl: "redis://cache:6379",
+    },
+    {
+      label: "Memcached for a backend-only project",
+      name: "memcached-docker-api",
+      projectType: "backend" as const,
+      language: "javascript" as const,
+      cache: "memcached" as const,
+      expectedImage: "memcached:1.6-alpine",
+      expectedUrl: "cache:11211",
+    },
+    {
+      label: "Redis for a Next fullstack project",
+      name: "redis-next-docker",
+      projectType: "fullstack" as const,
+      language: "typescript" as const,
+      framework: "next" as const,
+      cache: "redis" as const,
+      expectedImage: "redis:7-alpine",
+      expectedUrl: "redis://cache:6379",
+    },
+    {
+      label: "Memcached for a Vite fullstack project",
+      name: "memcached-vite-docker",
+      projectType: "fullstack" as const,
+      language: "javascript" as const,
+      framework: "vite" as const,
+      cache: "memcached" as const,
+      expectedImage: "memcached:1.6-alpine",
+      expectedUrl: "cache:11211",
+    },
+  ])("adds $label to Docker Compose", async ({
+    name,
+    projectType,
+    language,
+    framework,
+    cache,
+    expectedImage,
+    expectedUrl,
+  }) => {
+    const output = await generate({
+      name,
+      projectType,
+      language,
+      ...(projectType === "fullstack"
+        ? { frontend: { framework: framework!, styling: "tailwind-shadcn" as const } }
+        : {}),
+      backend: {
+        framework: "express",
+        database: "none",
+        auth: "none",
+        cache,
+      },
+      deployment: ["docker"],
+    });
+    const compose = await readFile(path.join(output, "docker-compose.yml"), "utf8");
+    expect(compose).toContain("  cache:");
+    expect(compose).toContain(`image: ${expectedImage}`);
+    expect(compose).toContain(`CACHE_URL: ${expectedUrl}`);
+    expect(compose).toMatch(/backend:[\s\S]*depends_on:\n\s+- cache/);
+    if (projectType === "fullstack") {
+      expect(compose).toMatch(/frontend:[\s\S]*depends_on:\n\s+- backend/);
+    }
+  });
+
+  it("does not add a cache service when cache is none", async () => {
+    const output = await generate({
+      name: "no-cache-docker-api",
+      projectType: "backend",
+      language: "typescript",
+      backend: {
+        framework: "express",
+        database: "none",
+        auth: "none",
+        cache: "none",
+      },
+      deployment: ["docker"],
+    });
+    const compose = await readFile(path.join(output, "docker-compose.yml"), "utf8");
+    expect(compose).not.toContain("  cache:");
+    expect(compose).not.toContain("CACHE_URL:");
+  });
 });

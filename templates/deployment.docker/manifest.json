@@ -16,6 +16,48 @@
       "find": "3000:3000",
       "replace": "3000:80",
       "framework": "vite"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "services:\n",
+      "replace": "services:\n  cache:\n    image: redis:7-alpine\n",
+      "cache": "redis"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "services:\n",
+      "replace": "services:\n  cache:\n    image: memcached:1.6-alpine\n",
+      "cache": "memcached"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      PORT: 4000",
+      "replace": "      PORT: 4000\n      CACHE_URL: redis://cache:6379",
+      "cache": "redis"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      PORT: 4000",
+      "replace": "      PORT: 4000\n      CACHE_URL: cache:11211",
+      "cache": "memcached"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "    env_file:",
+      "replace": "    depends_on:\n      - cache\n    env_file:",
+      "cache": "redis"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "    env_file:",
+      "replace": "    depends_on:\n      - cache\n    env_file:",
+      "cache": "memcached"
     }
   ]
 }
