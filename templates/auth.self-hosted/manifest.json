@@ -1,0 +1,54 @@
+{
+  "id": "auth.self-hosted",
+  "overlays": [
+    { "scope": "backend", "source": "files/typescript", "language": "typescript" },
+    { "scope": "backend", "source": "files/javascript", "language": "javascript" }
+  ],
+  "packages": [{
+    "scope": "backend",
+    "dependencies": {
+      "bcryptjs": "^3.0.2",
+      "jsonwebtoken": "^9.0.2"
+    },
+    "devDependencies": {
+      "@types/jsonwebtoken": "^9.0.10"
+    }
+  }],
+  "env": [{ "scope": "backend", "keys": ["JWT_SECRET"] }],
+  "patches": [
+    {
+      "scope": "backend",
+      "file": "src/server.ts",
+      "find": "// @praxis:imports",
+      "replace": "// @praxis:imports\nimport { authRouter } from \"./auth/routes.js\";",
+      "language": "typescript"
+    },
+    {
+      "scope": "backend",
+      "file": "src/server.ts",
+      "find": "// @praxis:middleware",
+      "replace": "// @praxis:middleware\napp.use(\"/api/auth\", authRouter);",
+      "language": "typescript"
+    },
+    {
+      "scope": "backend",
+      "file": "src/server.js",
+      "find": "// @praxis:imports",
+      "replace": "// @praxis:imports\nimport { authRouter } from \"./auth/routes.js\";",
+      "language": "javascript"
+    },
+    {
+      "scope": "backend",
+      "file": "src/server.js",
+      "find": "// @praxis:middleware",
+      "replace": "// @praxis:middleware\napp.use(\"/api/auth\", authRouter);",
+      "language": "javascript"
+    },
+    {
+      "scope": "backend",
+      "file": "prisma/schema.prisma",
+      "find": "// @praxis:models",
+      "replace": "// @praxis:models\nmodel User {\n  id           String @id @default(cuid()) @map(\"_id\")\n  email        String @unique\n  passwordHash String\n}"
+    }
+  ]
+}

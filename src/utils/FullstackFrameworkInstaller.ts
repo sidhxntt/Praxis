@@ -1,4 +1,5 @@
 import BaseFrameworkInstaller from "./BaseFrameworkInstaller";
+import { legacyBranchFor } from "../legacy/branchMatrix";
 
 type DatabaseType = "mongo" | "postgres";
 
@@ -14,17 +15,21 @@ abstract class FullstackFrameworkInstaller extends BaseFrameworkInstaller {
   ): Record<DatabaseType, FrameworkConfig> {
     return {
       mongo: {
-        branch: isTypescript
-          ? `ts-${framework}-mongo`
-          : `js-${framework}-mongo`,
+        branch: legacyBranchFor({
+          language: isTypescript ? "ts" : "js",
+          framework: framework as "vite" | "next",
+          database: "mongo",
+        }),
         message: `Installing ${isTypescript ? "TypeScript" : "JavaScript"} ${
           framework.charAt(0).toUpperCase() + framework.slice(1)
         } MongoDB framework...`,
       },
       postgres: {
-        branch: isTypescript
-          ? `ts-${framework}-postgres`
-          : `js-${framework}-postgres`,
+        branch: legacyBranchFor({
+          language: isTypescript ? "ts" : "js",
+          framework: framework as "vite" | "next",
+          database: "postgres",
+        }),
         message: `Installing ${isTypescript ? "TypeScript" : "JavaScript"} ${
           framework.charAt(0).toUpperCase() + framework.slice(1)
         } Postgres framework...`,

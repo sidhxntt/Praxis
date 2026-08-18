@@ -1,0 +1,21 @@
+{
+  "id": "deployment.docker",
+  "overlays": [
+    { "scope": "root", "source": "files/root-fullstack", "projectType": "fullstack" },
+    { "scope": "root", "source": "files/root-frontend", "projectType": "frontend" },
+    { "scope": "root", "source": "files/root-backend", "projectType": "backend" },
+    { "scope": "backend", "source": "files/backend-typescript", "language": "typescript" },
+    { "scope": "backend", "source": "files/backend-javascript", "language": "javascript" },
+    { "scope": "frontend", "source": "files/frontend-next", "framework": "next" },
+    { "scope": "frontend", "source": "files/frontend-vite", "framework": "vite" }
+  ],
+  "patches": [
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "3000:3000",
+      "replace": "3000:80",
+      "framework": "vite"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "id": "styling.tailwind-shadcn",
+  "overlays": [
+    { "scope": "frontend", "source": "files/vite", "framework": "vite" },
+    { "scope": "frontend", "source": "files/config-vite", "framework": "vite" },
+    { "scope": "frontend", "source": "files/config-next", "framework": "next" },
+    { "scope": "frontend", "source": "files/next", "framework": "next" },
+    { "scope": "frontend", "source": "files/typescript", "language": "typescript" },
+    { "scope": "frontend", "source": "files/javascript", "language": "javascript" }
+  ],
+  "packages": [{
+    "scope": "frontend",
+    "dependencies": {
+      "@radix-ui/react-slot": "1.3.3",
+      "class-variance-authority": "0.7.1",
+      "clsx": "2.1.1",
+      "lucide-react": "1.32.0",
+      "tailwind-merge": "3.6.0"
+    },
+    "devDependencies": {
+      "tailwindcss": "4.3.3"
+    }
+  }, {
+    "scope": "frontend",
+    "framework": "next",
+    "devDependencies": {
+      "@tailwindcss/postcss": "4.3.3",
+      "postcss": "^8.5.6"
+    }
+  }, {
+    "scope": "frontend",
+    "framework": "vite",
+    "devDependencies": {
+      "@tailwindcss/vite": "4.3.3"
+    }
+  }],
+  "patches": [{
+    "scope": "frontend",
+    "file": "vite.config.js",
+    "find": "import react from \"@vitejs/plugin-react\";",
+    "replace": "import react from \"@vitejs/plugin-react\";\nimport tailwindcss from \"@tailwindcss/vite\";",
+    "framework": "vite"
+  }, {
+    "scope": "frontend",
+    "file": "vite.config.js",
+    "find": "plugins: [react()],",
+    "replace": "plugins: [react(), tailwindcss()],",
+    "framework": "vite"
+  }, {
+    "scope": "frontend",
+    "file": "components.json",
+    "find": "\"tsx\": true",
+    "replace": "\"tsx\": false",
+    "language": "javascript"
+  }]
+}

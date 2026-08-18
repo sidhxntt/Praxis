@@ -1,0 +1,4 @@
+{
+  "id": "deployment.vercel",
+  "overlays": [{ "scope": "frontend", "source": "files/common" }]
+}

@@ -1,0 +1,4 @@
+{
+  "id": "deployment.render",
+  "overlays": [{ "scope": "root", "source": "files/common" }]
+}

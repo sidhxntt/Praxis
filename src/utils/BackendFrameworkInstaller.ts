@@ -1,4 +1,5 @@
 import BaseFrameworkInstaller from "./BaseFrameworkInstaller";
+import { legacyBranchFor } from "../legacy/branchMatrix";
 
 class BackendFrameworkInstaller extends BaseFrameworkInstaller {
   constructor(
@@ -8,11 +9,11 @@ class BackendFrameworkInstaller extends BaseFrameworkInstaller {
   ) {
     const frameworks = {
       mongo: {
-        branch: isTypescript ? "ts-mongo" : "js-mongo",
+        branch: legacyBranchFor({ language: isTypescript ? "ts" : "js", database: "mongo" }),
         message: `Installing ${isTypescript ? "TypeScript" : "JavaScript"} MongoDB framework...`,
       },
       postgres: {
-        branch: isTypescript ? "ts-postgres" : "js-postgres",
+        branch: legacyBranchFor({ language: isTypescript ? "ts" : "js", database: "postgres" }),
         message: `Installing ${isTypescript ? "TypeScript" : "JavaScript"} Postgres framework...`,
       },
     };

@@ -1,0 +1,4 @@
+{
+  "id": "base.workspace",
+  "overlays": [{ "scope": "root", "source": "files/common" }]
+}

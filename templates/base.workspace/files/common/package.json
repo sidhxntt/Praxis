@@ -1,0 +1,10 @@
+{
+  "name": "{{projectName}}",
+  "private": true,
+  "workspaces": ["frontend", "backend"],
+  "scripts": {
+    "dev:frontend": "cd frontend && {{packageManager}} run dev",
+    "dev:backend": "cd backend && {{packageManager}} run dev",
+    "build": "cd frontend && {{packageManager}} run build && cd ../backend && {{packageManager}} run build"
+  }
+}

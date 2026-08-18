@@ -39,6 +39,60 @@ npx praxiflow
 
 ## Usage
 
+Praxis Flow now has two compatible workflows:
+
+- `praxiflow` or `praxiflow legacy` runs the original branch-based generator.
+- `praxiflow create` runs the versioned, composable project builder.
+
+### Composable Builder
+
+```bash
+# Recommended fullstack defaults
+praxiflow create my-app --quick
+
+# Guided framework, database, auth, package manager, and deployment choices
+praxiflow create my-app --custom
+
+# Reproducible team or CI generation
+praxiflow create --config praxis.config.json
+
+# Generate source without installing packages
+praxiflow create my-app --quick --no-install
+```
+
+The focused V1 module catalog supports Next.js, Vite, Express, PostgreSQL,
+MongoDB, self-hosted auth, Clerk, Supabase Auth, Tailwind CSS, shadcn/ui,
+Vercel, Railway, Render, and Docker. Generated projects include a copy of
+their resolved `praxis.config.json` and `.env.example` files; secrets are
+never written by the CLI.
+
+Example configuration:
+
+```json
+{
+  "schemaVersion": 1,
+  "name": "my-app",
+  "projectType": "fullstack",
+  "language": "typescript",
+  "frontend": {
+    "framework": "next",
+    "styling": "tailwind-shadcn"
+  },
+  "backend": {
+    "framework": "express",
+    "database": "postgres",
+    "auth": "self-hosted"
+  },
+  "deployment": ["vercel", "railway", "docker"],
+  "packageManager": "npm",
+  "installDependencies": true,
+  "initializeGit": true
+}
+```
+
+Template assets are bundled with each Praxis Flow release, so the same CLI
+version and configuration produce the same source tree.
+
 ### Quick Start
 
 1. Run the CLI tool:
@@ -131,6 +185,8 @@ npm run prod
 - `npm run dev` - Run with ts-node for development
 - `npm run build` - Compile TypeScript to JavaScript
 - `npm run prod` - Run the compiled version
+- `npm test` - Run the automated compatibility and composition tests
+- `npm run check` - Run tests and the TypeScript build
 
 ## Project Structure
 

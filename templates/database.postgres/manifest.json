@@ -1,0 +1,53 @@
+{
+  "id": "database.postgres",
+  "overlays": [
+    { "scope": "backend", "source": "files/common" },
+    { "scope": "backend", "source": "files/typescript", "language": "typescript" },
+    { "scope": "backend", "source": "files/javascript", "language": "javascript" }
+  ],
+  "packages": [{
+    "scope": "backend",
+    "dependencies": {
+      "@prisma/client": "6.12.0",
+      "dotenv": "^16.6.1"
+    },
+    "devDependencies": {
+      "prisma": "6.12.0"
+    },
+    "scripts": {
+      "db:generate": "prisma generate",
+      "db:migrate": "prisma migrate dev"
+    }
+  }],
+  "env": [{ "scope": "backend", "keys": ["DATABASE_URL"] }],
+  "patches": [
+    {
+      "scope": "backend",
+      "file": "src/server.ts",
+      "find": "// @praxis:imports",
+      "replace": "// @praxis:imports\nimport { prisma } from \"./lib/prisma.js\";",
+      "language": "typescript"
+    },
+    {
+      "scope": "backend",
+      "file": "src/server.ts",
+      "find": "  // @praxis:startup",
+      "replace": "  // @praxis:startup\n  await prisma.$connect();\n  shutdownTasks.push(() => prisma.$disconnect());",
+      "language": "typescript"
+    },
+    {
+      "scope": "backend",
+      "file": "src/server.js",
+      "find": "// @praxis:imports",
+      "replace": "// @praxis:imports\nimport { prisma } from \"./lib/prisma.js\";",
+      "language": "javascript"
+    },
+    {
+      "scope": "backend",
+      "file": "src/server.js",
+      "find": "  // @praxis:startup",
+      "replace": "  // @praxis:startup\n  await prisma.$connect();\n  shutdownTasks.push(() => prisma.$disconnect());",
+      "language": "javascript"
+    }
+  ]
+}

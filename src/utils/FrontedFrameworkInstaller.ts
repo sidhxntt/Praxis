@@ -1,5 +1,6 @@
 import { capitalizeFirstLetter } from "../controllers/user_touch";
 import BaseFrameworkInstaller from "./BaseFrameworkInstaller";
+import { legacyBranchFor } from "../legacy/branchMatrix";
 
 class FrontedFrameworkInstaller extends BaseFrameworkInstaller {
   constructor(
@@ -9,11 +10,11 @@ class FrontedFrameworkInstaller extends BaseFrameworkInstaller {
   ) {
     const frameworks = {
       ts: {
-        branch: `ts-${frameworkType}`,
+        branch: legacyBranchFor({ language: "ts", framework: frameworkType }),
         message: `Installing TypeScript ${capitalizeFirstLetter(frameworkType)} Template...`,
       },
       js: {
-        branch: `js-${frameworkType}`,
+        branch: legacyBranchFor({ language: "js", framework: frameworkType }),
         message: `Installing JavaScript ${capitalizeFirstLetter(frameworkType)} Template...`,
       },
     };
