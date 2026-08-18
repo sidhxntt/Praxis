@@ -172,6 +172,62 @@ describe("composeProject", () => {
     await expect(readFile(path.join(destination, "compose.yml"))).rejects.toThrow();
   });
 
+  it("filters cache-specific overlays, patches, packages, and environment", async () => {
+    const root = await fixtureRoot();
+    await addModule(
+      root,
+      "base",
+      { overlays: [{ scope: "backend", source: "files/common" }] },
+      { "src/server.ts": "// cache\n" },
+    );
+    await addModule(
+      root,
+      "cache",
+      {
+        overlays: [
+          { scope: "backend", source: "files/common", cache: "redis" },
+        ],
+        patches: [
+          {
+            scope: "backend",
+            file: "src/server.ts",
+            find: "// cache",
+            replace: "// cache\n// redis enabled",
+            cache: "redis",
+          },
+        ],
+        packages: [
+          { scope: "backend", dependencies: { redis: "6.2.1" }, cache: "redis" },
+          { scope: "backend", dependencies: { memjs: "1.3.2" }, cache: "memcached" },
+        ],
+        env: [
+          { scope: "backend", keys: ["REDIS_ONLY"], cache: "redis" },
+          { scope: "backend", keys: ["MEMCACHED_ONLY"], cache: "memcached" },
+        ],
+      },
+      { "src/lib/cache.ts": "export const cache = 'redis';\n" },
+    );
+    const config = quickConfig("acme");
+    config.backend!.cache = "memcached";
+    config.deployment = [];
+    const destination = path.join(root, "output", "acme");
+
+    await composeProject(config, ["base", "cache"], {
+      templatesRoot: path.join(root, "templates"),
+      destination,
+    });
+
+    await expect(readFile(path.join(destination, "backend/src/lib/cache.ts"))).rejects.toThrow();
+    expect(await readFile(path.join(destination, "backend/src/server.ts"), "utf8"))
+      .toBe("// cache\n");
+    const packageJson = JSON.parse(
+      await readFile(path.join(destination, "backend/package.json"), "utf8"),
+    );
+    expect(packageJson.dependencies).toEqual({ memjs: "1.3.2" });
+    expect(await readFile(path.join(destination, "backend/.env.example"), "utf8"))
+      .toBe("MEMCACHED_ONLY=\n");
+  });
+
   it("rejects manifest paths outside their allowed directories", async () => {
     const root = await fixtureRoot();
     await addModule(root, "unsafe", {

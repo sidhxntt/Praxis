@@ -1,0 +1,64 @@
+{
+  "id": "cache.memcached",
+  "overlays": [
+    { "scope": "backend", "source": "files/typescript", "language": "typescript", "cache": "memcached" },
+    { "scope": "backend", "source": "files/javascript", "language": "javascript", "cache": "memcached" }
+  ],
+  "packages": [
+    { "scope": "backend", "cache": "memcached", "dependencies": { "memjs": "1.3.2" } },
+    { "scope": "backend", "cache": "memcached", "language": "typescript", "devDependencies": { "@types/memjs": "1.3.3" } }
+  ],
+  "env": [
+    { "scope": "backend", "cache": "memcached", "keys": ["CACHE_URL=localhost:11211"] }
+  ],
+  "patches": [
+    {
+      "scope": "backend",
+      "file": "src/server.ts",
+      "language": "typescript",
+      "cache": "memcached",
+      "find": "// @praxis:imports",
+      "replace": "// @praxis:imports\nimport { cacheGet, cacheSet, closeCache, connectCache } from \"./lib/cache.js\";"
+    },
+    {
+      "scope": "backend",
+      "file": "src/server.ts",
+      "language": "typescript",
+      "cache": "memcached",
+      "find": "// @praxis:middleware",
+      "replace": "// @praxis:middleware\n\napp.get(\"/api/cache\", async (_request, response, next) => {\n  try {\n    await cacheSet(\"praxis:example\", \"Cache is working\");\n    response.json({ value: await cacheGet(\"praxis:example\") });\n  } catch (error) {\n    next(error);\n  }\n});"
+    },
+    {
+      "scope": "backend",
+      "file": "src/server.ts",
+      "language": "typescript",
+      "cache": "memcached",
+      "find": "  // @praxis:startup",
+      "replace": "  // @praxis:startup\n  await connectCache();\n  shutdownTasks.push(closeCache);"
+    },
+    {
+      "scope": "backend",
+      "file": "src/server.js",
+      "language": "javascript",
+      "cache": "memcached",
+      "find": "// @praxis:imports",
+      "replace": "// @praxis:imports\nimport { cacheGet, cacheSet, closeCache, connectCache } from \"./lib/cache.js\";"
+    },
+    {
+      "scope": "backend",
+      "file": "src/server.js",
+      "language": "javascript",
+      "cache": "memcached",
+      "find": "// @praxis:middleware",
+      "replace": "// @praxis:middleware\n\napp.get(\"/api/cache\", async (_request, response, next) => {\n  try {\n    await cacheSet(\"praxis:example\", \"Cache is working\");\n    response.json({ value: await cacheGet(\"praxis:example\") });\n  } catch (error) {\n    next(error);\n  }\n});"
+    },
+    {
+      "scope": "backend",
+      "file": "src/server.js",
+      "language": "javascript",
+      "cache": "memcached",
+      "find": "  // @praxis:startup",
+      "replace": "  // @praxis:startup\n  await connectCache();\n  shutdownTasks.push(closeCache);"
+    }
+  ]
+}

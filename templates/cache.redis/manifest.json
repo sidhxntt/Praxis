@@ -1,0 +1,63 @@
+{
+  "id": "cache.redis",
+  "overlays": [
+    { "scope": "backend", "source": "files/typescript", "language": "typescript", "cache": "redis" },
+    { "scope": "backend", "source": "files/javascript", "language": "javascript", "cache": "redis" }
+  ],
+  "packages": [
+    { "scope": "backend", "cache": "redis", "dependencies": { "redis": "6.2.1" } }
+  ],
+  "env": [
+    { "scope": "backend", "cache": "redis", "keys": ["CACHE_URL=redis://localhost:6379"] }
+  ],
+  "patches": [
+    {
+      "scope": "backend",
+      "file": "src/server.ts",
+      "language": "typescript",
+      "cache": "redis",
+      "find": "// @praxis:imports",
+      "replace": "// @praxis:imports\nimport { cacheGet, cacheSet, closeCache, connectCache } from \"./lib/cache.js\";"
+    },
+    {
+      "scope": "backend",
+      "file": "src/server.ts",
+      "language": "typescript",
+      "cache": "redis",
+      "find": "// @praxis:middleware",
+      "replace": "// @praxis:middleware\n\napp.get(\"/api/cache\", async (_request, response, next) => {\n  try {\n    await cacheSet(\"praxis:example\", \"Cache is working\");\n    response.json({ value: await cacheGet(\"praxis:example\") });\n  } catch (error) {\n    next(error);\n  }\n});"
+    },
+    {
+      "scope": "backend",
+      "file": "src/server.ts",
+      "language": "typescript",
+      "cache": "redis",
+      "find": "  // @praxis:startup",
+      "replace": "  // @praxis:startup\n  await connectCache();\n  shutdownTasks.push(closeCache);"
+    },
+    {
+      "scope": "backend",
+      "file": "src/server.js",
+      "language": "javascript",
+      "cache": "redis",
+      "find": "// @praxis:imports",
+      "replace": "// @praxis:imports\nimport { cacheGet, cacheSet, closeCache, connectCache } from \"./lib/cache.js\";"
+    },
+    {
+      "scope": "backend",
+      "file": "src/server.js",
+      "language": "javascript",
+      "cache": "redis",
+      "find": "// @praxis:middleware",
+      "replace": "// @praxis:middleware\n\napp.get(\"/api/cache\", async (_request, response, next) => {\n  try {\n    await cacheSet(\"praxis:example\", \"Cache is working\");\n    response.json({ value: await cacheGet(\"praxis:example\") });\n  } catch (error) {\n    next(error);\n  }\n});"
+    },
+    {
+      "scope": "backend",
+      "file": "src/server.js",
+      "language": "javascript",
+      "cache": "redis",
+      "find": "  // @praxis:startup",
+      "replace": "  // @praxis:startup\n  await connectCache();\n  shutdownTasks.push(closeCache);"
+    }
+  ]
+}

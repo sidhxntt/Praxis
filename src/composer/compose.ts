@@ -42,6 +42,7 @@ export async function composeProject(
         if (overlay.language && overlay.language !== config.language) continue;
         if (overlay.framework && overlay.framework !== config.frontend?.framework) continue;
         if (overlay.projectType && overlay.projectType !== config.projectType) continue;
+        if (overlay.cache && overlay.cache !== config.backend?.cache) continue;
         const moduleRoot = path.resolve(options.templatesRoot, manifest.id);
         const source = confinedPath(moduleRoot, overlay.source, "overlay source");
         const output = outputDirectory(staging, overlay.scope, config);
@@ -51,6 +52,7 @@ export async function composeProject(
         if (patch.language && patch.language !== config.language) continue;
         if (patch.framework && patch.framework !== config.frontend?.framework) continue;
         if (patch.projectType && patch.projectType !== config.projectType) continue;
+        if (patch.cache && patch.cache !== config.backend?.cache) continue;
         const output = outputDirectory(staging, patch.scope, config);
         const filePath = confinedPath(output, patch.file, "patch target");
         const contents = await readFile(filePath, "utf8");
@@ -216,7 +218,7 @@ async function applyEnvironment(
     if (keys.size === 0) continue;
     const directory = outputDirectory(staging, scope, config);
     await mkdir(directory, { recursive: true });
-    const contents = [...keys].sort().map((key) => `${key}=`).join("\n");
+    const contents = [...keys].sort().map((key) => key.includes("=") ? key : `${key}=`).join("\n");
     await writeFile(path.join(directory, ".env.example"), `${contents}\n`);
   }
 }
@@ -227,7 +229,8 @@ function contributionMatches(
 ): boolean {
   return (!contribution.language || contribution.language === config.language)
     && (!contribution.framework || contribution.framework === config.frontend?.framework)
-    && (!contribution.projectType || contribution.projectType === config.projectType);
+    && (!contribution.projectType || contribution.projectType === config.projectType)
+    && (!contribution.cache || contribution.cache === config.backend?.cache);
 }
 
 function mergeRecord(

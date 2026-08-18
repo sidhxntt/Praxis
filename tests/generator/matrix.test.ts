@@ -124,4 +124,61 @@ describe("bundled template matrix", () => {
       .not.toContain("NEXT_PUBLIC_SUPABASE_URL");
     await expect(access(path.join(output, "backend/prisma"))).rejects.toThrow();
   });
+
+  it("generates a TypeScript backend with a working Redis cache module", async () => {
+    const output = await generate({
+      name: "redis-api",
+      projectType: "backend",
+      language: "typescript",
+      backend: {
+        framework: "express",
+        database: "none",
+        auth: "none",
+        cache: "redis",
+      },
+      deployment: [],
+    });
+    const packageJson = JSON.parse(await readFile(path.join(output, "package.json"), "utf8"));
+    expect(packageJson.dependencies.redis).toBe("6.2.1");
+    expect(packageJson.dependencies.memjs).toBeUndefined();
+    expect(packageJson.devDependencies?.["@types/memjs"]).toBeUndefined();
+    expect(await readFile(path.join(output, ".env.example"), "utf8"))
+      .toContain("CACHE_URL=redis://localhost:6379");
+    expect(await readFile(path.join(output, "src/lib/cache.ts"), "utf8"))
+      .toContain("createClient");
+    const server = await readFile(path.join(output, "src/server.ts"), "utf8");
+    expect(server).toContain('from "./lib/cache.js"');
+    expect(server).toContain("await connectCache()");
+    expect(server).toContain("shutdownTasks.push(closeCache)");
+    expect(server).toContain('app.get("/api/cache"');
+    expect(server).toContain('await cacheSet("praxis:example"');
+  });
+
+  it("generates a JavaScript backend with a working Memcached cache module", async () => {
+    const output = await generate({
+      name: "memcached-api",
+      projectType: "backend",
+      language: "javascript",
+      backend: {
+        framework: "express",
+        database: "none",
+        auth: "none",
+        cache: "memcached",
+      },
+      deployment: [],
+    });
+    const packageJson = JSON.parse(await readFile(path.join(output, "package.json"), "utf8"));
+    expect(packageJson.dependencies.memjs).toBe("1.3.2");
+    expect(packageJson.dependencies.redis).toBeUndefined();
+    expect(packageJson.devDependencies?.["@types/memjs"]).toBeUndefined();
+    expect(await readFile(path.join(output, ".env.example"), "utf8"))
+      .toContain("CACHE_URL=localhost:11211");
+    expect(await readFile(path.join(output, "src/lib/cache.js"), "utf8"))
+      .toContain("Client.create");
+    const server = await readFile(path.join(output, "src/server.js"), "utf8");
+    expect(server).toContain("await connectCache()");
+    expect(server).toContain("shutdownTasks.push(closeCache)");
+    expect(server).toContain('app.get("/api/cache"');
+    expect(server).toContain('await cacheSet("praxis:example"');
+  });
 });

@@ -6,6 +6,7 @@ export interface OverlayDefinition {
   language?: "typescript" | "javascript";
   framework?: "next" | "vite";
   projectType?: "frontend" | "backend" | "fullstack";
+  cache?: "redis" | "memcached" | "none";
 }
 
 export interface PackageContribution {
@@ -13,6 +14,7 @@ export interface PackageContribution {
   language?: "typescript" | "javascript";
   framework?: "next" | "vite";
   projectType?: "frontend" | "backend" | "fullstack";
+  cache?: "redis" | "memcached" | "none";
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
   scripts?: Record<string, string>;
@@ -24,6 +26,7 @@ export interface EnvironmentContribution {
   language?: "typescript" | "javascript";
   framework?: "next" | "vite";
   projectType?: "frontend" | "backend" | "fullstack";
+  cache?: "redis" | "memcached" | "none";
 }
 
 export interface PatchDefinition {
@@ -34,6 +37,7 @@ export interface PatchDefinition {
   language?: "typescript" | "javascript";
   framework?: "next" | "vite";
   projectType?: "frontend" | "backend" | "fullstack";
+  cache?: "redis" | "memcached" | "none";
 }
 
 export interface TemplateManifest {
