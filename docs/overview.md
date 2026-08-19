@@ -35,6 +35,8 @@ The configuration says what the user wants. The resolver converts that intent in
 
 This distinction matters: not every template choice produces a backend. “Template” can also mean a UI style module, deployment module, database module, or capability overlay. See [Terminology](terminology.md).
 
+Use [Praxis Core Internals](core-internals.md) for how the generator is implemented. Use [Praxis Template Architecture](template-architecture.md) for how generated code and infrastructure work together.
+
 ## Determinism and provenance
 
 For a fixed Praxis version and a validated configuration, module resolution and composition are deterministic. Every output receives `praxis.config.json`, which records the effective selection. UI template outputs also receive the selected `DESIGN.md`. Pro outputs record both requested and implied capabilities.
@@ -66,4 +68,3 @@ Praxis is not:
 - Module resolution: [`cli/src/config/resolver.ts`](../cli/src/config/resolver.ts)
 - Composition: [`cli/src/composer/compose.ts`](../cli/src/composer/compose.ts)
 - Public website: [`web/`](../web/)
-

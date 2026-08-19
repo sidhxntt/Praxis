@@ -2,6 +2,8 @@
 
 This page traces runtime relationships inside generated outputs. Praxis itself is not present at runtime.
 
+For stack-specific directory maps, dependency wiring, lifecycle, capability integration, and extension points, use the canonical [Express](express-architecture.md), [Django/DRF](django-architecture.md), and [Go/Gin](gin-architecture.md) architecture pages.
+
 ## Standard Express backend
 
 ```mermaid
@@ -110,4 +112,3 @@ Compose is developer/local production-shape wiring. Kubernetes expresses workloa
 6. Confirm with the relevant generator test rather than relying on filenames alone.
 
 Useful tests: [`cli/tests/generator/lifecycle.test.ts`](../cli/tests/generator/lifecycle.test.ts), [`cli/tests/generator/proRuntime.test.ts`](../cli/tests/generator/proRuntime.test.ts), and [`cli/tests/generator/proCapabilities.test.ts`](../cli/tests/generator/proCapabilities.test.ts).
-

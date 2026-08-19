@@ -6,7 +6,13 @@ on:
     paths:
       - "docs/**"
       - "scripts/check-doc-links.mjs"
+      - "scripts/check-template-context.mjs"
       - "scripts/render-github-wiki.mjs"
+      - "scripts/resolve-template-context.mjs"
+      - "scripts/template-context-lib.mjs"
+      - "tests/docs/**"
+      - "AGENTS.md"
+      - "CLAUDE.md"
       - "package.json"
       - ".github/workflows/wiki.yml"
   workflow_dispatch:
@@ -40,7 +46,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Home.md Overview.md Architecture.md Terminology.md Repository-Map.md Code-Architecture.md Generation-Pipeline.md Manifest-System.md Standard-Projects.md Praxis-Pro.md Generated-Backends.md UI-Templates.md Testing.md Agent-Guide.md Wiki-Publishing.md _Sidebar.md _Footer.md
+          git add Home.md Overview.md Core-Internals.md Template-Architecture.md Architecture.md Terminology.md Repository-Map.md Code-Architecture.md Generation-Pipeline.md Manifest-System.md Standard-Projects.md Standard-Frontend-Architecture.md Express-Architecture.md Fullstack-Architecture.md Praxis-Pro.md Django-Architecture.md Gin-Architecture.md Capability-Architecture.md Compose-Architecture.md Kubernetes-Architecture.md Terraform-Architecture.md Extending-Generated-Projects.md Generated-Backends.md UI-Templates.md Testing.md Agent-Guide.md Template-Agent-Guide.md Wiki-Publishing.md _Sidebar.md _Footer.md
           if git diff --cached --quiet; then
             echo "Wiki is already current."
             exit 0

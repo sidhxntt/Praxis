@@ -2,6 +2,8 @@
 
 Standard schema-version-1 projects compose frontend, Express backend, and deployment modules according to `projectType`.
 
+Detailed runtime guides: [frontend](standard-frontend-architecture.md), [Express backend](express-architecture.md), [fullstack workspace](fullstack-architecture.md), and [Docker Compose](compose-architecture.md).
+
 ## Project families
 
 ### Frontend
@@ -109,4 +111,3 @@ The frontend and backend remain separate packages. Database and cache clients ar
 - Configuration compatibility: [`cli/src/config/schema.ts`](../cli/src/config/schema.ts)
 - Standard manifests: [`cli/templates/backend.express/`](../cli/templates/backend.express/), [`cli/templates/database.postgres/`](../cli/templates/database.postgres/), [`cli/templates/deployment.docker/`](../cli/templates/deployment.docker/)
 - Matrix tests: [`cli/tests/generator/matrix.test.ts`](../cli/tests/generator/matrix.test.ts)
-
