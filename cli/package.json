@@ -1,6 +1,6 @@
 {
-  "name": "@sidhxntt/praxiflow",
-  "version": "1.4.1",
+  "name": "praxiflow",
+  "version": "1.4.2",
   "description": "Composable frontend, backend, full-stack, and production-backend project generator.",
   "repository": {
     "type": "git",
@@ -27,10 +27,11 @@
     "node": ">=20"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
   },
   "bin": {
-    "praxiflow": "./dist/index.js"
+    "praxiflow": "dist/index.js"
   },
   "license": "MIT",
   "scripts": {

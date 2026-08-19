@@ -4,7 +4,7 @@
 
 | Path | Owner and purpose | Published? |
 | --- | --- | --- |
-| `cli/` | Praxis Flow CLI, generator, manifests, UI artifacts, and tests | GitHub npm package `@sidhxntt/praxiflow` |
+| `cli/` | Praxis Flow CLI, generator, manifests, UI artifacts, and tests | Public npm package `praxiflow` |
 | `web/` | Public Next.js product website | Vercel application |
 | `docs/` | Human/agent documentation source and design records | Rendered to GitHub Wiki |
 | `scripts/` | Repository documentation tooling | Repository only |

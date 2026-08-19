@@ -226,3 +226,15 @@ test("Codex and Claude Code bootstrap into one canonical template guide", async 
     "Run every required verification command",
   ]) assert.match(guide, new RegExp(phrase, "i"));
 });
+
+test("Agent Guide provides a reusable prompt for new coding-agent sessions", async () => {
+  const guide = await readFile(path.join(root, "docs/agent-guide.md"), "utf8");
+
+  assert.match(guide, /## Prompt for a new agent session/);
+  assert.match(guide, /Read `AGENTS\.md` and `docs\/template-agent-guide\.md` completely/);
+  assert.match(guide, /resolve-template-context\.mjs --config/);
+  assert.match(guide, /--bundle <id>/);
+  assert.match(guide, /State the loaded bundle/);
+  assert.match(guide, /run every returned verification command/i);
+  assert.match(guide, /GitHub-only/i);
+});

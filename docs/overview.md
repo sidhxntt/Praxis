@@ -7,7 +7,7 @@ Praxis has two generation families:
 - **Standard Praxis Flow** generates frontend, backend, or fullstack JavaScript/TypeScript projects. Frontends may use Next.js, Vite React, Vue, Astro, or Angular; standard backends use Express.
 - **Praxis Pro** is a project type inside the same CLI. It generates a production-oriented backend using Python with Django/DRF or Go with Gin, plus selected operational capabilities.
 
-The repository also contains `web/`, the public Praxis website. The website explains the product; it does not run generation and is not shipped in the `@sidhxntt/praxiflow` GitHub package.
+The repository also contains `web/`, the public Praxis website. The website explains the product; it does not run generation and is not shipped in the `praxiflow` npm package.
 
 ## The central idea
 
