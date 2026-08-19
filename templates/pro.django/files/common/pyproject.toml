@@ -52,3 +52,7 @@ strict = true
 
 [tool.django-stubs]
 django_settings_module = "config.settings.test"
+
+[[tool.mypy.overrides]]
+module = ["celery", "celery.*"]
+ignore_missing_imports = true

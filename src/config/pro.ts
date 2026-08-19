@@ -60,6 +60,7 @@ export const recommendedProCapabilities: ProCapability[] = [
 ];
 
 const implications: Partial<Record<ProCapability, ProCapability[]>> = {
+  "background-jobs": ["redis-cache"],
   "scheduled-jobs": ["background-jobs"],
   "email-tasks": ["background-jobs"],
   realtime: ["redis-cache"],

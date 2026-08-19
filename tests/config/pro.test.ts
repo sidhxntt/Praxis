@@ -125,6 +125,13 @@ describe("Praxis Pro configuration", () => {
 });
 
 describe("resolveProCapabilities", () => {
+  it("uses Redis for background jobs", () => {
+    expect(resolveProCapabilities(["background-jobs"])).toEqual([
+      "redis-cache",
+      "background-jobs",
+    ]);
+  });
+
   it("resolves implications in deterministic catalog order", () => {
     expect(
       resolveProCapabilities([

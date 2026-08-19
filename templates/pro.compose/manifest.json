@@ -32,6 +32,22 @@
       "find": "volumes:\n  postgres-data:",
       "replace": "volumes:\n  postgres-data:\n  redis-data:",
       "capability": "redis-cache"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  worker:\n    build:\n      context: .\n    environment:\n      DJANGO_SETTINGS_MODULE: config.settings.development\n      DJANGO_SECRET_KEY: local-development-only-secret-key\n      DATABASE_HOST: postgres\n      DATABASE_NAME: app\n      DATABASE_USER: app\n      DATABASE_PASSWORD: app\n      REDIS_URL: redis://redis:6379/0\n    command: [\"celery\", \"-A\", \"config\", \"worker\", \"--loglevel=INFO\", \"--concurrency=2\"]\n    depends_on:\n      postgres:\n        condition: service_healthy\n      redis:\n        condition: service_healthy\n    restart: unless-stopped\n  # @praxis:services",
+      "proStack": "python-django",
+      "capability": "background-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  worker:\n    build:\n      context: .\n    entrypoint: [\"/worker\"]\n    environment:\n      REDIS_URL: redis://redis:6379/0\n    depends_on:\n      redis:\n        condition: service_healthy\n    restart: unless-stopped\n  # @praxis:services",
+      "proStack": "go-gin",
+      "capability": "background-jobs"
     }
   ]
 }

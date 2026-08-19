@@ -18,6 +18,7 @@ describe("proAnswersToConfig", () => {
         stack: "python-django",
         requestedCapabilities: ["scheduled-jobs", "terraform"],
         resolvedCapabilities: [
+          "redis-cache",
           "background-jobs",
           "scheduled-jobs",
           "kubernetes",
