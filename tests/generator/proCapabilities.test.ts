@@ -178,4 +178,47 @@ describe("Pro capability parity", () => {
         .rejects.toMatchObject({ code: "ENOENT" });
     },
   );
+
+  it.each(["python-django", "go-gin"] as const)(
+    "wires OpenTelemetry into the %s runtime and local Collector",
+    async (stack) => {
+      const destination = await generate(stack, ["opentelemetry"]);
+      const compose = await readFile(path.join(destination, "docker-compose.yml"), "utf8");
+      expect(compose).toContain("otel/opentelemetry-collector-contrib:0.153.0");
+      expect(compose).toContain("OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318");
+      expect(compose).toContain('test: ["CMD", "/otelcol-contrib", "--version"]');
+      const collector = await readFile(path.join(destination, "ops/otel-collector.yml"), "utf8");
+      expect(collector).toContain("health_check:");
+      expect(collector).toContain("endpoint: 0.0.0.0:13133");
+
+      if (stack === "python-django") {
+        const project = await readFile(path.join(destination, "pyproject.toml"), "utf8");
+        expect(project).toContain("opentelemetry-sdk==1.44.0");
+        expect(project).toContain("opentelemetry-instrumentation-django==0.65b0");
+        expect(await readFile(path.join(destination, "core/telemetry.py"), "utf8"))
+          .toContain("OTLPSpanExporter");
+        expect(await readFile(path.join(destination, "config/asgi.py"), "utf8"))
+          .toContain("configure_telemetry");
+      } else {
+        const goModule = await readFile(path.join(destination, "go.mod"), "utf8");
+        expect(goModule).toContain("go.opentelemetry.io/otel v1.42.0");
+        expect(goModule).toContain("go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin");
+        expect(await readFile(path.join(destination, "internal/telemetry/telemetry.go"), "utf8"))
+          .toContain("otlptracehttp.New");
+        expect(await readFile(path.join(destination, "internal/httpserver/router.go"), "utf8"))
+          .toContain('otelgin.Middleware("capability-api")');
+      }
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
+    "leaves no OpenTelemetry artifacts in a minimal %s project",
+    async (stack) => {
+      const destination = await generate(stack, []);
+      expect(await readFile(path.join(destination, "docker-compose.yml"), "utf8"))
+        .not.toContain("otel-collector");
+      await expect(readFile(path.join(destination, "ops/otel-collector.yml"), "utf8"))
+        .rejects.toMatchObject({ code: "ENOENT" });
+    },
+  );
 });

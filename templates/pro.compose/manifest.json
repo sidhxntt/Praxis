@@ -78,6 +78,27 @@
       "find": "volumes:\n  postgres-data:",
       "replace": "volumes:\n  postgres-data:\n  prometheus-data:",
       "capability": "prometheus"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      # @praxis:api-environment",
+      "replace": "      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318\n      OTEL_SERVICE_NAME: {{projectName}}\n      # @praxis:api-environment",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      # @praxis:api-dependencies",
+      "replace": "      otel-collector:\n        condition: service_healthy\n      # @praxis:api-dependencies",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  otel-collector:\n    image: otel/opentelemetry-collector-contrib:0.153.0\n    command: [\"--config=/etc/otelcol-contrib/config.yaml\"]\n    volumes:\n      - ./ops/otel-collector.yml:/etc/otelcol-contrib/config.yaml:ro\n    ports:\n      - \"4317:4317\"\n      - \"4318:4318\"\n      - \"13133:13133\"\n    healthcheck:\n      test: [\"CMD\", \"/otelcol-contrib\", \"--version\"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n    restart: unless-stopped\n  # @praxis:services",
+      "capability": "opentelemetry"
     }
   ]
 }
