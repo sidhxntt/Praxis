@@ -221,4 +221,32 @@ describe("Pro capability parity", () => {
         .rejects.toMatchObject({ code: "ENOENT" });
     },
   );
+
+  it.each(["python-django", "go-gin"] as const)(
+    "wires Nginx into the %s local production topology",
+    async (stack) => {
+      const destination = await generate(stack, ["nginx"]);
+      const compose = await readFile(path.join(destination, "docker-compose.yml"), "utf8");
+      expect(compose).toContain("nginx:1.30.3-alpine");
+      expect(compose).toContain("./ops/nginx.conf:/etc/nginx/nginx.conf:ro");
+      expect(compose).toContain("condition: service_healthy");
+      expect(compose).toContain("http://localhost/nginx-health");
+      const config = await readFile(path.join(destination, "ops/nginx.conf"), "utf8");
+      expect(config).toContain(stack === "python-django" ? "server api:8000" : "server api:8080");
+      expect(config).toContain("proxy_set_header X-Request-ID");
+      expect(config).toContain("client_max_body_size 2m");
+      expect(config).toContain("add_header X-Content-Type-Options nosniff always");
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
+    "leaves no Nginx artifacts in a minimal %s project",
+    async (stack) => {
+      const destination = await generate(stack, []);
+      expect(await readFile(path.join(destination, "docker-compose.yml"), "utf8"))
+        .not.toContain("nginx:");
+      await expect(readFile(path.join(destination, "ops/nginx.conf"), "utf8"))
+        .rejects.toMatchObject({ code: "ENOENT" });
+    },
+  );
 });

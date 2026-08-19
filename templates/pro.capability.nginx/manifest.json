@@ -1,0 +1,17 @@
+{
+  "id": "pro.capability.nginx",
+  "overlays": [
+    {
+      "scope": "root",
+      "source": "files/django",
+      "proStack": "python-django",
+      "capability": "nginx"
+    },
+    {
+      "scope": "root",
+      "source": "files/go",
+      "proStack": "go-gin",
+      "capability": "nginx"
+    }
+  ]
+}
