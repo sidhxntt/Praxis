@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seed
+spec:
+  suspend: true
+  ttlSecondsAfterFinished: 3600
+  backoffLimit: 1
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{projectName}}
+      automountServiceAccountToken: false
+      containers:
+        - name: seed
+          image: praxis-api
+          command: ["python", "manage.py", "seed"]
+          envFrom: [{ configMapRef: { name: app-config } }]
+          env:
+            - name: DJANGO_SECRET_KEY
+              valueFrom: { secretKeyRef: { name: praxis-secrets, key: django-secret-key } }
+            - name: DATABASE_PASSWORD
+              valueFrom: { secretKeyRef: { name: praxis-secrets, key: database-password } }
+            - name: SEED_ADMIN_EMAIL
+              valueFrom: { secretKeyRef: { name: praxis-secrets, key: seed-admin-email } }
+            - name: SEED_ADMIN_PASSWORD
+              valueFrom: { secretKeyRef: { name: praxis-secrets, key: seed-admin-password } }
+          securityContext: { allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: { drop: ["ALL"] } }

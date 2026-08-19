@@ -1,0 +1,6 @@
+{
+  "id": "pro.terraform.shared",
+  "overlays": [
+    { "scope": "root", "source": "files/common", "capability": "terraform" }
+  ]
+}

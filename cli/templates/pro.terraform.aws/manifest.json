@@ -1,0 +1,9 @@
+{
+  "id": "pro.terraform.aws",
+  "overlays": [
+    { "scope": "root", "source": "files/common", "cloud": "aws" },
+    { "scope": "root", "source": "files/cache", "cloud": "aws", "capability": "redis-cache" },
+    { "scope": "root", "source": "files/storage", "cloud": "aws", "capability": "object-storage" },
+    { "scope": "root", "source": "files/search", "cloud": "aws", "capability": "search" }
+  ]
+}

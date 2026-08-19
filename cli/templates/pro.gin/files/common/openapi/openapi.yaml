@@ -1,0 +1,11 @@
+openapi: 3.1.0
+info:
+  title: {{projectName}} API
+  version: 1.0.0
+paths:
+  /api/v1/health/live:
+    get:
+      operationId: healthLive
+      responses:
+        "200":
+          description: Process is alive

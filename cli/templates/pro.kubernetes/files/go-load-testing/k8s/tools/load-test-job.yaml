@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: load-test-scenario
+data:
+  k6.js: |
+    import http from "k6/http";
+    import { check } from "k6";
+    export const options = { vus: 10, duration: "1m", thresholds: { http_req_failed: ["rate<0.01"], http_req_duration: ["p(95)<500"] } };
+    export default function () {
+      const response = http.get("http://api/api/v1/health/live");
+      check(response, { "status 200": (result) => result.status === 200 });
+    }
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: load-test
+spec:
+  suspend: true
+  ttlSecondsAfterFinished: 3600
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      containers:
+        - name: k6
+          image: grafana/k6:1.3.0
+          args: ["run", "/scenario/k6.js"]
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { cpu: "1", memory: 512Mi }
+          securityContext: { allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: { drop: ["ALL"] } }
+          volumeMounts: [{ name: scenario, mountPath: /scenario, readOnly: true }]
+      volumes: [{ name: scenario, configMap: { name: load-test-scenario } }]

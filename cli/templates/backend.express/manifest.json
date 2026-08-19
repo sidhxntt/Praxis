@@ -1,0 +1,25 @@
+{
+  "id": "backend.express",
+  "overlays": [
+    {
+      "scope": "backend",
+      "source": "files/typescript",
+      "language": "typescript"
+    },
+    {
+      "scope": "backend",
+      "source": "files/javascript",
+      "language": "javascript"
+    }
+  ],
+  "packages": [
+    {
+    "scope": "backend",
+    "dependencies": {
+      "dotenv": "^16.6.1",
+      "express": "^5.1.0"
+    }
+    }
+  ],
+  "env": [{ "scope": "backend", "keys": ["PORT"] }]
+}

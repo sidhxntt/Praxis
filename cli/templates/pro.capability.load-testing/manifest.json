@@ -1,0 +1,17 @@
+{
+  "id": "pro.capability.load-testing",
+  "overlays": [
+    { "scope": "root", "source": "files/django", "proStack": "python-django", "capability": "load-testing" },
+    { "scope": "root", "source": "files/go", "proStack": "go-gin", "capability": "load-testing" }
+  ],
+  "patches": [
+    {
+      "scope": "root",
+      "file": "pyproject.toml",
+      "find": "  # @praxis:dev-dependencies",
+      "replace": "  \"locust==2.43.3\",\n  # @praxis:dev-dependencies",
+      "proStack": "python-django",
+      "capability": "load-testing"
+    }
+  ]
+}

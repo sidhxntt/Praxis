@@ -1,0 +1,60 @@
+{
+  "id": "pro.capability.redis-cache",
+  "overlays": [
+    {
+      "scope": "root",
+      "source": "files/go",
+      "proStack": "go-gin",
+      "capability": "redis-cache"
+    }
+  ],
+  "patches": [
+    {
+      "scope": "root",
+      "file": "pyproject.toml",
+      "find": "  # @praxis:dependencies",
+      "replace": "  \"django-redis==7.0.0\",\n  # @praxis:dependencies",
+      "proStack": "python-django",
+      "capability": "redis-cache"
+    },
+    {
+      "scope": "root",
+      "file": "config/settings/base.py",
+      "find": "# @praxis:settings",
+      "replace": "CACHES = {\n    \"default\": {\n        \"BACKEND\": \"django_redis.cache.RedisCache\",\n        \"LOCATION\": os.getenv(\"REDIS_URL\", \"redis://localhost:6379/0\"),\n        \"OPTIONS\": {\"CLIENT_CLASS\": \"django_redis.client.DefaultClient\"},\n        \"TIMEOUT\": 300,\n    }\n}\n# @praxis:settings",
+      "proStack": "python-django",
+      "capability": "redis-cache"
+    },
+    {
+      "scope": "root",
+      "file": "go.mod",
+      "find": "\t// @praxis:dependencies",
+      "replace": "\tgithub.com/redis/go-redis/v9 v9.21.0\n\t// @praxis:dependencies",
+      "proStack": "go-gin",
+      "capability": "redis-cache"
+    },
+    {
+      "scope": "root",
+      "file": "cmd/api/main.go",
+      "find": "\t// @praxis:imports",
+      "replace": "\n\t\"example.com/{{projectName}}/internal/cache\"\n\t// @praxis:imports",
+      "proStack": "go-gin",
+      "capability": "redis-cache"
+    },
+    {
+      "scope": "root",
+      "file": "cmd/api/main.go",
+      "find": "\t// @praxis:startup\n\n\trouter, err := httpserver.New(log, cfg.TrustedProxies, pool.Ping)",
+      "replace": "\tcacheClient, err := cache.Open(ctx, os.Getenv(\"REDIS_URL\"))\n\tif err != nil {\n\t\tlog.Error(\"redis startup failed\", \"error\", err)\n\t\tos.Exit(1)\n\t}\n\tdefer cacheClient.Close()\n\t// @praxis:startup\n\n\trouter, err := httpserver.New(log, cfg.TrustedProxies, pool.Ping, cacheClient.Ping)",
+      "proStack": "go-gin",
+      "capability": "redis-cache"
+    }
+  ],
+  "env": [
+    {
+      "scope": "root",
+      "keys": ["REDIS_URL=redis://redis:6379/0"],
+      "capability": "redis-cache"
+    }
+  ]
+}

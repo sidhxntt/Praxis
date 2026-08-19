@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: load-test-scenario
+data:
+  locustfile.py: |
+    from locust import HttpUser, constant_throughput, task
+    class ApiUser(HttpUser):
+        wait_time = constant_throughput(1)
+        @task
+        def health(self):
+            self.client.get("/api/v1/health/live", name="health")
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: load-test
+spec:
+  suspend: true
+  ttlSecondsAfterFinished: 3600
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      containers:
+        - name: locust
+          image: locustio/locust:2.43.3
+          args: ["-f", "/scenario/locustfile.py", "--headless", "--host", "http://api", "--users", "10", "--spawn-rate", "2", "--run-time", "1m", "--only-summary"]
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { cpu: "1", memory: 512Mi }
+          securityContext: { allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: { drop: ["ALL"] } }
+          volumeMounts: [{ name: scenario, mountPath: /scenario, readOnly: true }]
+      volumes: [{ name: scenario, configMap: { name: load-test-scenario } }]

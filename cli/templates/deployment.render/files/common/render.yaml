@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: {{projectName}}-backend
+    runtime: node
+    buildCommand: npm install && (npm --workspace backend run build || npm run build)
+    startCommand: npm --workspace backend run start || npm run start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production

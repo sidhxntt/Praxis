@@ -1,0 +1,96 @@
+{
+  "id": "styling.tailwind-shadcn",
+  "overlays": [
+    { "scope": "frontend", "source": "files/vite", "framework": "vite" },
+    { "scope": "frontend", "source": "files/config-vite", "framework": "vite" },
+    { "scope": "frontend", "source": "files/config-next", "framework": "next" },
+    { "scope": "frontend", "source": "files/next", "framework": "next" },
+    { "scope": "frontend", "source": "files/typescript", "language": "typescript", "framework": "next" },
+    { "scope": "frontend", "source": "files/typescript", "language": "typescript", "framework": "vite" },
+    { "scope": "frontend", "source": "files/javascript", "language": "javascript", "framework": "next" },
+    { "scope": "frontend", "source": "files/javascript", "language": "javascript", "framework": "vite" },
+    { "scope": "frontend", "source": "files/vue", "framework": "vue" },
+    { "scope": "frontend", "source": "files/astro", "framework": "astro" },
+    { "scope": "frontend", "source": "files/angular", "framework": "angular" }
+  ],
+  "packages": [{
+    "scope": "frontend",
+    "dependencies": {
+      "class-variance-authority": "0.7.1",
+      "clsx": "2.1.1",
+      "tailwind-merge": "3.6.0"
+    },
+    "devDependencies": {
+      "tailwindcss": "4.3.3"
+    }
+  }, {
+    "scope": "frontend",
+    "framework": "next",
+    "devDependencies": {
+      "@tailwindcss/postcss": "4.3.3",
+      "postcss": "^8.5.6"
+    }
+  }, {
+    "scope": "frontend",
+    "framework": "vite",
+    "devDependencies": {
+      "@tailwindcss/vite": "4.3.3"
+    }
+  }, {
+    "scope": "frontend",
+    "framework": "next",
+    "dependencies": {
+      "@radix-ui/react-slot": "1.3.3",
+      "lucide-react": "1.32.0"
+    }
+  }, {
+    "scope": "frontend",
+    "framework": "vite",
+    "dependencies": {
+      "@radix-ui/react-slot": "1.3.3",
+      "lucide-react": "1.32.0"
+    }
+  }, {
+    "scope": "frontend",
+    "framework": "vue",
+    "devDependencies": { "@tailwindcss/vite": "4.3.3" }
+  }, {
+    "scope": "frontend",
+    "framework": "astro",
+    "devDependencies": { "@tailwindcss/vite": "4.3.3" }
+  }, {
+    "scope": "frontend",
+    "framework": "angular",
+    "devDependencies": {
+      "@tailwindcss/postcss": "4.3.3",
+      "postcss": "^8.5.6"
+    }
+  }],
+  "patches": [{
+    "scope": "frontend",
+    "file": "vite.config.js",
+    "find": "import react from \"@vitejs/plugin-react\";",
+    "replace": "import react from \"@vitejs/plugin-react\";\nimport tailwindcss from \"@tailwindcss/vite\";",
+    "framework": "vite"
+  }, {
+    "scope": "frontend",
+    "file": "vite.config.js",
+    "find": "plugins: [react()],",
+    "replace": "plugins: [react(), tailwindcss()],",
+    "framework": "vite"
+  }, {
+    "scope": "frontend",
+    "file": "components.json",
+    "find": "\"tsx\": true",
+    "replace": "\"tsx\": false",
+    "language": "javascript",
+    "framework": "next"
+  }, {
+    "scope": "frontend",
+    "file": "components.json",
+    "find": "\"tsx\": true",
+    "replace": "\"tsx\": false",
+    "language": "javascript",
+    "framework": "vite"
+  }]
+}

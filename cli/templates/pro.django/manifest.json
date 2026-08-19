@@ -1,0 +1,23 @@
+{
+  "id": "pro.django",
+  "overlays": [
+    { "scope": "root", "source": "files/common", "proStack": "python-django" }
+  ],
+  "env": [
+    {
+      "scope": "root",
+      "proStack": "python-django",
+      "keys": [
+        "ALLOWED_HOSTS=localhost,127.0.0.1",
+        "DATABASE_HOST=postgres",
+        "DATABASE_NAME=app",
+        "DATABASE_PASSWORD=app",
+        "DATABASE_PORT=5432",
+        "DATABASE_USER=app",
+        "DJANGO_SECRET_KEY=",
+        "DJANGO_SETTINGS_MODULE=config.settings.development",
+        "LOG_LEVEL=INFO"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "id": "pro.capability.search",
+  "overlays": [
+    {
+      "scope": "root",
+      "source": "files/go",
+      "proStack": "go-gin",
+      "capability": "search"
+    }
+  ],
+  "patches": [
+    {
+      "scope": "root",
+      "file": "pyproject.toml",
+      "find": "  # @praxis:dependencies",
+      "replace": "  \"django-elasticsearch-dsl==9.0\",\n  # @praxis:dependencies",
+      "proStack": "python-django",
+      "capability": "search"
+    },
+    {
+      "scope": "root",
+      "file": "config/settings/base.py",
+      "find": "    # @praxis:installed-apps",
+      "replace": "    \"django_elasticsearch_dsl\",\n    # @praxis:installed-apps",
+      "proStack": "python-django",
+      "capability": "search"
+    },
+    {
+      "scope": "root",
+      "file": "config/settings/base.py",
+      "find": "# @praxis:settings",
+      "replace": "ELASTICSEARCH_DSL = {\n    \"default\": {\"hosts\": os.getenv(\"ELASTICSEARCH_URL\", \"http://localhost:9200\")}\n}\nELASTICSEARCH_DSL_AUTOSYNC = False\n# @praxis:settings",
+      "proStack": "python-django",
+      "capability": "search"
+    },
+    {
+      "scope": "root",
+      "file": "go.mod",
+      "find": "\t// @praxis:dependencies",
+      "replace": "\tgithub.com/elastic/go-elasticsearch/v9 v9.5.0\n\t// @praxis:dependencies",
+      "proStack": "go-gin",
+      "capability": "search"
+    },
+    {
+      "scope": "root",
+      "file": "cmd/api/main.go",
+      "find": "\t// @praxis:imports",
+      "replace": "\n\t\"example.com/{{projectName}}/internal/search\"\n\t// @praxis:imports",
+      "proStack": "go-gin",
+      "capability": "search"
+    },
+    {
+      "scope": "root",
+      "file": "cmd/api/main.go",
+      "find": "\t// @praxis:startup",
+      "replace": "\tif _, err := search.Open(ctx, os.Getenv(\"ELASTICSEARCH_URL\")); err != nil {\n\t\tlog.Error(\"Elasticsearch startup failed\", \"error\", err)\n\t\tos.Exit(1)\n\t}\n\t// @praxis:startup",
+      "proStack": "go-gin",
+      "capability": "search"
+    }
+  ],
+  "env": [
+    {
+      "scope": "root",
+      "keys": ["ELASTICSEARCH_URL=http://elasticsearch:9200"],
+      "capability": "search"
+    }
+  ]
+}

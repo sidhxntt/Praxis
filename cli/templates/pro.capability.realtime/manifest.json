@@ -1,0 +1,54 @@
+{
+  "id": "pro.capability.realtime",
+  "overlays": [
+    { "scope": "root", "source": "files/django", "proStack": "python-django", "capability": "realtime" },
+    { "scope": "root", "source": "files/go", "proStack": "go-gin", "capability": "realtime" }
+  ],
+  "patches": [
+    {
+      "scope": "root", "file": "pyproject.toml",
+      "find": "  # @praxis:dependencies",
+      "replace": "  \"channels==4.3.2\",\n  \"channels-redis==4.3.0\",\n  # @praxis:dependencies",
+      "proStack": "python-django", "capability": "realtime"
+    },
+    {
+      "scope": "root", "file": "config/settings/base.py",
+      "find": "    # @praxis:installed-apps",
+      "replace": "    \"channels\",\n    # @praxis:installed-apps",
+      "proStack": "python-django", "capability": "realtime"
+    },
+    {
+      "scope": "root", "file": "config/settings/base.py",
+      "find": "# @praxis:settings",
+      "replace": "CHANNEL_LAYERS = {\n    \"default\": {\n        \"BACKEND\": \"channels_redis.core.RedisChannelLayer\",\n        \"CONFIG\": {\"hosts\": [os.getenv(\"REDIS_URL\", \"redis://localhost:6379/0\")]},\n    }\n}\n# @praxis:settings",
+      "proStack": "python-django", "capability": "realtime"
+    },
+    {
+      "scope": "root", "file": "config/asgi.py",
+      "find": "from django.core.asgi import get_asgi_application\n",
+      "replace": "from channels.auth import AuthMiddlewareStack\nfrom channels.routing import ProtocolTypeRouter, URLRouter\nfrom django.core.asgi import get_asgi_application\n",
+      "proStack": "python-django", "capability": "realtime"
+    },
+    {
+      "scope": "root", "file": "config/asgi.py",
+      "find": "application = get_asgi_application()",
+      "replace": "django_application = get_asgi_application()\n\nfrom core.routing import websocket_urlpatterns  # noqa: E402\n\napplication = ProtocolTypeRouter({\n    \"http\": django_application,\n    \"websocket\": AuthMiddlewareStack(URLRouter(websocket_urlpatterns)),\n})",
+      "proStack": "python-django", "capability": "realtime"
+    },
+    {
+      "scope": "root", "file": "go.mod",
+      "find": "\t// @praxis:dependencies",
+      "replace": "\tgithub.com/coder/websocket v1.8.14\n\t// @praxis:dependencies",
+      "proStack": "go-gin", "capability": "realtime"
+    },
+    {
+      "scope": "root", "file": "internal/httpserver/router.go",
+      "find": "\t// @praxis:routes",
+      "replace": "\tregisterRealtimeRoute(router)\n\t// @praxis:routes",
+      "proStack": "go-gin", "capability": "realtime"
+    }
+  ],
+  "env": [
+    { "scope": "root", "keys": ["WEBSOCKET_ORIGINS=localhost:8080,localhost:3000"], "capability": "realtime" }
+  ]
+}

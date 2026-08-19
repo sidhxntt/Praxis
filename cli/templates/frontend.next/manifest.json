@@ -1,0 +1,28 @@
+{
+  "id": "frontend.next",
+  "overlays": [
+    { "scope": "frontend", "source": "files/common" },
+    { "scope": "frontend", "source": "files/typescript", "language": "typescript" },
+    { "scope": "frontend", "source": "files/javascript", "language": "javascript" }
+  ],
+  "packages": [{
+    "scope": "frontend",
+    "dependencies": {
+      "next": "16.3.1",
+      "react": "19.2.8",
+      "react-dom": "19.2.8"
+    },
+    "devDependencies": {
+      "@types/node": "^22.20.0",
+      "@types/react": "^19.2.0",
+      "@types/react-dom": "^19.2.0",
+      "typescript": "^5.9.3"
+    },
+    "scripts": {
+      "dev": "next dev",
+      "build": "next build",
+      "start": "next start"
+    }
+  }],
+  "env": [{ "scope": "frontend", "keys": ["NEXT_PUBLIC_APP_URL"] }]
+}

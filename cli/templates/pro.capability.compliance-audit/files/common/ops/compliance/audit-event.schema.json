@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Praxis HTTP mutation audit event",
+  "type": "object",
+  "required": ["event_type", "timestamp", "request_id", "actor", "method", "path", "status"],
+  "properties": {
+    "event_type": { "const": "audit.http_mutation" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "request_id": { "type": "string", "minLength": 1 },
+    "actor": { "type": "string", "minLength": 1 },
+    "method": { "enum": ["POST", "PUT", "PATCH", "DELETE"] },
+    "path": { "type": "string", "minLength": 1 },
+    "status": { "type": "integer", "minimum": 100, "maximum": 599 }
+  },
+  "additionalProperties": false
+}

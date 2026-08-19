@@ -1,0 +1,228 @@
+{
+  "id": "sentry",
+  "name": "Sentry inspired",
+  "sourceDesign": "DESIGN-sentry.md",
+  "description": "See the problem before it becomes the story. Observability that connects errors, performance, and releases into one useful path to a fix.",
+  "traits": [
+    "developer",
+    "observability",
+    "illustrated"
+  ],
+  "theme": "mixed",
+  "tokens": {
+    "colors": {
+      "background": "#ffffff",
+      "surface": "#f5f5f7",
+      "foreground": "#1f1633",
+      "muted": "#696970",
+      "accent": "#150f23",
+      "accentContrast": "#ffffff",
+      "darkSurface": "#111113",
+      "darkForeground": "#ffffff",
+      "border": "#dedee3"
+    },
+    "typography": {
+      "display": "'IBM Plex Sans', 'SFMono-Regular', ui-sans-serif, system-ui, sans-serif",
+      "body": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "displayWeight": 600,
+      "bodySize": "16px",
+      "displayTracking": "-0.035em"
+    },
+    "spacing": {
+      "container": "1280px",
+      "section": "clamp(4rem, 9vw, 8rem)"
+    },
+    "radii": {
+      "action": "10px",
+      "card": "12px"
+    },
+    "motion": {
+      "duration": "240ms",
+      "easing": "cubic-bezier(0.2, 0.8, 0.2, 1)"
+    }
+  },
+  "sections": [
+    {
+      "id": "top",
+      "type": "navigation",
+      "theme": "dark",
+      "variant": "global",
+      "brand": "Tracewell",
+      "links": [
+        {
+          "label": "Overview",
+          "href": "#overview"
+        },
+        {
+          "label": "Experience",
+          "href": "#experience"
+        },
+        {
+          "label": "Principles",
+          "href": "#principles"
+        }
+      ],
+      "action": {
+        "label": "Start building",
+        "href": "#begin"
+      }
+    },
+    {
+      "id": "overview",
+      "type": "hero",
+      "theme": "light",
+      "variant": "centered-product",
+      "eyebrow": "Tracewell",
+      "heading": "See the problem before it becomes the story.",
+      "body": "Observability that connects errors, performance, and releases into one useful path to a fix.",
+      "primaryAction": {
+        "label": "Start building",
+        "href": "#experience"
+      },
+      "secondaryAction": {
+        "label": "See the story",
+        "href": "#principles"
+      },
+      "asset": "assets/sentry-composition.svg"
+    },
+    {
+      "id": "proof",
+      "type": "metrics",
+      "theme": "dark",
+      "variant": "grid",
+      "eyebrow": "Measured in practice",
+      "heading": "Tracewell, by the numbers.",
+      "items": [
+        {
+          "value": "18 ms",
+          "label": "typical response"
+        },
+        {
+          "value": "99.99%",
+          "label": "service availability"
+        },
+        {
+          "value": "3×",
+          "label": "faster iteration"
+        }
+      ]
+    },
+    {
+      "id": "principles",
+      "type": "features",
+      "theme": "light",
+      "variant": "grid",
+      "eyebrow": "Guiding principles",
+      "heading": "What makes Tracewell feel different.",
+      "body": "A small set of strong decisions creates a recognizable experience across every screen and every moment.",
+      "items": [
+        {
+          "title": "Observable by default",
+          "description": "Tracewell presents the next useful action clearly, with nothing unnecessary competing for attention.",
+          "marker": "01"
+        },
+        {
+          "title": "Fast under pressure",
+          "description": "Flexible foundations adapt to real work while keeping the experience coherent and recognizable.",
+          "marker": "02"
+        },
+        {
+          "title": "Open at the edges",
+          "description": "Small interactions, responsive pacing, and accessible defaults make quality visible in everyday use.",
+          "marker": "03"
+        }
+      ]
+    },
+    {
+      "id": "experience",
+      "type": "showcase",
+      "theme": "dark",
+      "variant": "split",
+      "eyebrow": "The experience",
+      "heading": "Clarity at every layer.",
+      "body": "Tracewell brings its most important ideas forward and lets every supporting detail recede.",
+      "action": {
+        "label": "Explore the details",
+        "href": "#principles"
+      },
+      "asset": "assets/sentry-composition.svg"
+    },
+    {
+      "id": "community",
+      "type": "logo-cloud",
+      "theme": "light",
+      "variant": "row",
+      "heading": "Trusted by teams building with Tracewell.",
+      "items": [
+        "Northstar",
+        "Common Ground",
+        "Bright Labs",
+        "Open Field",
+        "New Arc",
+        "Good Work"
+      ]
+    },
+    {
+      "id": "begin",
+      "type": "cta",
+      "theme": "light",
+      "variant": "band",
+      "eyebrow": "The next step",
+      "heading": "Put clarity into production.",
+      "body": "Discover how Tracewell can turn a clear idea into an experience people remember.",
+      "action": {
+        "label": "Start building",
+        "href": "#top"
+      }
+    },
+    {
+      "id": "footer",
+      "type": "footer",
+      "theme": "light",
+      "variant": "columns",
+      "brand": "Tracewell",
+      "summary": "Observability that connects errors, performance, and releases into one useful path to a fix.",
+      "columns": [
+        {
+          "heading": "Explore",
+          "links": [
+            {
+              "label": "Overview",
+              "href": "#overview"
+            },
+            {
+              "label": "Experience",
+              "href": "#experience"
+            }
+          ]
+        },
+        {
+          "heading": "Company",
+          "links": [
+            {
+              "label": "Principles",
+              "href": "#principles"
+            },
+            {
+              "label": "Contact",
+              "href": "#begin"
+            }
+          ]
+        }
+      ],
+      "legal": "© 2026 Tracewell. An original Praxis Flow demonstration brand."
+    }
+  ],
+  "assets": [
+    {
+      "source": "assets/sentry-composition.svg",
+      "alt": "Original abstract composition representing the Tracewell experience",
+      "width": 1600,
+      "height": 900
+    }
+  ],
+  "accessibility": {
+    "reducedMotion": true,
+    "skipLink": true
+  }
+}

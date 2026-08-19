@@ -1,0 +1,72 @@
+{
+  "id": "ui.coinbase",
+  "overlays": [
+    {
+      "scope": "frontend",
+      "source": "files/shared"
+    },
+    {
+      "scope": "frontend",
+      "source": "files/next-js",
+      "framework": "next",
+      "language": "javascript",
+      "replace": true
+    },
+    {
+      "scope": "frontend",
+      "source": "files/next-ts",
+      "framework": "next",
+      "language": "typescript",
+      "replace": true
+    },
+    {
+      "scope": "frontend",
+      "source": "files/vite-js",
+      "framework": "vite",
+      "language": "javascript",
+      "replace": true
+    },
+    {
+      "scope": "frontend",
+      "source": "files/vite-ts",
+      "framework": "vite",
+      "language": "typescript",
+      "replace": true
+    },
+    {
+      "scope": "frontend",
+      "source": "files/vue-js",
+      "framework": "vue",
+      "language": "javascript",
+      "replace": true
+    },
+    {
+      "scope": "frontend",
+      "source": "files/vue-ts",
+      "framework": "vue",
+      "language": "typescript",
+      "replace": true
+    },
+    {
+      "scope": "frontend",
+      "source": "files/astro-js",
+      "framework": "astro",
+      "language": "javascript",
+      "replace": true
+    },
+    {
+      "scope": "frontend",
+      "source": "files/astro-ts",
+      "framework": "astro",
+      "language": "typescript",
+      "replace": true
+    },
+    {
+      "scope": "frontend",
+      "source": "files/angular-ts",
+      "framework": "angular",
+      "language": "typescript",
+      "replace": true
+    }
+  ]
+}

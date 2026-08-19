@@ -1,0 +1,10 @@
+groups:
+  - name: praxis-api
+    rules:
+      - alert: PraxisApiDown
+        expr: up{job="praxis-api"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Praxis API is unavailable

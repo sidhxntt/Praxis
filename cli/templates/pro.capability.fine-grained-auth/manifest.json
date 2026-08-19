@@ -1,0 +1,33 @@
+{
+  "id": "pro.capability.fine-grained-auth",
+  "overlays": [
+    { "scope": "root", "source": "files/django", "proStack": "python-django", "capability": "fine-grained-auth" },
+    { "scope": "root", "source": "files/go", "proStack": "go-gin", "capability": "fine-grained-auth" }
+  ],
+  "patches": [
+    {
+      "scope": "root", "file": "config/settings/base.py",
+      "find": "\"DEFAULT_SCHEMA_CLASS\": \"drf_spectacular.openapi.AutoSchema\",",
+      "replace": "\"DEFAULT_SCHEMA_CLASS\": \"drf_spectacular.openapi.AutoSchema\",\n    \"DEFAULT_PERMISSION_CLASSES\": [\"core.permissions.HasScopedPermission\"],",
+      "proStack": "python-django", "capability": "fine-grained-auth"
+    },
+    {
+      "scope": "root", "file": "go.mod",
+      "find": "\t// @praxis:dependencies",
+      "replace": "\tgithub.com/casbin/casbin/v2 v2.135.0\n\t// @praxis:dependencies",
+      "proStack": "go-gin", "capability": "fine-grained-auth"
+    },
+    {
+      "scope": "root", "file": "internal/httpserver/router.go",
+      "find": "\t// @praxis:imports",
+      "replace": "\n\t\"example.com/{{projectName}}/internal/authorization\"\n\t// @praxis:imports",
+      "proStack": "go-gin", "capability": "fine-grained-auth"
+    },
+    {
+      "scope": "root", "file": "internal/httpserver/router.go",
+      "find": "\t// @praxis:routes",
+      "replace": "\trouter.GET(\"/api/v1/admin\", auth.RequireBearer(), authorization.Require(\"admin\", \"read\"), func(c *gin.Context) {\n\t\tc.JSON(http.StatusOK, gin.H{\"status\": \"authorized\"})\n\t})\n\t// @praxis:routes",
+      "proStack": "go-gin", "capability": "fine-grained-auth"
+    }
+  ]
+}

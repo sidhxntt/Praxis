@@ -1,0 +1,57 @@
+{
+  "id": "pro.capability.background-jobs",
+  "overlays": [
+    { "scope": "root", "source": "files/django", "proStack": "python-django", "capability": "background-jobs" },
+    { "scope": "root", "source": "files/go", "proStack": "go-gin", "capability": "background-jobs" }
+  ],
+  "patches": [
+    {
+      "scope": "root",
+      "file": "pyproject.toml",
+      "find": "  # @praxis:dependencies",
+      "replace": "  \"celery==5.6.3\",\n  # @praxis:dependencies",
+      "proStack": "python-django",
+      "capability": "background-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "config/settings/base.py",
+      "find": "# @praxis:settings",
+      "replace": "CELERY_BROKER_URL = os.getenv(\"REDIS_URL\", \"redis://localhost:6379/0\")\nCELERY_RESULT_BACKEND = CELERY_BROKER_URL\nCELERY_TASK_ACKS_LATE = True\nCELERY_TASK_REJECT_ON_WORKER_LOST = True\nCELERY_TASK_TIME_LIMIT = 300\nCELERY_TASK_SOFT_TIME_LIMIT = 270\nCELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True\n# @praxis:settings",
+      "proStack": "python-django",
+      "capability": "background-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "config/__init__.py",
+      "find": "",
+      "replace": "from .celery import app as celery_app\n\n__all__ = (\"celery_app\",)\n",
+      "proStack": "python-django",
+      "capability": "background-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "go.mod",
+      "find": "\t// @praxis:dependencies",
+      "replace": "\tgithub.com/hibiken/asynq v0.26.0\n\t// @praxis:dependencies",
+      "proStack": "go-gin",
+      "capability": "background-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "Dockerfile",
+      "find": "RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags=\"-s -w\" -o /out/api ./cmd/api",
+      "replace": "RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags=\"-s -w\" -o /out/api ./cmd/api && \\\n    CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags=\"-s -w\" -o /out/worker ./cmd/worker",
+      "proStack": "go-gin",
+      "capability": "background-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "Dockerfile",
+      "find": "COPY --from=builder /out/api /api",
+      "replace": "COPY --from=builder /out/api /api\nCOPY --from=builder /out/worker /worker",
+      "proStack": "go-gin",
+      "capability": "background-jobs"
+    }
+  ]
+}

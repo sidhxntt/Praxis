@@ -1,0 +1,115 @@
+{
+  "id": "pro.capability.opentelemetry",
+  "overlays": [
+    { "scope": "root", "source": "files/common", "capability": "opentelemetry" },
+    {
+      "scope": "root",
+      "source": "files/django",
+      "proStack": "python-django",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "source": "files/go",
+      "proStack": "go-gin",
+      "capability": "opentelemetry"
+    }
+  ],
+  "patches": [
+    {
+      "scope": "root",
+      "file": "pyproject.toml",
+      "find": "  # @praxis:dependencies",
+      "replace": "  \"opentelemetry-sdk==1.44.0\",\n  \"opentelemetry-exporter-otlp-proto-http==1.44.0\",\n  \"opentelemetry-instrumentation-django==0.65b0\",\n  # @praxis:dependencies",
+      "proStack": "python-django",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "config/asgi.py",
+      "find": "# @praxis:imports",
+      "replace": "\nfrom core.telemetry import configure_telemetry\n\n# @praxis:imports",
+      "proStack": "python-django",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "config/asgi.py",
+      "find": "# @praxis:startup",
+      "replace": "configure_telemetry()",
+      "proStack": "python-django",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "config/wsgi.py",
+      "find": "# @praxis:imports",
+      "replace": "\nfrom core.telemetry import configure_telemetry\n\n# @praxis:imports",
+      "proStack": "python-django",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "config/wsgi.py",
+      "find": "# @praxis:startup",
+      "replace": "configure_telemetry()",
+      "proStack": "python-django",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "pyproject.toml",
+      "find": "module = [\"celery\", \"celery.*\"]",
+      "replace": "module = [\"celery\", \"celery.*\", \"opentelemetry.instrumentation.django\"]",
+      "proStack": "python-django",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "go.mod",
+      "find": "\t// @praxis:dependencies",
+      "replace": "\tgo.opentelemetry.io/otel v1.42.0\n\tgo.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.42.0\n\tgo.opentelemetry.io/otel/sdk v1.42.0\n\tgo.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.67.0\n\t// @praxis:dependencies",
+      "proStack": "go-gin",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "cmd/api/main.go",
+      "find": "\t// @praxis:imports",
+      "replace": "\n\t\"example.com/{{projectName}}/internal/telemetry\"\n\t// @praxis:imports",
+      "proStack": "go-gin",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "cmd/api/main.go",
+      "find": "\t// @praxis:startup",
+      "replace": "\tshutdownTelemetry, err := telemetry.Configure(ctx, os.Getenv(\"OTEL_EXPORTER_OTLP_ENDPOINT\"), \"{{projectName}}\")\n\tif err != nil {\n\t\tlog.Error(\"telemetry startup failed\", \"error\", err)\n\t\tos.Exit(1)\n\t}\n\tdefer func() {\n\t\tshutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)\n\t\tdefer cancel()\n\t\tif shutdownErr := shutdownTelemetry(shutdownCtx); shutdownErr != nil {\n\t\t\tlog.Error(\"telemetry shutdown failed\", \"error\", shutdownErr)\n\t\t}\n\t}()\n\t// @praxis:startup",
+      "proStack": "go-gin",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "internal/httpserver/router.go",
+      "find": "\t// @praxis:imports",
+      "replace": "\n\t\"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin\"\n\t// @praxis:imports",
+      "proStack": "go-gin",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "internal/httpserver/router.go",
+      "find": "\t// @praxis:routes",
+      "replace": "\trouter.Use(otelgin.Middleware(\"{{projectName}}\"))\n\t// @praxis:routes",
+      "proStack": "go-gin",
+      "capability": "opentelemetry"
+    }
+  ],
+  "env": [
+    {
+      "scope": "root",
+      "keys": ["OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318", "OTEL_SERVICE_NAME={{projectName}}"],
+      "capability": "opentelemetry"
+    }
+  ]
+}

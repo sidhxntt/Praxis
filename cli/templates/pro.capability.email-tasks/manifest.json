@@ -1,0 +1,40 @@
+{
+  "id": "pro.capability.email-tasks",
+  "overlays": [
+    { "scope": "root", "source": "files/django", "proStack": "python-django", "capability": "email-tasks" },
+    { "scope": "root", "source": "files/go", "proStack": "go-gin", "capability": "email-tasks" }
+  ],
+  "patches": [
+    {
+      "scope": "root", "file": "config/settings/base.py",
+      "find": "# @praxis:settings",
+      "replace": "EMAIL_BACKEND = \"django.core.mail.backends.smtp.EmailBackend\"\nEMAIL_HOST = os.getenv(\"SMTP_HOST\", \"localhost\")\nEMAIL_PORT = int(os.getenv(\"SMTP_PORT\", \"1025\"))\nEMAIL_HOST_USER = os.getenv(\"SMTP_USERNAME\", \"\")\nEMAIL_HOST_PASSWORD = os.getenv(\"SMTP_PASSWORD\", \"\")\nEMAIL_USE_TLS = os.getenv(\"SMTP_USE_TLS\", \"false\").lower() == \"true\"\nDEFAULT_FROM_EMAIL = os.getenv(\"EMAIL_FROM\", \"noreply@example.com\")\n# @praxis:settings",
+      "proStack": "python-django", "capability": "email-tasks"
+    },
+    {
+      "scope": "root", "file": "core/tasks.py",
+      "find": "from celery import shared_task\n",
+      "replace": "from celery import shared_task\n\nfrom .email_tasks import send_email_task\n\n__all__ = (\"example_task\", \"send_email_task\")\n",
+      "proStack": "python-django", "capability": "email-tasks"
+    },
+    {
+      "scope": "root", "file": "go.mod",
+      "find": "\t// @praxis:dependencies",
+      "replace": "\tgithub.com/wneessen/go-mail v0.8.1\n\t// @praxis:dependencies",
+      "proStack": "go-gin", "capability": "email-tasks"
+    },
+    {
+      "scope": "root", "file": "cmd/worker/main.go",
+      "find": "\tmux.HandleFunc(jobs.TypeExample, jobs.HandleExample)",
+      "replace": "\tmux.HandleFunc(jobs.TypeExample, jobs.HandleExample)\n\tmux.HandleFunc(jobs.TypeEmail, jobs.HandleEmail)",
+      "proStack": "go-gin", "capability": "email-tasks"
+    }
+  ],
+  "env": [
+    {
+      "scope": "root",
+      "keys": ["SMTP_HOST=localhost", "SMTP_PORT=1025", "SMTP_USERNAME=", "SMTP_PASSWORD=", "SMTP_USE_TLS=false", "EMAIL_FROM=noreply@example.com"],
+      "capability": "email-tasks"
+    }
+  ]
+}

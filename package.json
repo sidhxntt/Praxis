@@ -1,0 +1,22 @@
+{
+  "name": "praxis",
+  "version": "1.4.0",
+  "private": true,
+  "workspaces": [
+    "cli",
+    "web"
+  ],
+  "scripts": {
+    "docs:links": "node scripts/check-doc-links.mjs",
+    "docs:wiki": "node scripts/render-github-wiki.mjs",
+    "docs:check": "npm run docs:links && node scripts/render-github-wiki.mjs /tmp/praxis-wiki-check",
+    "dev:cli": "npm --workspace cli run dev",
+    "dev:web": "npm --workspace web run dev",
+    "build:web": "npm --workspace web run build",
+    "build:cli": "npm --workspace cli run build",
+    "test:cli": "npm --workspace cli run test",
+    "check:cli": "npm --workspace cli run check",
+    "check:web": "npm run build:web",
+    "check": "npm run check:cli && npm run check:web"
+  }
+}

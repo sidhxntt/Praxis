@@ -1,0 +1,235 @@
+{
+  "id": "pro.kubernetes",
+  "overlays": [
+    { "scope": "root", "source": "files/common", "capability": "kubernetes" },
+    {
+      "scope": "root",
+      "source": "files/django",
+      "proStack": "python-django",
+      "capability": "kubernetes"
+    },
+    {
+      "scope": "root",
+      "source": "files/go",
+      "proStack": "go-gin",
+      "capability": "kubernetes"
+    },
+    {
+      "scope": "root",
+      "source": "files/go-jwt",
+      "proStack": "go-gin",
+      "capability": "jwt-auth"
+    },
+    {
+      "scope": "root",
+      "source": "files/django-worker",
+      "proStack": "python-django",
+      "capability": "background-jobs"
+    },
+    {
+      "scope": "root",
+      "source": "files/go-worker",
+      "proStack": "go-gin",
+      "capability": "background-jobs"
+    },
+    {
+      "scope": "root",
+      "source": "files/django-scheduler",
+      "proStack": "python-django",
+      "capability": "scheduled-jobs"
+    },
+    {
+      "scope": "root",
+      "source": "files/go-scheduler",
+      "proStack": "go-gin",
+      "capability": "scheduled-jobs"
+    },
+    { "scope": "root", "source": "files/django-seed", "proStack": "python-django", "capability": "seed-data" },
+    { "scope": "root", "source": "files/go-seed", "proStack": "go-gin", "capability": "seed-data" },
+    { "scope": "root", "source": "files/django-load-testing", "proStack": "python-django", "capability": "load-testing" },
+    { "scope": "root", "source": "files/go-load-testing", "proStack": "go-gin", "capability": "load-testing" },
+    { "scope": "root", "source": "files/redis", "capability": "redis-cache" },
+    { "scope": "root", "source": "files/prometheus", "capability": "prometheus" },
+    { "scope": "root", "source": "files/opentelemetry", "capability": "opentelemetry" },
+    { "scope": "root", "source": "files/nginx", "capability": "nginx" },
+    { "scope": "root", "source": "files/autoscaling", "capability": "autoscaling" },
+    { "scope": "root", "source": "files/high-availability", "capability": "high-availability" },
+    { "scope": "root", "source": "files/cloud-secrets", "capability": "cloud-secrets" }
+    ,{ "scope": "root", "source": "files/object-storage", "capability": "object-storage" }
+    ,{ "scope": "root", "source": "files/search", "capability": "search" }
+    ,{ "scope": "root", "source": "files/elk", "capability": "elk" }
+    ,{ "scope": "root", "source": "files/synthetic-monitoring", "capability": "synthetic-monitoring" }
+  ],
+  "patches": [
+    {
+      "scope": "root", "file": "k8s/base/kustomization.yaml",
+      "find": "  # @praxis:resources",
+      "replace": "  - blackbox-exporter.yaml\n  # @praxis:resources",
+      "capability": "synthetic-monitoring"
+    },
+    {
+      "scope": "root", "file": "k8s/base/prometheus.yaml",
+      "find": "    scrape_configs:",
+      "replace": "    scrape_configs:\n      - job_name: blackbox-http\n        metrics_path: /probe\n        params: { module: [http_2xx] }\n        static_configs: [{ targets: [\"http://api/api/v1/health/live\"] }]\n        relabel_configs:\n          - { source_labels: [__address__], target_label: __param_target }\n          - { source_labels: [__param_target], target_label: instance }\n          - { target_label: __address__, replacement: \"blackbox-exporter:9115\" }",
+      "capability": "synthetic-monitoring"
+    },
+    {
+      "scope": "root", "file": "k8s/base/kustomization.yaml",
+      "find": "  # @praxis:resources",
+      "replace": "  - log-forwarder.yaml\n  # @praxis:resources",
+      "capability": "elk"
+    },
+    {
+      "scope": "root", "file": "k8s/base/deployment.yaml",
+      "find": "            # @praxis:container-env",
+      "replace": "            - name: KAFKA_BROKERS\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: kafka-brokers } }\n            - name: KAFKA_USERNAME\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: kafka-username, optional: true } }\n            - name: KAFKA_PASSWORD\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: kafka-password, optional: true } }\n            - name: KAFKA_TLS\n              value: \"true\"\n            # @praxis:container-env",
+      "capability": "kafka"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/worker.yaml",
+      "find": "            - name: REDIS_URL\n              value: redis://redis:6379/0",
+      "replace": "            - name: REDIS_URL\n              value: redis://redis:6379/0\n            - name: SMTP_HOST\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: smtp-host } }\n            - name: SMTP_PORT\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: smtp-port } }\n            - name: SMTP_USERNAME\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: smtp-username } }\n            - name: SMTP_PASSWORD\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: smtp-password } }\n            - name: EMAIL_FROM\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: email-from } }",
+      "capability": "email-tasks"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/kustomization.yaml",
+      "find": "  # @praxis:resources",
+      "replace": "  - worker.yaml\n  # @praxis:resources",
+      "capability": "background-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/kustomization.yaml",
+      "find": "  # @praxis:resources",
+      "replace": "  - scheduler.yaml\n  # @praxis:resources",
+      "capability": "scheduled-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/kustomization.yaml",
+      "find": "  # @praxis:resources",
+      "replace": "  - redis.yaml\n  # @praxis:resources",
+      "capability": "redis-cache"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/kustomization.yaml",
+      "find": "  # @praxis:resources",
+      "replace": "  - prometheus.yaml\n  # @praxis:resources",
+      "capability": "prometheus"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/kustomization.yaml",
+      "find": "  # @praxis:resources",
+      "replace": "  - otel-collector.yaml\n  # @praxis:resources",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/kustomization.yaml",
+      "find": "  # @praxis:resources",
+      "replace": "  - nginx.yaml\n  # @praxis:resources",
+      "capability": "nginx"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/kustomization.yaml",
+      "find": "  # @praxis:resources",
+      "replace": "  - hpa.yaml\n  # @praxis:resources",
+      "capability": "autoscaling"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/kustomization.yaml",
+      "find": "  # @praxis:resources",
+      "replace": "  - pdb.yaml\n  # @praxis:resources",
+      "capability": "high-availability"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/kustomization.yaml",
+      "find": "  # @praxis:resources",
+      "replace": "  - external-secret.yaml\n  # @praxis:resources",
+      "capability": "cloud-secrets"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/kustomization.yaml",
+      "find": "  # @praxis:resources",
+      "replace": "  - minio.yaml\n  # @praxis:resources",
+      "capability": "object-storage"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/kustomization.yaml",
+      "find": "  # @praxis:resources",
+      "replace": "  - elasticsearch.yaml\n  # @praxis:resources",
+      "capability": "search"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/kustomization.yaml",
+      "find": "  # @praxis:images",
+      "replace": "configMapGenerator:\n  - name: database-migrations\n    files:\n      - migrations/000001_core.up.sql\n  # @praxis:images",
+      "proStack": "go-gin"
+    },
+    {
+      "scope": "root", "file": "k8s/base/kustomization.yaml",
+      "find": "      - migrations/000001_core.up.sql",
+      "replace": "      - migrations/000001_core.up.sql\n      - migrations/000002_jwt.up.sql",
+      "proStack": "go-gin", "capability": "jwt-auth"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/deployment.yaml",
+      "find": "  replicas: 1\n  # @praxis:replicas",
+      "replace": "  replicas: 3\n  # @praxis:replicas",
+      "capability": "high-availability"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/deployment.yaml",
+      "find": "      # @praxis:pod-reliability",
+      "replace": "      topologySpreadConstraints:\n        - maxSkew: 1\n          topologyKey: topology.kubernetes.io/zone\n          whenUnsatisfiable: DoNotSchedule\n          labelSelector:\n            matchLabels:\n              app.kubernetes.io/name: {{projectName}}\n              app.kubernetes.io/component: api\n      affinity:\n        podAntiAffinity:\n          preferredDuringSchedulingIgnoredDuringExecution:\n            - weight: 100\n              podAffinityTerm:\n                topologyKey: kubernetes.io/hostname\n                labelSelector:\n                  matchLabels:\n                    app.kubernetes.io/name: {{projectName}}\n                    app.kubernetes.io/component: api\n      # @praxis:pod-reliability",
+      "capability": "high-availability"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/configmap.yaml",
+      "find": "  LOG_LEVEL: INFO",
+      "replace": "  LOG_LEVEL: INFO\n  REDIS_URL: redis://redis:6379/0",
+      "capability": "redis-cache"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/configmap.yaml",
+      "find": "  LOG_LEVEL: INFO",
+      "replace": "  LOG_LEVEL: INFO\n  OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318\n  OTEL_SERVICE_NAME: {{projectName}}",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/configmap.yaml",
+      "find": "  LOG_LEVEL: INFO",
+      "replace": "  LOG_LEVEL: INFO\n  S3_ENDPOINT: http://minio:9000\n  S3_REGION: us-east-1\n  S3_BUCKET: praxis",
+      "capability": "object-storage"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/deployment.yaml",
+      "find": "            # @praxis:container-env",
+      "replace": "            - name: S3_ACCESS_KEY\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: s3-access-key } }\n            - name: S3_SECRET_KEY\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: s3-secret-key } }\n            # @praxis:container-env",
+      "capability": "object-storage"
+    },
+    {
+      "scope": "root",
+      "file": "k8s/base/configmap.yaml",
+      "find": "  LOG_LEVEL: INFO",
+      "replace": "  LOG_LEVEL: INFO\n  ELASTICSEARCH_URL: http://elasticsearch:9200",
+      "capability": "search"
+    }
+  ]
+}

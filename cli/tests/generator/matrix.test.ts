@@ -1,0 +1,276 @@
+import { access, mkdtemp, readFile, rm } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { afterEach, describe, expect, it } from "vitest";
+import { PraxisConfig, validateConfig } from "../../src/config/schema";
+import { generateProject } from "../../src/generator/generate";
+
+const roots: string[] = [];
+afterEach(async () => {
+  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true })));
+});
+
+async function generate(
+  input: Omit<PraxisConfig, "schemaVersion" | "installDependencies" | "initializeGit" | "packageManager">,
+  packageManager: PraxisConfig["packageManager"] = "npm",
+) {
+  const root = await mkdtemp(path.join(os.tmpdir(), "praxis-matrix-"));
+  roots.push(root);
+  const config = validateConfig({
+    schemaVersion: 1,
+    ...input,
+    packageManager,
+    installDependencies: false,
+    initializeGit: false,
+  });
+  return generateProject(config, { cwd: root });
+}
+
+describe("bundled template matrix", () => {
+  it("generates a JavaScript Vite frontend with Vercel and Docker", async () => {
+    const output = await generate({
+      name: "vite-app",
+      projectType: "frontend",
+      language: "javascript",
+      frontend: { framework: "vite", styling: "tailwind-shadcn" },
+      deployment: ["vercel", "docker"],
+    });
+    await expect(access(path.join(output, "src/App.jsx"))).resolves.toBeUndefined();
+    await expect(access(path.join(output, "backend"))).rejects.toThrow();
+    expect(await readFile(path.join(output, "docker-compose.yml"), "utf8"))
+      .toContain('"3000:80"');
+  });
+
+  it("generates a TypeScript Express/Postgres backend with self-hosted auth", async () => {
+    const output = await generate({
+      name: "api",
+      projectType: "backend",
+      language: "typescript",
+      backend: {
+        framework: "express",
+        database: "postgres",
+        auth: "self-hosted",
+        cache: "none",
+      },
+      deployment: ["railway", "docker"],
+    });
+    expect(await readFile(path.join(output, "src/server.ts"), "utf8"))
+      .toContain('app.use("/api/auth", authRouter)');
+    expect(await readFile(path.join(output, "prisma/schema.prisma"), "utf8"))
+      .toContain('provider = "postgresql"');
+    expect(await readFile(path.join(output, "docker-compose.yml"), "utf8"))
+      .toContain("context: .");
+    expect(await readFile(path.join(output, "docker-compose.yml"), "utf8"))
+      .toContain("required: false");
+  });
+
+  it("generates a TypeScript Next/Mongo fullstack workspace with Clerk", async () => {
+    const output = await generate({
+      name: "saas",
+      projectType: "fullstack",
+      language: "typescript",
+      frontend: { framework: "next", styling: "tailwind-shadcn" },
+      backend: {
+        framework: "express",
+        database: "mongo",
+        auth: "clerk",
+        cache: "none",
+      },
+      deployment: ["vercel", "render", "docker"],
+    }, "pnpm");
+    expect(JSON.parse(await readFile(path.join(output, "package.json"), "utf8")).scripts.build)
+      .toContain("pnpm run build");
+    expect(await readFile(path.join(output, "backend/src/server.ts"), "utf8"))
+      .toContain("clerkMiddleware");
+    expect(await readFile(path.join(output, "backend/src/server.ts"), "utf8"))
+      .toContain('app.get("/api/protected", requireAuth');
+    expect(await readFile(path.join(output, "backend/prisma/schema.prisma"), "utf8"))
+      .toContain('provider = "mongodb"');
+    expect(JSON.parse(await readFile(path.join(output, "backend/package.json"), "utf8")).devDependencies.prisma)
+      .toBe("6.12.0");
+    await expect(access(path.join(output, "frontend/app/protected/page.tsx")))
+      .resolves.toBeUndefined();
+    const frontendPackage = JSON.parse(await readFile(path.join(output, "frontend/package.json"), "utf8"));
+    expect(frontendPackage.dependencies["@clerk/nextjs"]).toBeDefined();
+    expect(frontendPackage.dependencies["@clerk/clerk-react"]).toBeUndefined();
+    expect(frontendPackage.devDependencies["@tailwindcss/vite"]).toBeUndefined();
+    expect(await readFile(path.join(output, "frontend/.env.example"), "utf8"))
+      .not.toContain("VITE_CLERK_PUBLISHABLE_KEY");
+  });
+
+  it("generates a JavaScript Vite fullstack workspace with Supabase and no database", async () => {
+    const output = await generate({
+      name: "portal",
+      projectType: "fullstack",
+      language: "javascript",
+      frontend: { framework: "vite", styling: "tailwind-shadcn" },
+      backend: {
+        framework: "express",
+        database: "none",
+        auth: "supabase",
+        cache: "none",
+      },
+      deployment: ["render"],
+    });
+    expect(await readFile(path.join(output, "backend/src/server.js"), "utf8"))
+      .toContain('app.get("/api/protected", requireAuth');
+    expect(JSON.parse(await readFile(path.join(output, "backend/package.json"), "utf8")).scripts.build)
+      .toBe("node --check src/server.js");
+    await expect(access(path.join(output, "frontend/src/lib/supabase.js")))
+      .resolves.toBeUndefined();
+    await expect(access(path.join(output, "frontend/src/ProtectedExample.jsx")))
+      .resolves.toBeUndefined();
+    expect(await readFile(path.join(output, "frontend/.env.example"), "utf8"))
+      .not.toContain("NEXT_PUBLIC_SUPABASE_URL");
+    await expect(access(path.join(output, "backend/prisma"))).rejects.toThrow();
+  });
+
+  it("generates a TypeScript backend with a working Redis cache module", async () => {
+    const output = await generate({
+      name: "redis-api",
+      projectType: "backend",
+      language: "typescript",
+      backend: {
+        framework: "express",
+        database: "none",
+        auth: "none",
+        cache: "redis",
+      },
+      deployment: [],
+    });
+    const packageJson = JSON.parse(await readFile(path.join(output, "package.json"), "utf8"));
+    expect(packageJson.dependencies.redis).toBe("6.2.1");
+    expect(packageJson.dependencies.memjs).toBeUndefined();
+    expect(packageJson.devDependencies?.["@types/memjs"]).toBeUndefined();
+    expect(await readFile(path.join(output, ".env.example"), "utf8"))
+      .toContain("CACHE_URL=redis://localhost:6379");
+    expect(await readFile(path.join(output, "src/lib/cache.ts"), "utf8"))
+      .toContain("createClient");
+    const server = await readFile(path.join(output, "src/server.ts"), "utf8");
+    expect(server).toContain('from "./lib/cache.js"');
+    expect(server).toContain("await connectCache()");
+    expect(server).toContain("shutdownTasks.push(disconnectCache)");
+    expect(server).toContain('app.get("/api/cache"');
+    expect(server).toContain('await cacheSet("praxis:example"');
+  });
+
+  it("generates a JavaScript backend with a working Memcached cache module", async () => {
+    const output = await generate({
+      name: "memcached-api",
+      projectType: "backend",
+      language: "javascript",
+      backend: {
+        framework: "express",
+        database: "none",
+        auth: "none",
+        cache: "memcached",
+      },
+      deployment: [],
+    });
+    const packageJson = JSON.parse(await readFile(path.join(output, "package.json"), "utf8"));
+    expect(packageJson.dependencies.memjs).toBe("1.3.2");
+    expect(packageJson.dependencies.redis).toBeUndefined();
+    expect(packageJson.devDependencies?.["@types/memjs"]).toBeUndefined();
+    expect(await readFile(path.join(output, ".env.example"), "utf8"))
+      .toContain("CACHE_URL=localhost:11211");
+    const cacheHelper = await readFile(path.join(output, "src/lib/cache.js"), "utf8");
+    expect(cacheHelper).toContain("Client.create");
+    expect(cacheHelper).toContain("{ expires: 5 }");
+    const server = await readFile(path.join(output, "src/server.js"), "utf8");
+    expect(server).toContain("await connectCache()");
+    expect(server).toContain("shutdownTasks.push(disconnectCache)");
+    expect(server).toContain('app.get("/api/cache"');
+    expect(server).toContain('await cacheSet("praxis:example"');
+  });
+
+  it.each([
+    {
+      label: "Redis for a backend-only project",
+      name: "redis-docker-api",
+      projectType: "backend" as const,
+      language: "typescript" as const,
+      cache: "redis" as const,
+      expectedImage: "redis:7-alpine",
+      expectedUrl: "redis://cache:6379",
+    },
+    {
+      label: "Memcached for a backend-only project",
+      name: "memcached-docker-api",
+      projectType: "backend" as const,
+      language: "javascript" as const,
+      cache: "memcached" as const,
+      expectedImage: "memcached:1.6-alpine",
+      expectedUrl: "cache:11211",
+    },
+    {
+      label: "Redis for a Next fullstack project",
+      name: "redis-next-docker",
+      projectType: "fullstack" as const,
+      language: "typescript" as const,
+      framework: "next" as const,
+      cache: "redis" as const,
+      expectedImage: "redis:7-alpine",
+      expectedUrl: "redis://cache:6379",
+    },
+    {
+      label: "Memcached for a Vite fullstack project",
+      name: "memcached-vite-docker",
+      projectType: "fullstack" as const,
+      language: "javascript" as const,
+      framework: "vite" as const,
+      cache: "memcached" as const,
+      expectedImage: "memcached:1.6-alpine",
+      expectedUrl: "cache:11211",
+    },
+  ])("adds $label to Docker Compose", async ({
+    name,
+    projectType,
+    language,
+    framework,
+    cache,
+    expectedImage,
+    expectedUrl,
+  }) => {
+    const output = await generate({
+      name,
+      projectType,
+      language,
+      ...(projectType === "fullstack"
+        ? { frontend: { framework: framework!, styling: "tailwind-shadcn" as const } }
+        : {}),
+      backend: {
+        framework: "express",
+        database: "none",
+        auth: "none",
+        cache,
+      },
+      deployment: ["docker"],
+    });
+    const compose = await readFile(path.join(output, "docker-compose.yml"), "utf8");
+    expect(compose).toContain("  cache:");
+    expect(compose).toContain(`image: ${expectedImage}`);
+    expect(compose).toContain(`CACHE_URL: ${expectedUrl}`);
+    expect(compose).toMatch(/backend:[\s\S]*depends_on:\n\s+- cache/);
+    if (projectType === "fullstack") {
+      expect(compose).toMatch(/frontend:[\s\S]*depends_on:\n\s+- backend/);
+    }
+  });
+
+  it("does not add a cache service when cache is none", async () => {
+    const output = await generate({
+      name: "no-cache-docker-api",
+      projectType: "backend",
+      language: "typescript",
+      backend: {
+        framework: "express",
+        database: "none",
+        auth: "none",
+        cache: "none",
+      },
+      deployment: ["docker"],
+    });
+    const compose = await readFile(path.join(output, "docker-compose.yml"), "utf8");
+    expect(compose).not.toContain("  cache:");
+    expect(compose).not.toContain("CACHE_URL:");
+  });
+});

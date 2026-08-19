@@ -1,0 +1,24 @@
+{
+  "id": "pro.capability.seed-data",
+  "overlays": [
+    { "scope": "root", "source": "files/django", "proStack": "python-django", "capability": "seed-data" },
+    { "scope": "root", "source": "files/go", "proStack": "go-gin", "capability": "seed-data" }
+  ],
+  "patches": [
+    {
+      "scope": "root", "file": "Dockerfile",
+      "find": "CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags=\"-s -w\" -o /out/api ./cmd/api",
+      "replace": "CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags=\"-s -w\" -o /out/api ./cmd/api && \\\n    CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags=\"-s -w\" -o /out/seed ./cmd/seed",
+      "proStack": "go-gin", "capability": "seed-data"
+    },
+    {
+      "scope": "root", "file": "Dockerfile",
+      "find": "COPY --from=builder /out/api /api",
+      "replace": "COPY --from=builder /out/api /api\nCOPY --from=builder /out/seed /seed",
+      "proStack": "go-gin", "capability": "seed-data"
+    }
+  ],
+  "env": [
+    { "scope": "root", "keys": ["SEED_ADMIN_EMAIL=", "SEED_ADMIN_PASSWORD=", "SEED_METADATA_VALUE="], "capability": "seed-data" }
+  ]
+}

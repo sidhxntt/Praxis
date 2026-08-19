@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "moduleResolution": "Bundler",
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "include": ["src/**/*.js", "src/**/*.vue"]
+}

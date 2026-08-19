@@ -1,0 +1,256 @@
+{
+  "id": "pro.compose",
+  "overlays": [
+    { "scope": "root", "source": "files/django", "proStack": "python-django" },
+    { "scope": "root", "source": "files/go", "proStack": "go-gin" }
+  ],
+  "patches": [
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  load-test:\n    profiles: [\"tools\"]\n    image: locustio/locust:2.43.3\n    volumes:\n      - ./ops/load/locustfile.py:/mnt/locust/locustfile.py:ro\n    command: [\"-f\", \"/mnt/locust/locustfile.py\", \"--headless\", \"--host\", \"http://api:8000\", \"--users\", \"10\", \"--spawn-rate\", \"2\", \"--run-time\", \"1m\", \"--only-summary\"]\n    depends_on:\n      api:\n        condition: service_healthy\n    restart: \"no\"\n  # @praxis:services",
+      "proStack": "python-django", "capability": "load-testing"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  load-test:\n    profiles: [\"tools\"]\n    image: grafana/k6:1.3.0\n    environment:\n      TARGET_URL: http://api:8080\n      REQUEST_RATE: \"10\"\n      DURATION: 1m\n    volumes:\n      - ./ops/load/k6.js:/scripts/k6.js:ro\n    command: [\"run\", \"/scripts/k6.js\"]\n    depends_on:\n      api:\n        condition: service_healthy\n    restart: \"no\"\n  # @praxis:services",
+      "proStack": "go-gin", "capability": "load-testing"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  blackbox-exporter:\n    image: prom/blackbox-exporter:v0.28.0\n    command: [\"--config.file=/etc/blackbox_exporter/config.yml\"]\n    volumes:\n      - ./ops/blackbox.yml:/etc/blackbox_exporter/config.yml:ro\n    healthcheck:\n      test: [\"CMD-SHELL\", \"wget -q --spider http://localhost:9115/-/healthy\"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n    restart: unless-stopped\n  # @praxis:services",
+      "capability": "synthetic-monitoring"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  logs-elasticsearch:\n    image: docker.elastic.co/elasticsearch/elasticsearch:9.5.0\n    environment:\n      discovery.type: single-node\n      xpack.security.enabled: \"false\"\n      ES_JAVA_OPTS: -Xms512m -Xmx512m\n    volumes:\n      - logs-elasticsearch-data:/usr/share/elasticsearch/data\n    healthcheck:\n      test: [\"CMD-SHELL\", \"curl -fsS 'http://localhost:9200/_cluster/health?wait_for_status=yellow' >/dev/null\"]\n      interval: 10s\n      timeout: 5s\n      retries: 20\n      start_period: 30s\n    restart: unless-stopped\n  logstash:\n    image: docker.elastic.co/logstash/logstash:9.5.0\n    volumes:\n      - ./ops/elk/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro\n    depends_on:\n      logs-elasticsearch:\n        condition: service_healthy\n    healthcheck:\n      test: [\"CMD-SHELL\", \"curl -fsS http://localhost:9600/_node/pipelines >/dev/null\"]\n      interval: 10s\n      timeout: 5s\n      retries: 20\n    restart: unless-stopped\n  kibana:\n    image: docker.elastic.co/kibana/kibana:9.5.0\n    environment:\n      ELASTICSEARCH_HOSTS: http://logs-elasticsearch:9200\n    ports:\n      - \"5601:5601\"\n    depends_on:\n      logs-elasticsearch:\n        condition: service_healthy\n    healthcheck:\n      test: [\"CMD-SHELL\", \"curl -fsS http://localhost:5601/api/status >/dev/null\"]\n      interval: 10s\n      timeout: 5s\n      retries: 30\n    restart: unless-stopped\n  filebeat:\n    image: docker.elastic.co/beats/filebeat:9.5.0\n    user: root\n    command: [\"filebeat\", \"-e\", \"--strict.perms=false\"]\n    volumes:\n      - ./ops/elk/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro\n      - /var/lib/docker/containers:/var/lib/docker/containers:ro\n      - /var/run/docker.sock:/var/run/docker.sock:ro\n    depends_on:\n      logstash:\n        condition: service_healthy\n    restart: unless-stopped\n  # @praxis:services",
+      "capability": "elk"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "volumes:\n  postgres-data:",
+      "replace": "volumes:\n  postgres-data:\n  logs-elasticsearch-data:",
+      "capability": "elk"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  seed:\n    profiles: [\"tools\"]\n    build:\n      context: .\n    environment:\n      DJANGO_SETTINGS_MODULE: config.settings.development\n      DJANGO_SECRET_KEY: local-development-only-secret-key\n      DATABASE_HOST: postgres\n      DATABASE_NAME: app\n      DATABASE_USER: app\n      DATABASE_PASSWORD: app\n      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:-}\n      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-}\n    command: [\"python\", \"manage.py\", \"seed\"]\n    depends_on:\n      postgres:\n        condition: service_healthy\n    restart: \"no\"\n  # @praxis:services",
+      "proStack": "python-django", "capability": "seed-data"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  seed:\n    profiles: [\"tools\"]\n    build:\n      context: .\n    entrypoint: [\"/seed\"]\n    environment:\n      DATABASE_URL: postgres://app:app@postgres:5432/app?sslmode=disable\n      SEED_METADATA_VALUE: ${SEED_METADATA_VALUE:-}\n    depends_on:\n      migrate:\n        condition: service_completed_successfully\n    restart: \"no\"\n  # @praxis:services",
+      "proStack": "go-gin", "capability": "seed-data"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "      # @praxis:api-environment",
+      "replace": "      KAFKA_BROKERS: redpanda:9092\n      KAFKA_TOPIC: application-events\n      KAFKA_GROUP_ID: {{projectName}}\n      # @praxis:api-environment",
+      "capability": "kafka"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "      # @praxis:api-dependencies",
+      "replace": "      redpanda:\n        condition: service_healthy\n      # @praxis:api-dependencies",
+      "capability": "kafka"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  redpanda:\n    image: docker.redpanda.com/redpandadata/redpanda:v25.3.6\n    command: [\"redpanda\", \"start\", \"--mode\", \"dev-container\", \"--smp\", \"1\", \"--memory\", \"1G\", \"--reserve-memory\", \"0M\", \"--node-id\", \"0\", \"--kafka-addr\", \"internal://0.0.0.0:9092,external://0.0.0.0:19092\", \"--advertise-kafka-addr\", \"internal://redpanda:9092,external://localhost:19092\"]\n    ports:\n      - \"19092:19092\"\n      - \"19644:9644\"\n    volumes:\n      - redpanda-data:/var/lib/redpanda/data\n    healthcheck:\n      test: [\"CMD-SHELL\", \"rpk cluster health | grep -q Healthy\"]\n      interval: 10s\n      timeout: 5s\n      retries: 12\n    restart: unless-stopped\n  # @praxis:services",
+      "capability": "kafka"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "volumes:\n  postgres-data:",
+      "replace": "volumes:\n  postgres-data:\n  redpanda-data:",
+      "capability": "kafka"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      # @praxis:api-environment",
+      "replace": "      REDIS_URL: redis://redis:6379/0\n      # @praxis:api-environment",
+      "capability": "redis-cache"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      # @praxis:api-dependencies",
+      "replace": "      redis:\n        condition: service_healthy\n      # @praxis:api-dependencies",
+      "capability": "redis-cache"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  mailpit:\n    image: axllent/mailpit:v1.27.8\n    ports:\n      - \"1025:1025\"\n      - \"8025:8025\"\n    healthcheck:\n      test: [\"CMD\", \"/mailpit\", \"readyz\"]\n      interval: 5s\n      timeout: 3s\n      retries: 10\n    restart: unless-stopped\n  # @praxis:services",
+      "capability": "email-tasks"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  redis:\n    image: redis:8.8-alpine\n    command: [\"redis-server\", \"--appendonly\", \"yes\"]\n    volumes:\n      - redis-data:/data\n    healthcheck:\n      test: [\"CMD\", \"redis-cli\", \"ping\"]\n      interval: 5s\n      timeout: 3s\n      retries: 10\n    restart: unless-stopped\n  # @praxis:services",
+      "capability": "redis-cache"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "volumes:\n  postgres-data:",
+      "replace": "volumes:\n  postgres-data:\n  redis-data:",
+      "capability": "redis-cache"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  worker:\n    build:\n      context: .\n    environment:\n      DJANGO_SETTINGS_MODULE: config.settings.development\n      DJANGO_SECRET_KEY: local-development-only-secret-key\n      DATABASE_HOST: postgres\n      DATABASE_NAME: app\n      DATABASE_USER: app\n      DATABASE_PASSWORD: app\n      REDIS_URL: redis://redis:6379/0\n    command: [\"celery\", \"-A\", \"config\", \"worker\", \"--loglevel=INFO\", \"--concurrency=2\"]\n    depends_on:\n      postgres:\n        condition: service_healthy\n      redis:\n        condition: service_healthy\n    restart: unless-stopped\n  # @praxis:services",
+      "proStack": "python-django",
+      "capability": "background-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  worker:\n    build:\n      context: .\n    entrypoint: [\"/worker\"]\n    environment:\n      REDIS_URL: redis://redis:6379/0\n    depends_on:\n      redis:\n        condition: service_healthy\n    restart: unless-stopped\n  # @praxis:services",
+      "proStack": "go-gin",
+      "capability": "background-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      REDIS_URL: redis://redis:6379/0\n    command: [\"celery\"",
+      "replace": "      REDIS_URL: redis://redis:6379/0\n      SMTP_HOST: mailpit\n      SMTP_PORT: \"1025\"\n      EMAIL_FROM: noreply@example.com\n    command: [\"celery\"",
+      "proStack": "python-django",
+      "capability": "email-tasks"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      REDIS_URL: redis://redis:6379/0\n    depends_on:\n      redis:",
+      "replace": "      REDIS_URL: redis://redis:6379/0\n      SMTP_HOST: mailpit\n      SMTP_PORT: \"1025\"\n      EMAIL_FROM: noreply@example.com\n    depends_on:\n      redis:",
+      "proStack": "go-gin",
+      "capability": "email-tasks"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  scheduler:\n    build:\n      context: .\n    environment:\n      DJANGO_SETTINGS_MODULE: config.settings.development\n      DJANGO_SECRET_KEY: local-development-only-secret-key\n      DATABASE_HOST: postgres\n      DATABASE_NAME: app\n      DATABASE_USER: app\n      DATABASE_PASSWORD: app\n      REDIS_URL: redis://redis:6379/0\n    command: [\"celery\", \"-A\", \"config\", \"beat\", \"--loglevel=INFO\", \"--schedule=/tmp/celerybeat-schedule\"]\n    depends_on:\n      postgres:\n        condition: service_healthy\n      redis:\n        condition: service_healthy\n    restart: unless-stopped\n  # @praxis:services",
+      "proStack": "python-django",
+      "capability": "scheduled-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  scheduler:\n    build:\n      context: .\n    entrypoint: [\"/scheduler\"]\n    environment:\n      REDIS_URL: redis://redis:6379/0\n    depends_on:\n      redis:\n        condition: service_healthy\n    restart: unless-stopped\n  # @praxis:services",
+      "proStack": "go-gin",
+      "capability": "scheduled-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  prometheus:\n    image: prom/prometheus:v3.13.2\n    command: [\"--config.file=/etc/prometheus/prometheus.yml\", \"--storage.tsdb.path=/prometheus\"]\n    ports:\n      - \"9090:9090\"\n    volumes:\n      - ./ops/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro\n      - ./ops/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro\n      - prometheus-data:/prometheus\n    depends_on:\n      api:\n        condition: service_healthy\n    healthcheck:\n      test: [\"CMD-SHELL\", \"wget -q --spider http://localhost:9090/-/ready\"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n    restart: unless-stopped\n  # @praxis:services",
+      "capability": "prometheus"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "volumes:\n  postgres-data:",
+      "replace": "volumes:\n  postgres-data:\n  prometheus-data:",
+      "capability": "prometheus"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      # @praxis:api-environment",
+      "replace": "      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318\n      OTEL_SERVICE_NAME: {{projectName}}\n      # @praxis:api-environment",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      # @praxis:api-dependencies",
+      "replace": "      otel-collector:\n        condition: service_healthy\n      # @praxis:api-dependencies",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  otel-collector:\n    image: otel/opentelemetry-collector-contrib:0.153.0\n    command: [\"--config=/etc/otelcol-contrib/config.yaml\"]\n    volumes:\n      - ./ops/otel-collector.yml:/etc/otelcol-contrib/config.yaml:ro\n    ports:\n      - \"4317:4317\"\n      - \"4318:4318\"\n      - \"13133:13133\"\n    healthcheck:\n      test: [\"CMD\", \"/otelcol-contrib\", \"--version\"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n    restart: unless-stopped\n  # @praxis:services",
+      "capability": "opentelemetry"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  nginx:\n    image: nginx:1.30.3-alpine\n    ports:\n      - \"80:80\"\n    volumes:\n      - ./ops/nginx.conf:/etc/nginx/nginx.conf:ro\n    depends_on:\n      api:\n        condition: service_healthy\n    healthcheck:\n      test: [\"CMD\", \"wget\", \"-q\", \"--spider\", \"http://localhost/nginx-health\"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n    read_only: true\n    tmpfs:\n      - /var/cache/nginx\n      - /var/run\n    restart: unless-stopped\n  # @praxis:services",
+      "capability": "nginx"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      # @praxis:api-environment",
+      "replace": "      S3_ENDPOINT: http://minio:9000\n      S3_REGION: us-east-1\n      S3_BUCKET: praxis\n      S3_ACCESS_KEY: minio\n      S3_SECRET_KEY: local-development-only-secret\n      # @praxis:api-environment",
+      "capability": "object-storage"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      # @praxis:api-dependencies",
+      "replace": "      minio-init:\n        condition: service_completed_successfully\n      # @praxis:api-dependencies",
+      "capability": "object-storage"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  minio:\n    image: minio/minio:RELEASE.2025-09-07T16-13-09Z\n    command: [\"server\", \"/data\", \"--console-address\", \":9001\"]\n    environment:\n      MINIO_ROOT_USER: minio\n      MINIO_ROOT_PASSWORD: local-development-only-secret\n    ports:\n      - \"9000:9000\"\n      - \"9001:9001\"\n    volumes:\n      - minio-data:/data\n    healthcheck:\n      test: [\"CMD\", \"curl\", \"-f\", \"http://localhost:9000/minio/health/live\"]\n      interval: 10s\n      timeout: 5s\n      retries: 10\n    restart: unless-stopped\n  minio-init:\n    image: minio/mc:RELEASE.2025-08-13T08-35-41Z\n    depends_on:\n      minio:\n        condition: service_healthy\n    entrypoint: [\"/bin/sh\", \"-c\"]\n    command: [\"mc alias set local http://minio:9000 minio local-development-only-secret && mc mb --ignore-existing local/praxis\"]\n    restart: \"no\"\n  # @praxis:services",
+      "capability": "object-storage"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "volumes:\n  postgres-data:",
+      "replace": "volumes:\n  postgres-data:\n  minio-data:",
+      "capability": "object-storage"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      # @praxis:api-environment",
+      "replace": "      ELASTICSEARCH_URL: http://elasticsearch:9200\n      # @praxis:api-environment",
+      "capability": "search"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      # @praxis:api-dependencies",
+      "replace": "      elasticsearch:\n        condition: service_healthy\n      # @praxis:api-dependencies",
+      "capability": "search"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  elasticsearch:\n    image: docker.elastic.co/elasticsearch/elasticsearch:9.5.0\n    environment:\n      discovery.type: single-node\n      xpack.security.enabled: \"false\"\n      ES_JAVA_OPTS: -Xms512m -Xmx512m\n    ports:\n      - \"9200:9200\"\n    volumes:\n      - elasticsearch-data:/usr/share/elasticsearch/data\n    healthcheck:\n      test: [\"CMD-SHELL\", \"curl -fsS 'http://localhost:9200/_cluster/health?wait_for_status=yellow' >/dev/null\"]\n      interval: 10s\n      timeout: 5s\n      retries: 20\n      start_period: 30s\n    restart: unless-stopped\n  # @praxis:services",
+      "capability": "search"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "volumes:\n  postgres-data:",
+      "replace": "volumes:\n  postgres-data:\n  elasticsearch-data:",
+      "capability": "search"
+    }
+  ]
+}

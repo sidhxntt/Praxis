@@ -1,0 +1,29 @@
+{
+  "id": "frontend.vite",
+  "overlays": [
+    { "scope": "frontend", "source": "files/common" },
+    { "scope": "frontend", "source": "files/typescript", "language": "typescript" },
+    { "scope": "frontend", "source": "files/javascript", "language": "javascript" }
+  ],
+  "packages": [{
+    "scope": "frontend",
+    "dependencies": {
+      "react": "19.2.8",
+      "react-dom": "19.2.8"
+    },
+    "devDependencies": {
+      "@types/node": "^22.20.0",
+      "@types/react": "^19.2.0",
+      "@types/react-dom": "^19.2.0",
+      "@vitejs/plugin-react": "6.0.5",
+      "typescript": "^5.9.3",
+      "vite": "8.2.1"
+    },
+    "scripts": {
+      "dev": "vite",
+      "build": "vite build",
+      "preview": "vite preview"
+    }
+  }],
+  "env": [{ "scope": "frontend", "keys": ["VITE_APP_URL"] }]
+}

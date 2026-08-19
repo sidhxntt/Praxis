@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seed
+spec:
+  suspend: true
+  ttlSecondsAfterFinished: 3600
+  backoffLimit: 1
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{projectName}}
+      automountServiceAccountToken: false
+      containers:
+        - name: seed
+          image: praxis-api
+          command: ["/seed"]
+          env:
+            - name: DATABASE_URL
+              valueFrom: { secretKeyRef: { name: praxis-secrets, key: database-url } }
+            - name: SEED_METADATA_VALUE
+              valueFrom: { secretKeyRef: { name: praxis-secrets, key: seed-metadata-value } }
+          securityContext: { allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: { drop: ["ALL"] } }

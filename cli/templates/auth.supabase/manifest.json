@@ -1,0 +1,30 @@
+{
+  "id": "auth.supabase",
+  "overlays": [
+    { "scope": "backend", "source": "files/typescript", "language": "typescript" },
+    { "scope": "backend", "source": "files/javascript", "language": "javascript" },
+    { "scope": "frontend", "source": "files/next-typescript", "language": "typescript", "framework": "next" },
+    { "scope": "frontend", "source": "files/next-javascript", "language": "javascript", "framework": "next" },
+    { "scope": "frontend", "source": "files/vite-typescript", "language": "typescript", "framework": "vite" },
+    { "scope": "frontend", "source": "files/vite-javascript", "language": "javascript", "framework": "vite" }
+  ],
+  "packages": [
+    { "scope": "backend", "dependencies": { "@supabase/supabase-js": "^2.57.4" } },
+    { "scope": "frontend", "dependencies": { "@supabase/supabase-js": "^2.57.4" } }
+  ],
+  "env": [
+    { "scope": "backend", "keys": ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"] },
+    { "scope": "frontend", "framework": "next", "keys": ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"] },
+    { "scope": "frontend", "framework": "vite", "keys": ["VITE_SUPABASE_URL", "VITE_SUPABASE_ANON_KEY"] }
+  ],
+  "patches": [
+    { "scope": "backend", "file": "src/server.ts", "find": "// @praxis:imports", "replace": "// @praxis:imports\nimport { requireAuth } from \"./auth/require-auth.js\";", "language": "typescript" },
+    { "scope": "backend", "file": "src/server.ts", "find": "// @praxis:middleware", "replace": "// @praxis:middleware\napp.get(\"/api/protected\", requireAuth, (_request, response) => response.json({ message: \"Protected route\" }));", "language": "typescript" },
+    { "scope": "backend", "file": "src/server.js", "find": "// @praxis:imports", "replace": "// @praxis:imports\nimport { requireAuth } from \"./auth/require-auth.js\";", "language": "javascript" },
+    { "scope": "backend", "file": "src/server.js", "find": "// @praxis:middleware", "replace": "// @praxis:middleware\napp.get(\"/api/protected\", requireAuth, (_request, response) => response.json({ message: \"Protected route\" }));", "language": "javascript" },
+    { "scope": "frontend", "file": "src/App.tsx", "find": "import { Button } from \"@/components/ui/button\";", "replace": "import { Button } from \"@/components/ui/button\";\nimport { ProtectedExample } from \"@/ProtectedExample\";", "language": "typescript", "framework": "vite" },
+    { "scope": "frontend", "file": "src/App.tsx", "find": "<Button>Get started</Button>", "replace": "<Button>Get started</Button>\n        <ProtectedExample />", "language": "typescript", "framework": "vite" },
+    { "scope": "frontend", "file": "src/App.jsx", "find": "import { Button } from \"@/components/ui/button\";", "replace": "import { Button } from \"@/components/ui/button\";\nimport { ProtectedExample } from \"@/ProtectedExample\";", "language": "javascript", "framework": "vite" },
+    { "scope": "frontend", "file": "src/App.jsx", "find": "<Button>Get started</Button>", "replace": "<Button>Get started</Button>\n        <ProtectedExample />", "language": "javascript", "framework": "vite" }
+  ]
+}

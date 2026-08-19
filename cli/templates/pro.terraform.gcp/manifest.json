@@ -1,0 +1,9 @@
+{
+  "id": "pro.terraform.gcp",
+  "overlays": [
+    { "scope": "root", "source": "files/common", "cloud": "gcp" },
+    { "scope": "root", "source": "files/cache", "cloud": "gcp", "capability": "redis-cache" },
+    { "scope": "root", "source": "files/storage", "cloud": "gcp", "capability": "object-storage" },
+    { "scope": "root", "source": "files/search", "cloud": "gcp", "capability": "search" }
+  ]
+}
