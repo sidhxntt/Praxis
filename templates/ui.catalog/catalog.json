@@ -15,21 +15,21 @@
         "path": "previews/airbnb-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "209d2531641ebc68a3ddfac8eca13856c10f32157778e23920e3a00852ed03c3",
+        "sha256": "e27e6d320d73c23dd23f1d92cc65c778c751905b24a529bb97ee99e78164016c",
         "alt": "Airbnb inspired landing page preview"
       },
       "desktop": {
         "path": "previews/airbnb-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "6dd0c17a75fc1ff9953357d149c9a932c7c98dc7336d692c4bcc1b106a2086cc",
+        "sha256": "dc2dc5f2e163bfd50b18e7bce5518b91fc54fa73a21c22ec4a93688746d710ec",
         "alt": "Airbnb inspired landing page preview"
       },
       "mobile": {
         "path": "previews/airbnb-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "cee16e6ae5dd2efccac7bc0b868c2068bbb03ddd797311d3602620eb78294ff5",
+        "sha256": "18b7d460f7550735e9078429ac1981eedcd790326447299ba3aa382f96169729",
         "alt": "Airbnb inspired landing page preview"
       }
     }
@@ -64,7 +64,7 @@
         "path": "previews/airtable-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "4d67141b19e1e86466fc86ea64c782d3439e5e43481686bec933b505b53c5275",
+        "sha256": "c14652c390a1c4d8e89fac8f9e50cde7c5c3916aec6cd530d762269b5ba2895f",
         "alt": "Airtable inspired landing page preview"
       }
     }
@@ -155,21 +155,21 @@
         "path": "previews/bmw-m-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "0d99126868f041baee7952f37ec00347d94cac4f4e5ea4c2fa6989abaf64eca3",
+        "sha256": "aa0eb5dd6bbd2e3724292eb1aff0930dc2a0e250dce6b337f5c572da436e2886",
         "alt": "Bmw M inspired landing page preview"
       },
       "desktop": {
         "path": "previews/bmw-m-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "88a48ca2d2ce4031e4a571c2fd863618cd49c796f4d455e33760f738e5e6112b",
+        "sha256": "4c7e6b9794b64baad51d671780167f8a9395390b28cacb0ade06f902b8da0380",
         "alt": "Bmw M inspired landing page preview"
       },
       "mobile": {
         "path": "previews/bmw-m-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "b1f95742b23c0cb3434d7097d959b78145c2195d70ee557df26ced0bc16f755b",
+        "sha256": "9ef12d6f3f67e0462d274e909ca8a21f9c8739af02faa105e756e34466cbf7a8",
         "alt": "Bmw M inspired landing page preview"
       }
     }
@@ -190,21 +190,21 @@
         "path": "previews/bmw-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "e651bcc33b61ff27d5896b59f8160eb7c2d2fe7d4384464015d24e0ccb3e5a35",
+        "sha256": "cccd228a16ae290bbac163ed4893422e0cbca6e4957f99c7e26e68d34675537f",
         "alt": "Bmw inspired landing page preview"
       },
       "desktop": {
         "path": "previews/bmw-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "148f738eae4a688a4cc275c4623a06e318c600a4e0130cc9947353f6c1bf6658",
+        "sha256": "7cff240f2b7d3cef53eacd832ab9e0d3f0ecb744028c9ae187bd5890de3f2887",
         "alt": "Bmw inspired landing page preview"
       },
       "mobile": {
         "path": "previews/bmw-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "ec761b068b479a1902c50f80830047732a42f59e18f0412bab34c97b70c424c1",
+        "sha256": "39ca366a3ff4a515d17aec318e63575d0a6f20cd161219d313d57fae02f84942",
         "alt": "Bmw inspired landing page preview"
       }
     }
@@ -225,21 +225,21 @@
         "path": "previews/bugatti-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "adde12dc1f13ac930aef5aae51a0691121443a2d6b8f8c0759e28a711064fb07",
+        "sha256": "bd67717bb00fe54ca925b7b8ac349db3b2bf1176d4db39c70ce3c2f9a5911b34",
         "alt": "Bugatti inspired landing page preview"
       },
       "desktop": {
         "path": "previews/bugatti-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "8efe94aa27114e95da223e03d84272cffe6c4a6b273a1d06d982499090c45183",
+        "sha256": "a18c7b1fe1d0ede9bd0b28d6068eefff841b6fd81cdaa7b0f15e85ff543e1cfc",
         "alt": "Bugatti inspired landing page preview"
       },
       "mobile": {
         "path": "previews/bugatti-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "ef96fbc93d4c37aa9b307c3a4e5feed129c39ada1d462e5850aee41901ef060a",
+        "sha256": "1fdaf08bce513c4ae92b21ee1916bfce633a7ab57afcbbdca4a6f01d61ac3f51",
         "alt": "Bugatti inspired landing page preview"
       }
     }
@@ -295,21 +295,21 @@
         "path": "previews/claude-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "7dc1e33b70b6b17c82387982bdc7ca0fba65c0ac0740bf68064c575efa23800c",
+        "sha256": "0438e95993ad146e24b64ad7ac9647d5d27225ba61b05e6b57e7a77032496a76",
         "alt": "Claude inspired landing page preview"
       },
       "desktop": {
         "path": "previews/claude-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "9ba5fc4f69e45281608c35d4bf9b13fcf4ef28d0c4edf4180519bcf372b5b945",
+        "sha256": "fc3a879dd1f6941ca5792fc6c78eb161bc272bfac7c5d44e37dbd44aa7f98afd",
         "alt": "Claude inspired landing page preview"
       },
       "mobile": {
         "path": "previews/claude-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "77c5cae634dbc1737ed30d73ffde62d413e3d5b23113eecb696bb353aa6ef465",
+        "sha256": "919062386491f222996fb9abe9bcc3ceb1ffef99488d6f293f41894927dbe38a",
         "alt": "Claude inspired landing page preview"
       }
     }
@@ -344,7 +344,7 @@
         "path": "previews/clay-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "862e16956d2d3cf7ddde42aee366ad6b61a9ca0b6630cdf9b559610e0c4a93e9",
+        "sha256": "e7e56a27e012b8ff510c1fc518be69ba57989e58f89361f2b2ca9a0f8fca8160",
         "alt": "Clay inspired landing page preview"
       }
     }
@@ -435,21 +435,21 @@
         "path": "previews/cursor-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "a7103906e9cae4b00c2b6fed0592a6d19b8895dc8a7e41ac093b8c882ab9c7de",
+        "sha256": "26c21ad0e6236a9f2a31afcff1811cc3d00ee972f2b7b5400329538d9ddc40a8",
         "alt": "Cursor inspired landing page preview"
       },
       "desktop": {
         "path": "previews/cursor-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "2fabde62d4eebccaa50c97d9eb20b1ee9000acc840cd2b9e85e3d4c802e7496a",
+        "sha256": "f1496414788d94449eb5ce435b7cb6325e4825e5bedb6b08ce0a71e15913fbbf",
         "alt": "Cursor inspired landing page preview"
       },
       "mobile": {
         "path": "previews/cursor-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "5d7ccc8b258629fd4c0ab04fa1dc1af105569bb5caf792d5aac143dd2569d57a",
+        "sha256": "505fe7b0debc163a79724d3747ba062909db61bed5e836c3607427def665fd5a",
         "alt": "Cursor inspired landing page preview"
       }
     }
@@ -470,21 +470,21 @@
         "path": "previews/dell-1996-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "bf335e6e4f29572f023430ffbd2aacc8e4ce8e1aea373e58379855a88e109eb2",
+        "sha256": "60ffe65e24a5ce87b74c2207c0d601be0d60370e9152fe81291d83cfaf00791d",
         "alt": "Dell 1996 inspired landing page preview"
       },
       "desktop": {
         "path": "previews/dell-1996-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "1cac44d3b41c5568c7e13f3be7a64727e590789e1155b396bf36235b5b917fb2",
+        "sha256": "85c9c2aac599cdef77a602a2dfa10e0767368b1bc720175a87854fa1fef3cd34",
         "alt": "Dell 1996 inspired landing page preview"
       },
       "mobile": {
         "path": "previews/dell-1996-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "f51389169d8f91470cdbdedf48d72d6b90c328d181b30f2d1b593b4e6de7e501",
+        "sha256": "2693146fcd92761b188301f2e780028b3f78315f406b0564a42c46aaa68fe415",
         "alt": "Dell 1996 inspired landing page preview"
       }
     }
@@ -505,21 +505,21 @@
         "path": "previews/discord-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "b114aad8918a7be0868ec5aeda9ca201593474ee30cb556131e22dc50495958d",
+        "sha256": "fe74e9b10b408ef4c508a4fe651e10d1db24cea72998227470a137c4b0af2500",
         "alt": "Discord inspired landing page preview"
       },
       "desktop": {
         "path": "previews/discord-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "f126a4a8ecb7d5caea876284c32af4beb079d74bc7e7a591ffe5ec94849c0eaf",
+        "sha256": "87ec41528fc338dd80405f7528cd5347974c51aa47316cd78350e30d8d792817",
         "alt": "Discord inspired landing page preview"
       },
       "mobile": {
         "path": "previews/discord-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "0b5e6f067abf884776b93c35309cb893fe74249ce7a7d958f81110e53de9f291",
+        "sha256": "a19c1ff871ded6a7573d7447a63a93a0b0d5c90413a20817fbee63dd80da8e06",
         "alt": "Discord inspired landing page preview"
       }
     }
@@ -540,21 +540,21 @@
         "path": "previews/elevenlabs-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "38faf639597e50ac3e59735c278e456fd66e97ccff821f89fdd1000778ecc3ac",
+        "sha256": "1f1020554940a21e1816463637a1f2a33327b67de188dc55b9121613aa4827c5",
         "alt": "Elevenlabs inspired landing page preview"
       },
       "desktop": {
         "path": "previews/elevenlabs-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "8ee44ead33c72efe15ced29226ddaffb904fbc5302e74d35a4a9b6fe375881a6",
+        "sha256": "a112ec088140cdee65a43263c719e8645007a1e3f6b63f8dfc50d3038e0c91de",
         "alt": "Elevenlabs inspired landing page preview"
       },
       "mobile": {
         "path": "previews/elevenlabs-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "eb53ab65c47d0aed4de3c832f642173fb452643d96bec962ac5abc6d4d713905",
+        "sha256": "c09f393ff4fddbef8ee8a45ed1b1e98268bec18e4643bf0d5f283e7f83dde2cb",
         "alt": "Elevenlabs inspired landing page preview"
       }
     }
@@ -575,21 +575,21 @@
         "path": "previews/expo-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "909a6c54686ebf9374155c0aed121980b5068ad41e3d46264b03f4d58e67bf62",
+        "sha256": "d5dc82c9af42d7f920c1436ab4832e468ef2d7c2c8c6a136edeb426e275d023d",
         "alt": "Expo inspired landing page preview"
       },
       "desktop": {
         "path": "previews/expo-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "bc221c59b553061d0fb6b6fb341879de610314ca6a631ef54dc4891e1c46103c",
+        "sha256": "738a0822e6de45efe7bfbd9a85faaaa0bfea362a757bc4ac00b510ac6c9a0807",
         "alt": "Expo inspired landing page preview"
       },
       "mobile": {
         "path": "previews/expo-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "732a86e5ac0dd7b1cc54a5a8b0efa8b51f1b616499e946cded0daa490d2387e8",
+        "sha256": "5d25d9c8b2c32af4f99cebd14c31c8b5a5d4bf309ebed4299e8a0d069ce4e038",
         "alt": "Expo inspired landing page preview"
       }
     }
@@ -610,21 +610,21 @@
         "path": "previews/ferrari-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "49102c3519f2c188c745a206b44e7d55758f754b68c0cbc18f8535f6ebb63a31",
+        "sha256": "0dc1e848c29b55313f632a26d88c65cc7d487dfc09932aad81390ce17a9842b1",
         "alt": "Ferrari inspired landing page preview"
       },
       "desktop": {
         "path": "previews/ferrari-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "e5c07eab5ee6af3ff8b640b2ca699367ba1389f64bbc4c066aec010c2c890f68",
+        "sha256": "30c4825c546aaa4ce6639e5ac7a35b64cdb240745eb74f2864bae40ce79440ab",
         "alt": "Ferrari inspired landing page preview"
       },
       "mobile": {
         "path": "previews/ferrari-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "500b22df050e5a62e4618bdd20ba133ba8dfb9fc9f595decc13fbd19bf9c28aa",
+        "sha256": "26f1370c711de51632846d0fc4df23b9d2d0fb33f91a03c243be7ed2a2254cdf",
         "alt": "Ferrari inspired landing page preview"
       }
     }
@@ -659,7 +659,7 @@
         "path": "previews/figma-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "b1e3ae6b96c87fd30edc12f73ae817db54095cdd96735e6978fb9813262c1ea3",
+        "sha256": "59a038c9116f3fabd49f2893d027a5074adbc748f13c90ecd75dcd0503f49f3a",
         "alt": "Figma inspired landing page preview"
       }
     }
@@ -694,7 +694,7 @@
         "path": "previews/framer-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "b49d65f736d9a27dcad21fcadefd255bf5433d4c000d4e32c7efa9502f189718",
+        "sha256": "228c8be499761694ad3f36e71acee732fea318a4a8f76755cf930f7cdeb944db",
         "alt": "Framer inspired landing page preview"
       }
     }
@@ -715,21 +715,21 @@
         "path": "previews/hp-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "08a087811e0740e95f952399c5ebae5fd3c0158f809cf140d4bfd3547821cf31",
+        "sha256": "cee95a02b85946aa6b5dae4a3ac0861dfe0f928eeaa1221ef8143cbddf07590a",
         "alt": "HP inspired landing page preview"
       },
       "desktop": {
         "path": "previews/hp-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "5d207fabdc8185239bec91ec78fd24d0d33cf08e2b9e6b06359da8dc7d843eae",
+        "sha256": "bbccf9466049c37808a4d8d0721146bb118d6b1d4f69725e0f5eaaa255ee4671",
         "alt": "HP inspired landing page preview"
       },
       "mobile": {
         "path": "previews/hp-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "0a212a5ec02fe476baf8873c59dd50b04a2b325ce55f105599fb53134c9087d7",
+        "sha256": "6496e1d8d3ac12788d0e0f15f01258ef3d3e65e4d99fe109095d2e4a9c1ee9b1",
         "alt": "HP inspired landing page preview"
       }
     }
@@ -750,21 +750,21 @@
         "path": "previews/lamborghini-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "9ec420c61670ee75b6108c5d272cae0757edf439a561b3c04f4aed18f50808ad",
+        "sha256": "b83c15544be383f579b84b7b4221c63c916b27310bf297e5a1bd26662fc4603a",
         "alt": "Lamborghini inspired landing page preview"
       },
       "desktop": {
         "path": "previews/lamborghini-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "79739c4835b4a31e6c2b7ea8e6ef4cac2f288b6269a40bc1c68c3fc9bb8ce251",
+        "sha256": "6fdf8579f36bf67da64f048913e64a1dc300bfde4968c11bd5e696c9db70cef4",
         "alt": "Lamborghini inspired landing page preview"
       },
       "mobile": {
         "path": "previews/lamborghini-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "59b3af4a762251ae583519f3bc9a8bbde4aa365c5160f5dbe7ebd44497775234",
+        "sha256": "899f709fceeaf51aa94d98770fe4e98580e5c4fe3005d6f7b66717da2dbbbfed",
         "alt": "Lamborghini inspired landing page preview"
       }
     }
@@ -785,21 +785,21 @@
         "path": "previews/lovable-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "07b61a58741511a66bc1eb735bfe328d0695053b89be4588ec31d9fc43998e18",
+        "sha256": "412e1b18aa61704fa16a6928f8b1c008778d2c433c5f032ba8fdd784e582b56d",
         "alt": "Lovable inspired landing page preview"
       },
       "desktop": {
         "path": "previews/lovable-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "4221ca88641ddd70477ac1def57a8fffa916bd18db3cf434c4c3c39cac475c1c",
+        "sha256": "e3c9d4810cbe509ca39fdff5ec458de2ffa6887b5f19e2e77a8fc44332168d5b",
         "alt": "Lovable inspired landing page preview"
       },
       "mobile": {
         "path": "previews/lovable-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "cd31a7501bae77c6d8d795b1d5b27341addb820309b0c3f2327932688440d255",
+        "sha256": "6415f19b321adea8a4e80f878208e82b4a5102dec95622d518211d905092d772",
         "alt": "Lovable inspired landing page preview"
       }
     }
@@ -820,21 +820,21 @@
         "path": "previews/mastercard-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "5e63bd2eb8f89c06ea41c5edfd403fd46e94a220af3ca10860cc786ebb68274b",
+        "sha256": "bc37d3e3af1b51dc393fbf6bb4005e057dc38527a10e0e8424d2ec6e78e4e8eb",
         "alt": "Mastercard inspired landing page preview"
       },
       "desktop": {
         "path": "previews/mastercard-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "99942e6b54ecf95b6e3332ad03a88c7ee20510c26368f0891c5225d90c4eda13",
+        "sha256": "1e3de674a4cc8806f7f64e1efdd3e16d976922a209b500d92826703f36b49b9a",
         "alt": "Mastercard inspired landing page preview"
       },
       "mobile": {
         "path": "previews/mastercard-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "3edb37c81be66cd845121ee509ffa8e21fecb147686764113fec5d7391c17b9c",
+        "sha256": "50c449f06f108611bf5ff2b5e9da34f85b27304820c4ca6c47527d4829cd8ba4",
         "alt": "Mastercard inspired landing page preview"
       }
     }
@@ -869,7 +869,7 @@
         "path": "previews/meta-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "7a5cbf14b0c486907a7b7dcaea74038311b973d6403c96afcd883bb6bfd1fe7c",
+        "sha256": "c3d9f9a35a96c65a81a7673c098959dca38389e39523addf1adde8f5f5c421ea",
         "alt": "Meta inspired landing page preview"
       }
     }
@@ -890,21 +890,21 @@
         "path": "previews/mongodb-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "97dc82128f863b1ad2c670e3793271a1699b7f33045c6d24916d461a6590ee12",
+        "sha256": "44e18294c083f4b885a942e3381162d5f0194979e31cf0d12b69b272e8974a00",
         "alt": "Mongodb inspired landing page preview"
       },
       "desktop": {
         "path": "previews/mongodb-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "b987be02ae195a396533f6998aa6e55f46bef12e35da50cc944dbe2c39b2ef59",
+        "sha256": "c1fff040406f0a62bb343179c7e985e4f14ade3715f1dc9b5c55a77d1aa9e00c",
         "alt": "Mongodb inspired landing page preview"
       },
       "mobile": {
         "path": "previews/mongodb-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "82d026ce116b98d45178613e171e6bba7969d5542feba33341b0356a16e876ff",
+        "sha256": "9a448311021b39363b6cf9528ee27a730f61013f10c1a431abc69085db5e91e8",
         "alt": "Mongodb inspired landing page preview"
       }
     }
@@ -925,21 +925,21 @@
         "path": "previews/notion-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "877091577b5c6e6ed564c3e90f2ad2ac4989145aaf7af197e5b28f9d85768d5b",
+        "sha256": "f9fdf7a8aa8c7e8570c3cedd3111de28547a37506d7557b1fbdbc97094769ead",
         "alt": "Notion inspired landing page preview"
       },
       "desktop": {
         "path": "previews/notion-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "b5a9713f0cc42c48d832c7273fe2bf0afa6f3486dc8fcdcb9d5d102484a6ba79",
+        "sha256": "35370d06b23916e21cf904052e5da563e6c654931d8d60565e73848bc4dbad10",
         "alt": "Notion inspired landing page preview"
       },
       "mobile": {
         "path": "previews/notion-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "506c2b4a4c150dc1d928aac0b93a461ddaa4ca914ac9be021604d8b23874bd04",
+        "sha256": "4affcd419e1d0805a2a0a0bf4d59a977c23a07c65c319f39003de4e5662799e9",
         "alt": "Notion inspired landing page preview"
       }
     }
@@ -1030,21 +1030,21 @@
         "path": "previews/pinterest-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "0fe5e07120cdef79b180c6fcd8525aa109c5ac66e6a642b6964a1fd50add724c",
+        "sha256": "78c521e67bee61b85c1a735db3fd0cd02b0b8d4097847053646566fb9742a54a",
         "alt": "Pinterest inspired landing page preview"
       },
       "desktop": {
         "path": "previews/pinterest-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "6bd2c623e31d5c49c024db8eb22c413eaee066f7fc8bca27c560d200002c6195",
+        "sha256": "b213ff282f5aef5a95d6d6505783688445ad9015db39d58953af6e9150e7910c",
         "alt": "Pinterest inspired landing page preview"
       },
       "mobile": {
         "path": "previews/pinterest-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "d6adb8732b74c5e4f42943d9992aeb516064ce6becd0a687554784e501a4bc29",
+        "sha256": "8978ba2a1f432f02cb7a3177e3e71cb8a2b028db585039a02f8c7859d310eb39",
         "alt": "Pinterest inspired landing page preview"
       }
     }
@@ -1065,21 +1065,21 @@
         "path": "previews/playstation-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "e3a0494731550b4ffb68f68e1e24a273df8cf39deda51da4076bf821f713b5f4",
+        "sha256": "e9764daedd4230f0c4fe5abc9cdcf767a2c74c25c0f9936e769611404d30fbcc",
         "alt": "Playstation inspired landing page preview"
       },
       "desktop": {
         "path": "previews/playstation-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "48c18dc9fea1dde66f38821deb0886eec0648e406deabf276955339cda93a17d",
+        "sha256": "c92b7d4ea62587614887f3c519fbdfc4ac6e30f0d44ce4fa2443b43253a3ae0c",
         "alt": "Playstation inspired landing page preview"
       },
       "mobile": {
         "path": "previews/playstation-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "327518421e814c4be568f66e7bea33335a8f4aaa6975d66a4bde665288026f39",
+        "sha256": "6a84cf2ae0b3c364b4607e17aaebed0ef3be01635bf8fe905aca57ef1cb50ad5",
         "alt": "Playstation inspired landing page preview"
       }
     }
@@ -1135,21 +1135,21 @@
         "path": "previews/revolut-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "ee1ea16f7b14075d5d9ccf92e89c0edb70568d00c121e8581ab5a3573d03bc45",
+        "sha256": "fab442012c24632ccb586b6f49cdb5d8112013d6961e7f12ff2bb38c215e5e44",
         "alt": "Revolut inspired landing page preview"
       },
       "desktop": {
         "path": "previews/revolut-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "9ff432e1cbf322540397748e9a13e3abbcdf12c405f6d51be89096e60963709d",
+        "sha256": "9f589329423ff27e7f6176d6cd8b34477d8ef5b5c95b4ab3c4c86d84bb065b18",
         "alt": "Revolut inspired landing page preview"
       },
       "mobile": {
         "path": "previews/revolut-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "793489cf2e818c2db6e3171917af23943405f24d3efaac6e74f52e5fc7eec6e9",
+        "sha256": "53401d51fbce0a70e188e52b8bfda66335bb7b99962da5462e6197e87345a263",
         "alt": "Revolut inspired landing page preview"
       }
     }
@@ -1205,21 +1205,21 @@
         "path": "previews/spacex-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "bbf08502fb01cd8d28e9e9f9a753c36f34b8dc74e5bfc60fee71029ba85c3a03",
+        "sha256": "b23e981337f96b7d1afc454c64d7939056bcd2cd923d6f1ad67f64b74f00bbf4",
         "alt": "Spacex inspired landing page preview"
       },
       "desktop": {
         "path": "previews/spacex-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "9c0aea24f5c68ec030697d5eaa47637cd0d368e7bb1c92dec35fdf05a028bab8",
+        "sha256": "f621e9807b6b804ffba260d8d4ac837d84c9e77b5cfd72191c6ca88a1bfc1764",
         "alt": "Spacex inspired landing page preview"
       },
       "mobile": {
         "path": "previews/spacex-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "bff9194612f8d1f59216d6bdaaec34f1fc711e8e188838c070dbf443fecfe161",
+        "sha256": "c4f3a8b81bbfa160ad7fde9bb0e23b355b231bcf2b273e1c34aa3c11aaca66c9",
         "alt": "Spacex inspired landing page preview"
       }
     }
@@ -1275,21 +1275,21 @@
         "path": "previews/tesla-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "d218d596d9c2483c92303f6ea607401353617a863300ce7199c3af40ece51aab",
+        "sha256": "6d5af74aea9b482f7974f166d53ce61fdf9623e0841327cf75f41e3b9c922c4c",
         "alt": "Tesla inspired landing page preview"
       },
       "desktop": {
         "path": "previews/tesla-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "f2810e6e28d784d635042d81a003ad80c327f231d0d74f0e342675897a00b886",
+        "sha256": "d7f1671257a9edbaaddb4bca7b7e82dc3528c4cd220a577acac5357024e0a463",
         "alt": "Tesla inspired landing page preview"
       },
       "mobile": {
         "path": "previews/tesla-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "d92bf34c3f5702eb6d304bfb4c33ea05dd543565271c2da8f75a2ded99727f31",
+        "sha256": "69a401a9cdf272cfc457ba0d6336754f739519c8c5460481074fea5de320177d",
         "alt": "Tesla inspired landing page preview"
       }
     }
@@ -1310,21 +1310,21 @@
         "path": "previews/uber-thumbnail.webp",
         "width": 640,
         "height": 400,
-        "sha256": "454b5ded01f643af5e5a5ae27dc14de5ee478c2679b7bc57e6cd5c26bc3d9553",
+        "sha256": "f1b41e9de16523a679b0647114933807b876a03f228a514954b7a8ab8b91a160",
         "alt": "Uber inspired landing page preview"
       },
       "desktop": {
         "path": "previews/uber-desktop.webp",
         "width": 1440,
         "height": 900,
-        "sha256": "a952829c33a6278732e7f4cb818682a8e26d13aa41034bdb46c49b5d64106d97",
+        "sha256": "bee3a02ec6deb653ba896a3df414b40172a5eb9261cbbd7970a0bc3a06e3b3a2",
         "alt": "Uber inspired landing page preview"
       },
       "mobile": {
         "path": "previews/uber-mobile.webp",
         "width": 390,
         "height": 844,
-        "sha256": "8c9bcf5bcef5e9a8d419a6fcf53d3df4dcdb3d739be45a82342c8acdcf1a0bcb",
+        "sha256": "a0fed0908a8e63d99e5af42a28af20a128e1d4b1bd784bf84420a61e9f60bbc3",
         "alt": "Uber inspired landing page preview"
       }
     }

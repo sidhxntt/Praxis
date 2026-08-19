@@ -29,6 +29,7 @@
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
     "@types/chalk-animation": "^1.6.3",
     "@types/figlet": "^1.7.0",
     "@types/node": "^22.10.0",

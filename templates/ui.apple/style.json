@@ -38,7 +38,7 @@
       "links": [
         { "label": "Studio", "href": "#studio" },
         { "label": "Materials", "href": "#materials" },
-        { "label": "Journal", "href": "#journal" }
+        { "label": "Journal", "href": "#impact" }
       ],
       "action": { "label": "Reserve", "href": "#reserve" }
     },
@@ -51,7 +51,7 @@
       "heading": "Quietly extraordinary.",
       "body": "A considered collection of everyday objects shaped around calm, clarity, and enduring materials.",
       "primaryAction": { "label": "Explore the collection", "href": "#studio" },
-      "secondaryAction": { "label": "Watch the film", "href": "#journal" },
+      "secondaryAction": { "label": "Watch the film", "href": "#impact" },
       "asset": "assets/stillform-stage.svg"
     },
     {
@@ -87,7 +87,7 @@
       "eyebrow": "Material study",
       "heading": "Weight you can feel. Impact you cannot.",
       "body": "The enclosure uses reclaimed alloy, refined through a low-energy process and finished without decorative coatings.",
-      "action": { "label": "Read our material standard", "href": "#journal" }
+      "action": { "label": "Read our material standard", "href": "#impact" }
     },
     {
       "id": "impact",
@@ -130,7 +130,7 @@
         {
           "heading": "Company",
           "links": [
-            { "label": "Journal", "href": "#journal" },
+            { "label": "Journal", "href": "#impact" },
             { "label": "Responsibility", "href": "#impact" }
           ]
         }
