@@ -1,0 +1,6 @@
+{
+  "id": "pro.core",
+  "overlays": [
+    { "scope": "root", "source": "files/common", "projectType": "pro-backend" }
+  ]
+}

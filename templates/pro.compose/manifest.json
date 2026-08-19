@@ -1,0 +1,6 @@
+{
+  "id": "pro.compose",
+  "overlays": [
+    { "scope": "root", "source": "files/django", "proStack": "python-django" }
+  ]
+}
