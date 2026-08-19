@@ -26,10 +26,14 @@ jobs:
           registry-url: https://npm.pkg.github.com
           scope: "@sidhxntt"
       - run: npm ci
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
       - name: Verify release tag matches package version
         if: github.event_name == 'push'
         working-directory: cli
-        run: test "cli-v$(node -p \"require('./package.json').version\")" = "$GITHUB_REF_NAME"
+        run: |
+          package_version="$(node -p "require('./package.json').version")"
+          test "cli-v${package_version}" = "$GITHUB_REF_NAME"
       - name: Verify CLI
         run: npm --workspace cli run check
       - name: Publish package
