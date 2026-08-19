@@ -70,7 +70,8 @@ describe("complete generated UI matrix", () => {
           { mode: "starter" },
         ), { cwd: root });
         await expect(readFile(path.join(starter, adapter.entry), "utf8")).resolves.toBeTruthy();
-        await expect(readFile(path.join(starter, "DESIGN.md"), "utf8")).rejects.toThrow();
+        expect(await readFile(path.join(starter, "DESIGN.md"), "utf8"))
+          .toContain(`Framework: \`${adapter.framework}\``);
         await expect(readdir(path.join(starter, "public/ui"))).rejects.toThrow();
         await rm(starter, { recursive: true });
       }

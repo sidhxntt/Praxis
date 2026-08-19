@@ -14,6 +14,8 @@ It also includes Praxis Pro, a capability-driven production backend generator fo
 
 The complete human- and agent-friendly technical guide lives in the [repository documentation](docs/index.md) and is published to the [Praxis GitHub Wiki](https://github.com/sidhxntt/Praxis/wiki). It covers the system and code architecture, configuration-to-manifest generation flow, standard and Pro backend topology, UI template pipeline, extension points, and verification requirements.
 
+Maintainer releases use separate repository and CLI tags. See [RELEASING.md](RELEASING.md) for the verified tagging and publishing workflow.
+
 Repository Markdown is the source of truth; the Wiki is generated from it. See the [Wiki publishing guide](docs/wiki-publishing.md).
 
 ## Features
@@ -79,8 +81,24 @@ The generated project contains pinned dependencies, health/readiness/startup pro
 
 ## Installation
 
+Praxis Flow is published to GitHub Packages as `@sidhxntt/praxiflow`. Configure npm authentication for GitHub Packages in `~/.npmrc`:
+
+```ini
+@sidhxntt:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+```
+
+The token must be a classic GitHub personal access token with `read:packages`.
+
 ```bash
-npm install -g praxiflow
+npm install --global @sidhxntt/praxiflow
+praxiflow
+```
+
+Or run it without a global installation:
+
+```bash
+npx @sidhxntt/praxiflow
 ```
 
 During local development:
@@ -137,7 +155,7 @@ These names describe visual inspiration only. Praxis Flow is not affiliated with
 
 Each option generates a responsive, industry-style landing page with navigation, hero, supporting product/story sections, proof or metrics, a call to action, and footer. Templates do not include dashboards, application forms, or admin UI.
 
-If template mode is selected, the normalized design guide is copied to `DESIGN.md` in a frontend-only project or `frontend/DESIGN.md` in a fullstack project. This preserves the chosen design language for future development. Plain starter mode does not add a design guide.
+Every frontend includes a design guide: `DESIGN.md` in a frontend-only project or `frontend/DESIGN.md` in a fullstack project. A selected visual template contributes its specific design language; plain Tailwind and shadcn starter mode receives an adaptable design foundation.
 
 The optional `create` command is a compatibility alias:
 

@@ -4,11 +4,13 @@ export function renderPageMarkup(style) {
   const body = style.sections.filter(({ type }) => !["navigation", "footer"].includes(type));
   return [
     '<a class="skip-link" href="#main">Skip to content</a>',
+    `<div class="ui-page ${style.traits.map((trait) => `trait-${attr(trait)}`).join(" ")}" data-style="${attr(style.id)}">`,
     renderSection(navigation, style),
     '<main id="main">',
     ...body.map((section) => renderSection(section, style)),
     "</main>",
     renderSection(footer, style),
+    "</div>",
   ].join("\n");
 }
 
@@ -17,13 +19,13 @@ function renderSection(section, style) {
   const attributes = `id="${attr(section.id)}" class="ui-section ui-${attr(section.type)} theme-${attr(section.theme)} variant-${attr(section.variant)}"`;
   switch (section.type) {
     case "navigation":
-      return `<header ${attributes}><div class="ui-container nav-inner"><a class="brand" href="#top">${text(section.brand)}</a><nav aria-label="Primary"><ul>${section.links.map((link) => `<li>${linkTo(link)}</li>`).join("")}</ul></nav>${linkTo(section.action, "button primary compact")}</div></header>`;
+      return `<header ${attributes}><div class="ui-container nav-inner"><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"></span>${text(section.brand)}</a><nav aria-label="Primary"><ul>${section.links.map((link) => `<li>${linkTo(link)}</li>`).join("")}</ul></nav>${linkTo(section.action, "button primary compact")}</div></header>`;
     case "hero":
-      return `<section ${attributes}><div class="ui-container hero-copy">${eyebrow(section)}<h1>${text(section.heading)}</h1><p class="lead">${text(section.body)}</p><div class="actions">${linkTo(section.primaryAction, "button primary")}${section.secondaryAction ? linkTo(section.secondaryAction, "button secondary") : ""}</div></div><figure class="hero-visual"><img src="${assetUrl(style.id, section.asset)}" alt="${attr(assetAlt(style, section.asset))}" width="${asset(style, section.asset).width}" height="${asset(style, section.asset).height}" /></figure></section>`;
+      return `<section ${attributes}><div class="hero-ambient" aria-hidden="true"></div><div class="ui-container hero-copy">${eyebrow(section)}<h1>${text(section.heading)}</h1><p class="lead">${text(section.body)}</p><div class="actions">${linkTo(section.primaryAction, "button primary")}${section.secondaryAction ? linkTo(section.secondaryAction, "button secondary") : ""}</div></div><figure class="hero-visual"><div class="visual-frame"><img src="${assetUrl(style.id, section.asset)}" alt="${attr(assetAlt(style, section.asset))}" width="${asset(style, section.asset).width}" height="${asset(style, section.asset).height}" /></div></figure></section>`;
     case "showcase":
       return `<section ${attributes}><div class="ui-container showcase-grid"><div>${eyebrow(section)}<h2>${text(section.heading)}</h2><p class="lead">${text(section.body)}</p>${section.action ? linkTo(section.action, "text-link") : ""}</div>${section.asset ? `<figure><img src="${assetUrl(style.id, section.asset)}" alt="${attr(assetAlt(style, section.asset))}" width="${asset(style, section.asset).width}" height="${asset(style, section.asset).height}" loading="lazy" /></figure>` : '<div class="material-study" aria-hidden="true"><span></span><span></span><span></span></div>'}</div></section>`;
     case "features":
-      return `<section ${attributes}><div class="ui-container">${eyebrow(section)}<h2>${text(section.heading)}</h2>${section.body ? `<p class="lead section-intro">${text(section.body)}</p>` : ""}<div class="feature-grid">${section.items.map((item) => `<article><span class="marker">${text(item.marker ?? "")}</span><h3>${text(item.title)}</h3><p>${text(item.description)}</p></article>`).join("")}</div></div></section>`;
+      return `<section ${attributes}><div class="ui-container">${eyebrow(section)}<h2>${text(section.heading)}</h2>${section.body ? `<p class="lead section-intro">${text(section.body)}</p>` : ""}<div class="feature-grid">${section.items.map((item) => `<article><div class="feature-top"><span class="marker">${text(item.marker ?? "")}</span><span class="feature-line" aria-hidden="true"></span></div><h3>${text(item.title)}</h3><p>${text(item.description)}</p></article>`).join("")}</div></div></section>`;
     case "metrics":
       return `<section ${attributes}><div class="ui-container">${eyebrow(section)}<h2>${text(section.heading)}</h2><dl class="metrics-grid">${section.items.map((item) => `<div><dt>${text(item.label)}</dt><dd>${text(item.value)}</dd></div>`).join("")}</dl></div></section>`;
     case "logo-cloud":
@@ -33,9 +35,9 @@ function renderSection(section, style) {
     case "pricing":
       return `<section ${attributes}><div class="ui-container"><h2>${text(section.heading)}</h2>${section.body ? `<p class="lead section-intro">${text(section.body)}</p>` : ""}<div class="pricing-grid">${section.tiers.map((tier) => `<article><h3>${text(tier.name)}</h3><p class="price">${text(tier.price)}</p><p>${text(tier.description)}</p><ul>${tier.features.map((feature) => `<li>${text(feature)}</li>`).join("")}</ul></article>`).join("")}</div></div></section>`;
     case "cta":
-      return `<section ${attributes}><div class="ui-container cta-inner">${eyebrow(section)}<h2>${text(section.heading)}</h2><p class="lead">${text(section.body)}</p>${linkTo(section.action, "button primary")}</div></section>`;
+      return `<section ${attributes}><div class="ui-container cta-shell"><div class="cta-inner">${eyebrow(section)}<h2>${text(section.heading)}</h2><p class="lead">${text(section.body)}</p>${linkTo(section.action, "button primary")}</div></div></section>`;
     case "footer":
-      return `<footer ${attributes}><div class="ui-container footer-grid"><div><a class="brand" href="#top">${text(section.brand)}</a><p>${text(section.summary)}</p></div>${section.columns.map((column) => `<div><h2>${text(column.heading)}</h2><ul>${column.links.map((link) => `<li>${linkTo(link)}</li>`).join("")}</ul></div>`).join("")}</div><p class="ui-container legal">${text(section.legal)}</p></footer>`;
+      return `<footer ${attributes}><div class="ui-container footer-grid"><div><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"></span>${text(section.brand)}</a><p>${text(section.summary)}</p></div>${section.columns.map((column) => `<div><h2>${text(column.heading)}</h2><ul>${column.links.map((link) => `<li>${linkTo(link)}</li>`).join("")}</ul></div>`).join("")}</div><p class="ui-container legal">${text(section.legal)}</p></footer>`;
     default:
       throw new Error(`unsupported section type "${section.type}"`);
   }

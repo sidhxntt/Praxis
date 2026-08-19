@@ -1,13 +1,19 @@
-import { FrequentlyAskedQuestionsPro } from "@/components/faq2";
-import { FeaturesPro } from "@/components/feature2";
-import { HeroPro } from "@/components/hero2";
+import CTA from "@/components/cta";
+import { FrequentlyAskedQuestions } from "@/components/faq";
+import { Features } from "@/components/features";
+import { Hero } from "@/components/hero";
+import { SpotlightLogoCloud } from "@/components/logos-cloud";
+import { Testimonials } from "@/components/testimonials";
 
-export default function HomePro() {
+export default function PraxisProPage() {
   return (
-    <div>
-      <HeroPro />
-      <FeaturesPro />
-      <FrequentlyAskedQuestionsPro />
-    </div>
+    <main>
+      <Hero product="pro" />
+      <SpotlightLogoCloud product="pro" />
+      <Features product="pro" />
+      <Testimonials product="pro" />
+      <FrequentlyAskedQuestions product="pro" />
+      <CTA product="pro" />
+    </main>
   );
 }

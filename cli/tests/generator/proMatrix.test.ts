@@ -39,6 +39,7 @@ describe("Praxis Pro release matrix", () => {
         expect(readme).toContain(`Stack: \`${stack}\``);
         expect(readme).toContain("Explicitly selected:");
         expect(readme).toContain("Automatically implied:");
+        expect(readme).toContain("will not work correctly until its environment is configured");
         for (const file of ["docker-compose.yml", stack === "python-django" ? "pyproject.toml" : "go.mod"]) {
           expect(await readFile(path.join(destination, file), "utf8")).not.toMatch(/\{\{[^}]+\}\}/);
         }

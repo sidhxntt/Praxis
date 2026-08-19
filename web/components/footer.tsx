@@ -1,51 +1,40 @@
+"use client";
 import Link from "next/link";
 import React from "react";
 import { Logo } from "./logo";
-import {
-  IconBrandLinkedin,
-  IconBrandMedium,
-  IconBrandTwitter,
-  IconBrandGithub
-} from "@tabler/icons-react";
+import { IconBrandGithub } from "@tabler/icons-react";
+import { usePathname } from "next/navigation";
 
 export function Footer() {
-  // const documentation = [
-  //   { title: "Getting Started", href: "#" },
-  //   { title: "API Reference", href: "#" },
-  //   { title: "Integrations", href: "#" },
-  //   { title: "Examples", href: "#" },
-  //   { title: "SDKs", href: "#" },
-  // ];
+  const isPro = usePathname().startsWith("/pro");
+  const documentation = [
+    { title: "Overview", href: "https://github.com/sidhxntt/Praxis#readme" },
+    { title: "Architecture", href: "https://github.com/sidhxntt/Praxis/tree/main/docs" },
+    { title: isPro ? "Praxis Pro" : "Standard projects", href: isPro ? "https://github.com/sidhxntt/Praxis/blob/main/docs/praxis-pro.md" : "https://github.com/sidhxntt/Praxis/blob/main/docs/standard-projects.md" },
+  ];
 
-  // const resources = [
-  //   { title: "Changelog", href: "#" },
-  //   { title: "Pricing", href: "#" },
-  //   { title: "Status", href: "#" },
-  //   { title: "Webhooks", href: "#" },
-  // ];
+  const resources = [
+    { title: "GitHub", href: "https://github.com/sidhxntt/Praxis" },
+    { title: "CLI help", href: "https://github.com/sidhxntt/Praxis#cli-reference" },
+    { title: "UI templates", href: "https://github.com/sidhxntt/Praxis#landing-page-template-gallery" },
+  ];
 
-  // const company = [
-  //   { title: "Blog", href: "#" },
-  //   { title: "Contact", href: "#" },
-  //   { title: "Customers", href: "#" },
-  //   { title: "Brand", href: "#" },
-  // ];
+  const company = [
+    { title: "Praxis Flow", href: "/" },
+    { title: "Praxis Pro", href: "/pro" },
+    { title: "FAQ", href: `${isPro ? "/pro" : ""}/#faqs` },
+  ];
 
-  // const legal = [
-  //   { title: "Acceptable Use", href: "#" },
-  //   { title: "Privacy Policy", href: "#" },
-  //   { title: "Terms of Service", href: "#" },
-  // ];
+  const legal = [
+    { title: "MIT License", href: "https://github.com/sidhxntt/Praxis/blob/main/LICENSE" },
+  ];
 
   const socials = [
-    { title: "Github", href: "https://github.com/sidhxntt", icon:   IconBrandGithub},
-    { title: "Medium", href: "https://medium.com/@sidhxntt", icon: IconBrandMedium },
-    { title: "LinkedIn", href: "https://www.linkedin.com/in/siddhant-gupta-885384239/", icon: IconBrandLinkedin },
-    { title: "Twitter", href: "https://x.com/sidhxntt", icon: IconBrandTwitter },
+    { title: "GitHub", href: "https://github.com/sidhxntt/Praxis", icon: IconBrandGithub },
   ];
 
   return (
-    <div className="relative border-t border-white/[0.1] px-8 bg-black w-full overflow-hidden mx-auto max-w-7xl">
+    <div className="relative border-t border-white/[0.1] px-8 py-20 bg-black w-full overflow-hidden mx-auto max-w-7xl">
       <div className="absolute bottom-full left-1/2 -translate-x-1/2 -mb-px flex h-8 items-end overflow-hidden">
         <div className="flex -mb-px h-[2px] w-56">
           <div className="w-full flex-none [background-image:linear-gradient(90deg,rgba(255,255,255,0)_0%,#FFFFFF_32.29%,rgba(255,255,255,0.3)_67.19%,rgba(255,255,255,0)_100%)] blur-xs" />
@@ -65,7 +54,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-10 lg:gap-20">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 lg:gap-20">
             <div className="flex flex-col space-y-4">
               <p className="text-white font-semibold">Documentation</p>
               <ul className="space-y-3">
@@ -129,7 +118,7 @@ export function Footer() {
                 ))}
               </ul>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>

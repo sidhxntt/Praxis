@@ -1,12 +1,10 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Button } from "./button";
 import { cn } from "@/lib/utils";
-import { motion, useAnimation, useInView } from "framer-motion";
+import { motion, useAnimation, useInView } from "motion/react";
 import Link from "next/link";
-import { Copy } from "lucide-react";
-import { Badge } from "@/components/ui/badge"
-import { AlertCircleIcon } from "lucide-react"
+import { products, type ProductKey } from "@/lib/products";
 
 const BackgroundGrid = ({ className }: { className?: string }) => {
   const controls = useAnimation();
@@ -25,7 +23,6 @@ const BackgroundGrid = ({ className }: { className?: string }) => {
 
   return (
     <div
-
       ref={ref}
       className={cn("absolute inset-0 overflow-hidden", className)}
     >
@@ -133,11 +130,11 @@ const LineGradient = ({ position }: { position: "left" | "right" }) => {
   );
 };
 
-export default function CTA() {
+export default function CTA({ product = "flow" }: { product?: ProductKey }) {
+  const content = products[product];
   const controls = useAnimation();
   const ref = React.useRef(null);
   const inView = useInView(ref, { amount: 0.3, once: true });
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (inView) {
@@ -149,16 +146,8 @@ export default function CTA() {
     }
   }, [controls, inView]);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText("npx praxiflow");
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   return (
-    <div 
-      id="home"
-    className="bg-black w-full max-w-7xl mx-auto min-h-[100vh] md:min-h-[120dvh] flex items-center justify-center px-4 sm:px-6 lg:px-8 relative">
+    <div className="bg-black w-full max-w-7xl mx-auto min-h-[80vh] md:min-h-[100dvh] flex items-center justify-center px-4 sm:px-6 lg:px-8 relative">
       <LineGradient position="left" />
       <motion.div
         ref={ref}
@@ -166,21 +155,6 @@ export default function CTA() {
         animate={controls}
         className="w-full max-w-4xl mx-auto text-center py-8 md:py-12 lg:py-20 pb-16 md:pb-32 lg:pb-48 relative z-10"
       >
-        <div className="relative bottom-3 sm:relative sm:bottom-5">
-          <Link
-            href={"/pro"}
-            target="__blank"
-           >
-          <Badge
-          variant="secondary"
-          className="bg-blue-600 text-white gap-2 hover:bg-blue-700"
-        >
-          <AlertCircleIcon />
-          Introducing Praxis Pro
-        </Badge>
-          </Link>
-        </div>
-
         <div className="relative z-20">
           <h2
             className={cn(
@@ -190,11 +164,10 @@ export default function CTA() {
               "px-4 md:px-8"
             )}
           >
-            Develop your SaaS in days not months
+            {content.ctaTitle}
           </h2>
           <p className="max-w-lg text-xs sm:text-sm md:text-base text-neutral-400 text-center mx-auto my-4 md:my-6 lg:my-8 px-4">
-            Praxis — the lightning-fast scaffolding tool that transforms
-            concepts into production-ready code with a single command.
+            {content.ctaDescription}
           </p>
         </div>
         <BackgroundGrid className="mt-8 md:mt-16 lg:mt-36 z-0" />
@@ -204,29 +177,9 @@ export default function CTA() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="relative z-20"
         >
-          <Link
-            href={
-              "https://praxisdocs.hashnode.space/praxis/introduction/getting-started"
-            }
-            target="_blank"
-          >
-            <Button className="h-10 md:h-12 lg:h-16 w-32 md:w-40 lg:w-48 rounded-full text-xs sm:text-sm md:text-base font-medium">
-              Get Started Now
-            </Button>
-          </Link>
-          <div
-            className=" font-bold max-w-lg text-xs sm:text-sm md:text-base text-neutral-400 text-center mx-auto my-4 md:my-6 lg:my-8 px-4 flex items-center justify-center gap-2 cursor-pointer"
-            onClick={handleCopy}
-          >
-            <span>npx praxiflow</span>
-            <Copy className="w-4 h-4 text-neutral-400 hover:text-white" />
-            {copied && <span className="text-green-500 text-xs">Copied!</span>}
-          </div>
-          <div
-            className=" font-bold max-w-lg text-xs sm:text-sm md:text-base text-neutral-400 text-center mx-auto my-4 md:my-6 lg:my-8 px-4 flex items-center justify-center gap-2 cursor-pointer"
-          >
-          <a href="https://www.producthunt.com/products/praxis-4?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-praxis&#0045;4" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1007579&theme=light&t=1755718896191" alt="Praxis&#0032; - Ship&#0032;your&#0032;SaaS&#0032;in&#0032;days&#0032;not&#0032;in&#0032;months&#0046; | Product Hunt" style={{width: "250px", height: "54px"}} width="250" height="54" /></a>
-          </div>
+          <Button as={Link} href="https://github.com/sidhxntt/Praxis" className="h-10 md:h-12 lg:h-16 w-40 md:w-48 lg:w-56 rounded-full text-xs sm:text-sm md:text-base font-medium">
+            View on GitHub
+          </Button>
         </motion.div>
       </motion.div>
       <LineGradient position="right" />

@@ -18,10 +18,14 @@ export interface GallerySession {
 const STATIC_FILES = new Map([
   ["/", ["index.html", "text/html; charset=utf-8"]],
   ["/index.html", ["index.html", "text/html; charset=utf-8"]],
-  ["/gallery.css", ["gallery.css", "text/css; charset=utf-8"]],
-  ["/gallery.js", ["gallery.js", "text/javascript; charset=utf-8"]],
 ] as const);
-type StaticPath = "/" | "/index.html" | "/gallery.css" | "/gallery.js";
+type StaticPath = "/" | "/index.html";
+
+const NEXT_ASSET_TYPES = new Map([
+  [".css", "text/css; charset=utf-8"],
+  [".js", "text/javascript; charset=utf-8"],
+  [".woff2", "font/woff2"],
+] as const);
 
 export async function startGallery(options: GalleryOptions = {}): Promise<GallerySession> {
   const root = path.resolve(
@@ -119,6 +123,21 @@ async function handleRequest(
       }
       return send(response, 200, catalog);
     }
+    if (/^\/_next\/static\/[a-zA-Z0-9._/-]+$/.test(pathname)) {
+      const extension = path.extname(pathname);
+      const contentType = NEXT_ASSET_TYPES.get(extension as ".css" | ".js" | ".woff2");
+      if (!contentType) return send(response, 404, "Not found");
+      const assetPath = path.resolve(root, `.${pathname}`);
+      const staticRoot = path.resolve(root, "_next/static");
+      if (!assetPath.startsWith(`${staticRoot}${path.sep}`)) return send(response, 404, "Not found");
+      try {
+        response.setHeader("content-type", contentType);
+        response.setHeader("cache-control", "public, max-age=31536000, immutable");
+        return send(response, 200, await readFile(assetPath));
+      } catch {
+        return send(response, 404, "Not found");
+      }
+    }
     const preview = pathname.match(/^\/previews\/([a-z0-9-]+)-(thumbnail|desktop|mobile)\.webp$/);
     if (preview && isUiStyleId(preview[1])) {
       try {
@@ -171,6 +190,6 @@ async function readJsonBody(request: IncomingMessage): Promise<unknown> {
 function send(response: ServerResponse, status: number, body: string | Buffer): void {
   response.statusCode = status;
   response.setHeader("x-content-type-options", "nosniff");
-  response.setHeader("content-security-policy", "default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; connect-src 'self'");
+  response.setHeader("content-security-policy", "default-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'");
   response.end(body);
 }

@@ -62,7 +62,8 @@ describe("frontend framework starters", () => {
 
       await expect(access(path.join(output, entry))).resolves.toBeUndefined();
       await expect(access(path.join(output, primitive))).resolves.toBeUndefined();
-      await expect(access(path.join(output, "DESIGN.md"))).rejects.toThrow();
+      expect(await readFile(path.join(output, "DESIGN.md"), "utf8"))
+        .toContain(`Framework: \`${framework}\``);
       expect(packageJson.scripts.build).toBe(build);
       expect(packageJson.devDependencies.tailwindcss).toBe("4.3.3");
     },

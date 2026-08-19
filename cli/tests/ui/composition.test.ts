@@ -56,7 +56,7 @@ describe("selected UI composition", () => {
       .rejects.toThrow();
   });
 
-  it("keeps the plain Tailwind and shadcn starter free of design artifacts", async () => {
+  it("gives the plain Tailwind and shadcn starter a design foundation", async () => {
     const config = quickConfig("plain-starter");
     config.projectType = "frontend";
     config.backend = undefined;
@@ -66,7 +66,7 @@ describe("selected UI composition", () => {
 
     expect(await readFile(path.join(destination, "app/page.tsx"), "utf8"))
       .toContain("Built with Praxis Flow");
-    await expect(readFile(path.join(destination, "DESIGN.md"), "utf8"))
-      .rejects.toThrow();
+    expect(await readFile(path.join(destination, "DESIGN.md"), "utf8"))
+      .toContain("Styling: Tailwind CSS with shadcn/ui-compatible primitives");
   });
 });
