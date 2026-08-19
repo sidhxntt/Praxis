@@ -177,8 +177,8 @@ export default function CTA({ product = "flow" }: { product?: ProductKey }) {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="relative z-20"
         >
-          <Button as={Link} href="https://github.com/sidhxntt/Praxis" className="h-10 md:h-12 lg:h-16 w-40 md:w-48 lg:w-56 rounded-full text-xs sm:text-sm md:text-base font-medium">
-            View on GitHub
+          <Button as={Link} href="https://github.com/sidhxntt/Praxis/wiki/Agent-Guide" className="h-10 md:h-12 lg:h-16 w-40 md:w-48 lg:w-56 rounded-full text-xs sm:text-sm md:text-base font-medium">
+            Agent Wiki
           </Button>
         </motion.div>
       </motion.div>
