@@ -65,8 +65,8 @@ async function main() {
         theme: style.theme,
         previews: {
           thumbnail: await previewRecord(`${id}-thumbnail.webp`, 640, 400, alt),
-          desktop: await previewRecord(path.basename(desktop.absolute), 1440, 900, alt),
-          mobile: await previewRecord(path.basename(mobile.absolute), 390, 844, alt),
+          desktop: await previewRecord(path.basename(desktop.absolute), desktop.width, desktop.height, alt),
+          mobile: await previewRecord(path.basename(mobile.absolute), mobile.width, mobile.height, alt),
         },
       });
       await context.close();
@@ -84,10 +84,11 @@ async function main() {
 async function capture(page, id, kind, viewport) {
   await page.setViewportSize(viewport);
   await page.evaluate(() => scrollTo(0, 0));
-  const png = await page.screenshot({ type: "png", animations: "disabled" });
+  const png = await page.screenshot({ type: "png", animations: "disabled", fullPage: true });
   const absolute = path.join(previewsRoot, `${id}-${kind}.webp`);
   await sharp(png).webp({ quality: 82, effort: 6 }).toFile(absolute);
-  return { absolute };
+  const metadata = await sharp(png).metadata();
+  return { absolute, width: metadata.width, height: metadata.height };
 }
 
 async function previewRecord(filename, width, height, alt) {

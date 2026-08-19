@@ -31,21 +31,23 @@ describe("rendered UI previews", () => {
     const manifested: string[] = [];
     for (const style of catalog) {
       for (const [kind, expected] of Object.entries({
-        thumbnail: [640, 400],
-        desktop: [1440, 900],
-        mobile: [390, 844],
+        thumbnail: { width: 640, minimumHeight: 400, exactHeight: 400 },
+        desktop: { width: 1440, minimumHeight: 901 },
+        mobile: { width: 390, minimumHeight: 845 },
       })) {
         const preview = style.previews[kind as keyof CatalogRecord["previews"]];
         manifested.push(path.basename(preview.path));
-        expect([preview.width, preview.height]).toEqual(expected);
+        expect(preview.width).toBe(expected.width);
+        expect(preview.height).toBeGreaterThanOrEqual(expected.minimumHeight);
+        if (expected.exactHeight) expect(preview.height).toBe(expected.exactHeight);
         expect(preview.alt).toContain(style.label);
         expect(preview.alt.toLowerCase()).toContain("landing page preview");
         const bytes = await readFile(path.join(root, "gallery", preview.path));
         expect(createHash("sha256").update(bytes).digest("hex")).toBe(preview.sha256);
         const metadata = await sharp(bytes).metadata();
         expect([metadata.width, metadata.height, metadata.format]).toEqual([
-          expected[0],
-          expected[1],
+          preview.width,
+          preview.height,
           "webp",
         ]);
       }
