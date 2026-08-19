@@ -2,6 +2,8 @@
 
 This page is a deterministic orientation path for Claude, Codex, and other coding agents. Treat repository state and tests as authoritative; documentation narrows where to inspect but does not replace inspection.
 
+For any generated-template task, the mandatory entry point is the [Template Agent Guide](template-agent-guide.md). Resolve the exact bounded context from `praxis.config.json` instead of attempting to load the whole Wiki indiscriminately.
+
 ## First five minutes
 
 1. Read [`README.md`](../README.md) for supported product surface.
@@ -96,4 +98,3 @@ Agents should prefer these stable data sources over prose lists:
 - module declarations: `cli/templates/*/manifest.json`;
 - published package allowlist: `cli/package.json#files`;
 - CI truth: `.github/workflows/ci.yml` and `ui-matrix.yml`.
-

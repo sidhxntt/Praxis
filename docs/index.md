@@ -1,46 +1,60 @@
 # Praxis documentation
 
-Praxis is a deterministic project generator. A user describes a desired project through the `praxiflow` CLI or a versioned JSON configuration; Praxis validates that intent, resolves a set of composable template modules, and atomically writes a complete source tree.
+Praxis turns an explicit project decision into an inspectable, standalone repository. The `praxiflow` CLI validates a typed configuration, resolves composable modules, and applies their files and integrations atomically. The result owns its runtime: Praxis is not a runtime dependency of generated applications.
 
-This directory is the documentation source of truth. The [Praxis GitHub Wiki](https://github.com/sidhxntt/Praxis/wiki) is rendered from these files so documentation changes travel through the same review history as code.
+Markdown in `docs/` is the source of truth for the [Praxis GitHub Wiki](https://github.com/sidhxntt/Praxis/wiki).
 
-## Choose a reading path
+## The mental model
 
-### I am evaluating Praxis
+```mermaid
+flowchart LR
+    Intent[CLI answers or praxis.config.json] --> Validate[Validate configuration]
+    Validate --> Resolve[Resolve modules and capability closure]
+    Resolve --> Compose[Compose overlays, packages, env, and patches]
+    Compose --> Output[Standalone generated repository]
+    Output --> Local[Local runtime through Docker Compose]
+    Output --> Cluster[Kubernetes when selected]
+    Output --> Cloud[Terraform for AWS, Azure, or GCP when selected]
+    Output -. no Praxis runtime dependency .-> Praxis[Praxis source repository]
+```
 
-1. [Overview](overview.md) — what Praxis is and is not.
-2. [Architecture](architecture.md) — the major systems and data flow.
-3. [Standard projects](standard-projects.md) or [Praxis Pro](praxis-pro.md) — what gets generated.
+The configuration is the intent record. The resolver decides which modules participate. Manifests describe conditional contributions. The composer writes into a staging directory and promotes it only after composition succeeds. Generated code then runs independently using its framework-native architecture.
 
-### I am changing Praxis
+## Two documentation domains
 
-1. [Repository map](repository-map.md) — workspace and directory ownership.
-2. [Code architecture](code-architecture.md) — TypeScript modules and abstractions.
-3. [Generation pipeline](generation-pipeline.md) — the complete execution sequence.
-4. [Manifest system](manifest-system.md) — how template modules compose.
-5. [Testing](testing.md) — the evidence required for a safe change.
+### [Praxis Core Internals](core-internals.md)
 
-### I am an agent joining the repository
+Read this when changing Praxis itself. It covers the repository, CLI, schemas, resolver, capability closure, manifests, composer, UI authoring pipeline, tests, and Wiki publication.
 
-Start with the [agent guide](agent-guide.md). It maps common tasks to authoritative files, invariants, and verification commands. Do not infer generator behavior from template filenames alone: module selection and manifest selectors determine what reaches an output.
+### [Praxis Template Architecture](template-architecture.md)
 
-## Core documentation
+Read this when working in or changing generated applications. It covers Standard frontend/Express/fullstack outputs, Django/DRF and Go/Gin Praxis Pro stacks, capability wiring, Docker Compose, Kubernetes, and Terraform.
 
-| Page | Answers |
-| --- | --- |
-| [Terminology](terminology.md) | What do project, module, manifest, overlay, selector, capability, and scope mean? |
-| [Code architecture](code-architecture.md) | Which modules own parsing, configuration, resolution, composition, UI selection, and generation? |
-| [Generation pipeline](generation-pipeline.md) | How does a CLI answer become a generated directory? |
-| [Manifest system](manifest-system.md) | How are files, packages, environment keys, and patches combined? |
-| [Generated backends](generated-backends.md) | How do Express, Django, and Gin outputs work and tie together? |
-| [UI templates](ui-templates.md) | How do 40 designs become native code across nine targets? |
-| [Wiki publishing](wiki-publishing.md) | How are these files validated and published? |
+The boundary matters: Core explains **how Praxis decides and writes**; Templates explain **how the written application runs**.
+
+## Standard Praxis and Praxis Pro
+
+| | Standard Praxis | Praxis Pro |
+| --- | --- | --- |
+| Primary use | Frontend, Express backend, or fullstack scaffolding | Production-oriented backend foundation |
+| Backends | Express with TypeScript or JavaScript | Django/DRF or Go/Gin |
+| Selection | Framework, database, auth, cache, deployment, UI | Stack plus requested/resolved operational capabilities |
+| Local topology | Docker when selected | Docker Compose always supplies the local production shape |
+| Cluster/cloud | Standard deployment modules | Kubernetes and AWS/Azure/GCP Terraform when selected |
+| Architecture guide | [Standard projects](standard-projects.md) | [Praxis Pro](praxis-pro.md) |
+
+## Choose your path
+
+- **Evaluating Praxis:** [Overview](overview.md) → [System architecture](architecture.md) → [Standard projects](standard-projects.md) or [Praxis Pro](praxis-pro.md).
+- **Using a generated repository:** [Template architecture](template-architecture.md) → choose the generated stack → [extension guide](extending-generated-projects.md).
+- **Changing the generator:** [Core internals](core-internals.md) → [code architecture](code-architecture.md) → [generation pipeline](generation-pipeline.md) → [testing](testing.md).
+- **Codex or Claude Code working on templates:** start with the [Template Agent Guide](template-agent-guide.md), then resolve the exact context bundle.
+- **Publishing documentation:** [Wiki publishing](wiki-publishing.md).
 
 ## Accuracy contract
 
-- Pages describe the current `main`/`cli` implementation unless marked **Future direction**.
-- Repository-relative source links identify the implementation that supports a claim.
-- A template existing on disk does not mean it is selected for every project.
-- Frontend-only projects do **not** generate a backend. Backend and fullstack projects generate Express; `pro-backend` generates Django/DRF or Go/Gin.
-- Generated projects are outputs, not runtime dependencies of the Praxis CLI.
-
+- Pages describe implemented behavior and link to authoritative source or contract tests.
+- A template directory existing does not mean every project selects it; `resolveModules` and manifest selectors decide output.
+- Requested Praxis Pro capabilities and resolved capabilities are distinct.
+- Docker Compose, Kubernetes, and Terraform are related outputs with different lifecycle ownership.
+- The Wiki routes understanding; source and executable tests remain the final evidence.
