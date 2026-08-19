@@ -124,6 +124,34 @@ describe("Pro capability parity", () => {
   );
 
   it.each(["python-django", "go-gin"] as const)(
+    "wires asynchronous email into the %s worker and local SMTP stack",
+    async (stack) => {
+      const destination = await generate(stack, ["email-tasks"]);
+      const compose = await readFile(path.join(destination, "docker-compose.yml"), "utf8");
+      expect(compose).toContain("axllent/mailpit:v1.27.8");
+      expect(compose).toContain("SMTP_HOST: mailpit");
+      expect(compose).toContain("worker:");
+      expect(await readFile(path.join(destination, ".env.example"), "utf8"))
+        .toContain("EMAIL_FROM=noreply@example.com");
+      if (stack === "python-django") {
+        const task = await readFile(path.join(destination, "core/email_tasks.py"), "utf8");
+        expect(task).toContain("send_mail");
+        expect(task).toContain("autoretry_for");
+        expect(await readFile(path.join(destination, "config/settings/base.py"), "utf8"))
+          .toContain("EMAIL_HOST");
+      } else {
+        expect(await readFile(path.join(destination, "go.mod"), "utf8"))
+          .toContain("github.com/wneessen/go-mail v0.8.1");
+        const task = await readFile(path.join(destination, "internal/jobs/email.go"), "utf8");
+        expect(task).toContain("TypeEmail");
+        expect(task).toContain("DialAndSendWithContext");
+        expect(await readFile(path.join(destination, "cmd/worker/main.go"), "utf8"))
+          .toContain("jobs.HandleEmail");
+      }
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
     "wires Redis into the %s runtime and local Compose stack",
     async (stack) => {
       const destination = await generate(stack, ["redis-cache"]);

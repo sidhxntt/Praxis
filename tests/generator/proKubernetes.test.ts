@@ -26,6 +26,17 @@ async function generate(stack: ProStack, requested: ProCapability[]) {
 
 describe("Praxis Pro Kubernetes output", () => {
   it.each(["python-django", "go-gin"] as const)(
+    "injects external SMTP configuration into the %s email worker",
+    async (stack) => {
+      const destination = await generate(stack, ["kubernetes", "email-tasks"]);
+      const worker = await readFile(path.join(destination, "k8s/base/worker.yaml"), "utf8");
+      expect(worker).toContain("name: SMTP_HOST");
+      expect(worker).toContain("key: smtp-host");
+      expect(worker).toContain("name: SMTP_PASSWORD");
+      expect(worker).toContain("key: smtp-password");
+    },
+  );
+  it.each(["python-django", "go-gin"] as const)(
     "generates a secure, stack-aware %s application workload",
     async (stack) => {
       const destination = await generate(stack, ["kubernetes"]);

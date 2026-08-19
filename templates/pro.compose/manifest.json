@@ -23,6 +23,13 @@
       "scope": "root",
       "file": "docker-compose.yml",
       "find": "  # @praxis:services",
+      "replace": "  mailpit:\n    image: axllent/mailpit:v1.27.8\n    ports:\n      - \"1025:1025\"\n      - \"8025:8025\"\n    healthcheck:\n      test: [\"CMD\", \"/mailpit\", \"readyz\"]\n      interval: 5s\n      timeout: 3s\n      retries: 10\n    restart: unless-stopped\n  # @praxis:services",
+      "capability": "email-tasks"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
       "replace": "  redis:\n    image: redis:8.8-alpine\n    command: [\"redis-server\", \"--appendonly\", \"yes\"]\n    volumes:\n      - redis-data:/data\n    healthcheck:\n      test: [\"CMD\", \"redis-cli\", \"ping\"]\n      interval: 5s\n      timeout: 3s\n      retries: 10\n    restart: unless-stopped\n  # @praxis:services",
       "capability": "redis-cache"
     },
@@ -48,6 +55,22 @@
       "replace": "  worker:\n    build:\n      context: .\n    entrypoint: [\"/worker\"]\n    environment:\n      REDIS_URL: redis://redis:6379/0\n    depends_on:\n      redis:\n        condition: service_healthy\n    restart: unless-stopped\n  # @praxis:services",
       "proStack": "go-gin",
       "capability": "background-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      REDIS_URL: redis://redis:6379/0\n    command: [\"celery\"",
+      "replace": "      REDIS_URL: redis://redis:6379/0\n      SMTP_HOST: mailpit\n      SMTP_PORT: \"1025\"\n      EMAIL_FROM: noreply@example.com\n    command: [\"celery\"",
+      "proStack": "python-django",
+      "capability": "email-tasks"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      REDIS_URL: redis://redis:6379/0\n    depends_on:\n      redis:",
+      "replace": "      REDIS_URL: redis://redis:6379/0\n      SMTP_HOST: mailpit\n      SMTP_PORT: \"1025\"\n      EMAIL_FROM: noreply@example.com\n    depends_on:\n      redis:",
+      "proStack": "go-gin",
+      "capability": "email-tasks"
     },
     {
       "scope": "root",

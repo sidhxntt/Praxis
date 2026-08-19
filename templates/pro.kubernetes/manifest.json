@@ -51,6 +51,13 @@
   "patches": [
     {
       "scope": "root",
+      "file": "k8s/base/worker.yaml",
+      "find": "            - name: REDIS_URL\n              value: redis://redis:6379/0",
+      "replace": "            - name: REDIS_URL\n              value: redis://redis:6379/0\n            - name: SMTP_HOST\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: smtp-host } }\n            - name: SMTP_PORT\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: smtp-port } }\n            - name: SMTP_USERNAME\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: smtp-username } }\n            - name: SMTP_PASSWORD\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: smtp-password } }\n            - name: EMAIL_FROM\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: email-from } }",
+      "capability": "email-tasks"
+    },
+    {
+      "scope": "root",
       "file": "k8s/base/kustomization.yaml",
       "find": "  # @praxis:resources",
       "replace": "  - worker.yaml\n  # @praxis:resources",
