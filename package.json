@@ -11,6 +11,7 @@
     "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc && node -e \"require('node:fs').chmodSync('dist/index.js',0o755)\"",
     "test": "vitest run",
     "test:watch": "vitest",
+    "ui:generate": "node scripts/ui/generate.mjs",
     "check": "npm run test && npm run build",
     "prepublishOnly": "npm run check"
   },
