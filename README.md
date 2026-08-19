@@ -14,6 +14,8 @@ It also includes Praxis Pro, a capability-driven production backend generator fo
 
 The complete human- and agent-friendly technical guide lives in the [repository documentation](docs/index.md) and is published to the [Praxis GitHub Wiki](https://github.com/sidhxntt/Praxis/wiki). It covers the system and code architecture, configuration-to-manifest generation flow, standard and Pro backend topology, UI template pipeline, extension points, and verification requirements.
 
+Maintainer releases use separate repository and CLI tags. See [RELEASING.md](RELEASING.md) for the verified tagging and publishing workflow.
+
 Repository Markdown is the source of truth; the Wiki is generated from it. See the [Wiki publishing guide](docs/wiki-publishing.md).
 
 ## Features
