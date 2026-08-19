@@ -3,7 +3,9 @@ export function formatHelp(): string {
 
 Usage:
   praxiflow                              Start the interactive project builder
-  praxiflow create [project-name]        Alias for the interactive builder
+  praxiflow [project-name] --quick       Create with recommended defaults
+  praxiflow --config <file>              Create from a Praxis configuration file
+  praxiflow create [project-name]        Compatibility alias for the builder
   praxiflow create [project-name] --quick
                                         Create with recommended defaults
   praxiflow create --config <file>       Create from a Praxis configuration file
