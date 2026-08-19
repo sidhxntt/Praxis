@@ -9,6 +9,7 @@ describe("answersToConfig", () => {
         projectType: "frontend",
         language: "javascript",
         frontendFramework: "vite",
+        frontendUi: { mode: "template", style: "apple" },
         deployment: ["vercel", "docker"],
         packageManager: "pnpm",
         installDependencies: true,
@@ -19,7 +20,11 @@ describe("answersToConfig", () => {
       name: "acme",
       projectType: "frontend",
       language: "javascript",
-      frontend: { framework: "vite", styling: "tailwind-shadcn" },
+      frontend: {
+        framework: "vite",
+        styling: "tailwind-shadcn",
+        ui: { mode: "template", style: "apple" },
+      },
       deployment: ["vercel", "docker"],
       packageManager: "pnpm",
       installDependencies: true,
@@ -34,6 +39,7 @@ describe("answersToConfig", () => {
         projectType: "fullstack",
         language: "typescript",
         frontendFramework: "next",
+        frontendUi: { mode: "starter" },
         database: "mongo",
         auth: "clerk",
         cache: "redis",
@@ -43,7 +49,7 @@ describe("answersToConfig", () => {
         initializeGit: true,
       }),
     ).toMatchObject({
-      frontend: { framework: "next" },
+      frontend: { framework: "next", ui: { mode: "starter" } },
       backend: {
         framework: "express",
         database: "mongo",

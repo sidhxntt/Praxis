@@ -2,6 +2,8 @@ import * as p from "@clack/prompts";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { quickConfig } from "../../src/config/schema";
 import { runCreate } from "../../src/workflow/runCreate";
+import { resolveUiStyle } from "../../src/ui/resolveUi";
+import { generateProject } from "../../src/generator/generate";
 
 vi.mock("@clack/prompts", () => ({
   intro: vi.fn(),
@@ -20,6 +22,9 @@ vi.mock("../../src/controllers/user_touch", () => ({
 }));
 vi.mock("../../src/generator/generate", () => ({
   generateProject: vi.fn(async () => "/tmp/acme"),
+}));
+vi.mock("../../src/ui/resolveUi", () => ({
+  resolveUiStyle: vi.fn(async () => "apple"),
 }));
 
 beforeEach(() => {
@@ -63,6 +68,7 @@ describe("runCreate", () => {
       .mockResolvedValueOnce("fullstack" as never)
       .mockResolvedValueOnce("typescript" as never)
       .mockResolvedValueOnce("next" as never)
+      .mockResolvedValueOnce("starter" as never)
       .mockResolvedValueOnce("postgres" as never)
       .mockResolvedValueOnce("self-hosted" as never)
       .mockResolvedValueOnce("redis" as never)
@@ -85,11 +91,117 @@ describe("runCreate", () => {
         "Project type",
         "Language",
         "Frontend framework",
+        "Use a landing page template?",
         "Database",
         "Authentication",
         "Cache",
         "Package manager",
       ]);
+  });
+
+  it("offers all frameworks and resolves a visual template immediately after framework", async () => {
+    vi.mocked(p.text).mockResolvedValue("acme" as never);
+    vi.mocked(p.select)
+      .mockResolvedValueOnce("frontend" as never)
+      .mockResolvedValueOnce("javascript" as never)
+      .mockResolvedValueOnce("vue" as never)
+      .mockResolvedValueOnce("template" as never)
+      .mockResolvedValueOnce("npm" as never);
+    vi.mocked(p.multiselect).mockResolvedValue([] as never);
+    vi.mocked(p.confirm)
+      .mockResolvedValueOnce(false as never)
+      .mockResolvedValueOnce(false as never);
+
+    await runCreate({
+      kind: "create",
+      projectName: undefined,
+      mode: "custom",
+      configPath: undefined,
+      installDependencies: true,
+    });
+
+    const frameworkPrompt = vi.mocked(p.select).mock.calls[2][0];
+    expect(frameworkPrompt.options).toEqual([
+      { value: "next", label: "Next.js" },
+      { value: "vite", label: "Vite (React)" },
+      { value: "vue", label: "Vue" },
+      { value: "astro", label: "Astro" },
+      { value: "angular", label: "Angular (TypeScript only)" },
+    ]);
+    expect(resolveUiStyle).toHaveBeenCalledOnce();
+    expect(vi.mocked(generateProject).mock.calls.at(-1)?.[0]).toMatchObject({
+      language: "javascript",
+      frontend: { framework: "vue", ui: { mode: "template", style: "apple" } },
+    });
+  });
+
+  it("explains Angular's constraint and can continue by switching to TypeScript", async () => {
+    vi.mocked(p.text).mockResolvedValue("angular-app" as never);
+    vi.mocked(p.select)
+      .mockResolvedValueOnce("frontend" as never)
+      .mockResolvedValueOnce("javascript" as never)
+      .mockResolvedValueOnce("angular" as never)
+      .mockResolvedValueOnce("typescript" as never)
+      .mockResolvedValueOnce("starter" as never)
+      .mockResolvedValueOnce("npm" as never);
+    vi.mocked(p.multiselect).mockResolvedValue([] as never);
+    vi.mocked(p.confirm)
+      .mockResolvedValueOnce(false as never)
+      .mockResolvedValueOnce(false as never);
+
+    await runCreate({
+      kind: "create",
+      projectName: undefined,
+      mode: "custom",
+      configPath: undefined,
+      installDependencies: true,
+    });
+
+    expect(vi.mocked(p.select).mock.calls[3][0]).toMatchObject({
+      message: "Angular requires TypeScript",
+      options: [
+        { value: "typescript", label: "Continue with TypeScript" },
+        { value: "reselect", label: "Choose another framework" },
+      ],
+    });
+    expect(vi.mocked(generateProject).mock.calls.at(-1)?.[0]).toMatchObject({
+      language: "typescript",
+      frontend: { framework: "angular", ui: { mode: "starter" } },
+    });
+  });
+
+  it("skips framework and template prompts for backend-only projects", async () => {
+    vi.mocked(p.text).mockResolvedValue("api" as never);
+    vi.mocked(p.select)
+      .mockResolvedValueOnce("backend" as never)
+      .mockResolvedValueOnce("typescript" as never)
+      .mockResolvedValueOnce("postgres" as never)
+      .mockResolvedValueOnce("none" as never)
+      .mockResolvedValueOnce("none" as never)
+      .mockResolvedValueOnce("npm" as never);
+    vi.mocked(p.multiselect).mockResolvedValue([] as never);
+    vi.mocked(p.confirm)
+      .mockResolvedValueOnce(false as never)
+      .mockResolvedValueOnce(false as never);
+
+    await runCreate({
+      kind: "create",
+      projectName: undefined,
+      mode: "custom",
+      configPath: undefined,
+      installDependencies: true,
+    });
+
+    expect(vi.mocked(p.select).mock.calls.map(([options]) => options.message))
+      .toEqual([
+        "Project type",
+        "Language",
+        "Database",
+        "Authentication",
+        "Cache",
+        "Package manager",
+      ]);
+    expect(resolveUiStyle).not.toHaveBeenCalled();
   });
 
   it("runs the Pro stack and capability flow with conditional cloud selection", async () => {
