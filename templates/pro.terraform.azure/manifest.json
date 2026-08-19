@@ -1,0 +1,9 @@
+{
+  "id": "pro.terraform.azure",
+  "overlays": [
+    { "scope": "root", "source": "files/common", "cloud": "azure" },
+    { "scope": "root", "source": "files/cache", "cloud": "azure", "capability": "redis-cache" },
+    { "scope": "root", "source": "files/storage", "cloud": "azure", "capability": "object-storage" },
+    { "scope": "root", "source": "files/search", "cloud": "azure", "capability": "search" }
+  ]
+}
