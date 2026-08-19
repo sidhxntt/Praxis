@@ -1,0 +1,228 @@
+{
+  "id": "notion",
+  "name": "Notion inspired",
+  "sourceDesign": "DESIGN-notion.md",
+  "description": "A quieter place for everything you know. Documents, projects, and team memory arranged in one calm, adaptable workspace.",
+  "traits": [
+    "productivity",
+    "minimal",
+    "editorial"
+  ],
+  "theme": "light",
+  "tokens": {
+    "colors": {
+      "background": "#ffffff",
+      "surface": "#f5f5f7",
+      "foreground": "#000000",
+      "muted": "#696970",
+      "accent": "#0075de",
+      "accentContrast": "#ffffff",
+      "darkSurface": "#111113",
+      "darkForeground": "#ffffff",
+      "border": "#e6e6e6"
+    },
+    "typography": {
+      "display": "Georgia, 'Times New Roman', ui-serif, serif",
+      "body": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "displayWeight": 600,
+      "bodySize": "17px",
+      "displayTracking": "-0.02em"
+    },
+    "spacing": {
+      "container": "1440px",
+      "section": "clamp(4rem, 9vw, 8rem)"
+    },
+    "radii": {
+      "action": "9999px",
+      "card": "18px"
+    },
+    "motion": {
+      "duration": "240ms",
+      "easing": "cubic-bezier(0.2, 0.8, 0.2, 1)"
+    }
+  },
+  "sections": [
+    {
+      "id": "top",
+      "type": "navigation",
+      "theme": "light",
+      "variant": "editorial",
+      "brand": "Papertrail",
+      "links": [
+        {
+          "label": "Overview",
+          "href": "#overview"
+        },
+        {
+          "label": "Experience",
+          "href": "#experience"
+        },
+        {
+          "label": "Principles",
+          "href": "#principles"
+        }
+      ],
+      "action": {
+        "label": "Explore the story",
+        "href": "#begin"
+      }
+    },
+    {
+      "id": "overview",
+      "type": "hero",
+      "theme": "light",
+      "variant": "split-editorial",
+      "eyebrow": "Papertrail",
+      "heading": "A quieter place for everything you know.",
+      "body": "Documents, projects, and team memory arranged in one calm, adaptable workspace.",
+      "primaryAction": {
+        "label": "Explore the story",
+        "href": "#experience"
+      },
+      "secondaryAction": {
+        "label": "See the story",
+        "href": "#principles"
+      },
+      "asset": "assets/notion-composition.svg"
+    },
+    {
+      "id": "experience",
+      "type": "showcase",
+      "theme": "light",
+      "variant": "split",
+      "eyebrow": "The experience",
+      "heading": "Every detail supports the story.",
+      "body": "Papertrail brings its most important ideas forward and lets every supporting detail recede.",
+      "action": {
+        "label": "Explore the details",
+        "href": "#principles"
+      },
+      "asset": "assets/notion-composition.svg"
+    },
+    {
+      "id": "principles",
+      "type": "features",
+      "theme": "light",
+      "variant": "alternating",
+      "eyebrow": "Guiding principles",
+      "heading": "What makes Papertrail feel different.",
+      "body": "A small set of strong decisions creates a recognizable experience across every screen and every moment.",
+      "items": [
+        {
+          "title": "Clear from the start",
+          "description": "Papertrail presents the next useful action clearly, with nothing unnecessary competing for attention.",
+          "marker": "01"
+        },
+        {
+          "title": "Human at every scale",
+          "description": "Flexible foundations adapt to real work while keeping the experience coherent and recognizable.",
+          "marker": "02"
+        },
+        {
+          "title": "Made to endure",
+          "description": "Small interactions, responsive pacing, and accessible defaults make quality visible in everyday use.",
+          "marker": "03"
+        }
+      ]
+    },
+    {
+      "id": "voices",
+      "type": "testimonials",
+      "theme": "light",
+      "variant": "editorial",
+      "heading": "What people notice about Papertrail.",
+      "items": [
+        {
+          "quote": "The experience feels considered from the first moment, but never asks us to learn its logic.",
+          "name": "Mara Chen",
+          "role": "Design lead"
+        },
+        {
+          "quote": "We moved faster without sacrificing the quality or clarity our customers expect.",
+          "name": "Jon Bell",
+          "role": "Product director"
+        },
+        {
+          "quote": "It gives the team enough structure to stay aligned and enough room to do original work.",
+          "name": "Amara Okafor",
+          "role": "Studio founder"
+        }
+      ]
+    },
+    {
+      "id": "craft",
+      "type": "showcase",
+      "theme": "light",
+      "variant": "light-stage",
+      "eyebrow": "The craft",
+      "heading": "Designed for the moments between milestones.",
+      "body": "Purposeful materials, durable choices, and a precise visual rhythm make the experience feel complete without feeling crowded.",
+      "action": {
+        "label": "Read the principles",
+        "href": "#principles"
+      }
+    },
+    {
+      "id": "begin",
+      "type": "cta",
+      "theme": "light",
+      "variant": "split",
+      "eyebrow": "The next step",
+      "heading": "Begin with a more thoughtful experience.",
+      "body": "Discover how Papertrail can turn a clear idea into an experience people remember.",
+      "action": {
+        "label": "Explore the story",
+        "href": "#top"
+      }
+    },
+    {
+      "id": "footer",
+      "type": "footer",
+      "theme": "light",
+      "variant": "minimal",
+      "brand": "Papertrail",
+      "summary": "Documents, projects, and team memory arranged in one calm, adaptable workspace.",
+      "columns": [
+        {
+          "heading": "Explore",
+          "links": [
+            {
+              "label": "Overview",
+              "href": "#overview"
+            },
+            {
+              "label": "Experience",
+              "href": "#experience"
+            }
+          ]
+        },
+        {
+          "heading": "Company",
+          "links": [
+            {
+              "label": "Principles",
+              "href": "#principles"
+            },
+            {
+              "label": "Contact",
+              "href": "#begin"
+            }
+          ]
+        }
+      ],
+      "legal": "© 2026 Papertrail. An original Praxis Flow demonstration brand."
+    }
+  ],
+  "assets": [
+    {
+      "source": "assets/notion-composition.svg",
+      "alt": "Original abstract composition representing the Papertrail experience",
+      "width": 1600,
+      "height": 900
+    }
+  ],
+  "accessibility": {
+    "reducedMotion": true,
+    "skipLink": true
+  }
+}

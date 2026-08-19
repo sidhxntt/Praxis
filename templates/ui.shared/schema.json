@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://praxiflow.dev/schemas/canonical-landing-page.json",
+  "title": "Praxis Flow canonical landing page",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "sourceDesign", "description", "traits", "theme", "tokens", "sections", "assets", "accessibility"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "name": { "type": "string", "minLength": 1 },
+    "sourceDesign": { "type": "string", "pattern": "^DESIGN-[a-z0-9-]+\\.md$" },
+    "description": { "type": "string", "minLength": 1 },
+    "traits": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "theme": { "enum": ["light", "dark", "mixed"] },
+    "tokens": { "type": "object" },
+    "sections": { "type": "array", "minItems": 7, "items": { "type": "object", "required": ["id", "type", "theme", "variant"] } },
+    "assets": { "type": "array", "items": { "type": "object", "required": ["source", "alt", "width", "height"] } },
+    "accessibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reducedMotion", "skipLink"],
+      "properties": {
+        "reducedMotion": { "const": true },
+        "skipLink": { "const": true }
+      }
+    }
+  }
+}

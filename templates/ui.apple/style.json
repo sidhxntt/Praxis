@@ -1,0 +1,150 @@
+{
+  "id": "apple",
+  "name": "Apple inspired",
+  "sourceDesign": "DESIGN-apple.md",
+  "description": "A photography-first product story with near-invisible chrome, alternating light and dark stages, and one quiet blue action color.",
+  "traits": ["minimal", "premium", "editorial"],
+  "theme": "mixed",
+  "tokens": {
+    "colors": {
+      "background": "#ffffff",
+      "surface": "#f5f5f7",
+      "foreground": "#1d1d1f",
+      "muted": "#6e6e73",
+      "accent": "#0066cc",
+      "accentContrast": "#ffffff",
+      "darkSurface": "#272729",
+      "darkForeground": "#ffffff",
+      "border": "#e0e0e0"
+    },
+    "typography": {
+      "display": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "body": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "displayWeight": 600,
+      "bodySize": "17px",
+      "displayTracking": "-0.02em"
+    },
+    "spacing": { "container": "1440px", "section": "clamp(4rem, 9vw, 7.5rem)" },
+    "radii": { "action": "9999px", "card": "18px" },
+    "motion": { "duration": "220ms", "easing": "cubic-bezier(0.2, 0.8, 0.2, 1)" }
+  },
+  "sections": [
+    {
+      "id": "top",
+      "type": "navigation",
+      "theme": "dark",
+      "variant": "global-frosted",
+      "brand": "Stillform",
+      "links": [
+        { "label": "Studio", "href": "#studio" },
+        { "label": "Materials", "href": "#materials" },
+        { "label": "Journal", "href": "#impact" }
+      ],
+      "action": { "label": "Reserve", "href": "#reserve" }
+    },
+    {
+      "id": "hero",
+      "type": "hero",
+      "theme": "light",
+      "variant": "centered-product",
+      "eyebrow": "Stillform One",
+      "heading": "Quietly extraordinary.",
+      "body": "A considered collection of everyday objects shaped around calm, clarity, and enduring materials.",
+      "primaryAction": { "label": "Explore the collection", "href": "#studio" },
+      "secondaryAction": { "label": "Watch the film", "href": "#impact" },
+      "asset": "assets/stillform-stage.svg"
+    },
+    {
+      "id": "studio",
+      "type": "showcase",
+      "theme": "dark",
+      "variant": "dark-stage",
+      "eyebrow": "The studio edition",
+      "heading": "Made to disappear into your day.",
+      "body": "Balanced proportions, tactile controls, and a surface that changes character with the light.",
+      "action": { "label": "See every detail", "href": "#materials" },
+      "asset": "assets/stillform-stage.svg"
+    },
+    {
+      "id": "principles",
+      "type": "features",
+      "theme": "light",
+      "variant": "bento",
+      "eyebrow": "Designed with restraint",
+      "heading": "Only what earns its place.",
+      "body": "Every decision serves the experience, from the first touch to the thousandth use.",
+      "items": [
+        { "title": "Tactile by nature", "description": "Soft-touch controls respond with a precise, reassuring click.", "marker": "01" },
+        { "title": "Considered materials", "description": "Recycled aluminum and mineral glass create a durable, quiet finish.", "marker": "02" },
+        { "title": "Built for repair", "description": "A modular interior makes essential parts accessible and replaceable.", "marker": "03" }
+      ]
+    },
+    {
+      "id": "materials",
+      "type": "showcase",
+      "theme": "light",
+      "variant": "light-stage",
+      "eyebrow": "Material study",
+      "heading": "Weight you can feel. Impact you cannot.",
+      "body": "The enclosure uses reclaimed alloy, refined through a low-energy process and finished without decorative coatings.",
+      "action": { "label": "Read our material standard", "href": "#impact" }
+    },
+    {
+      "id": "impact",
+      "type": "metrics",
+      "theme": "dark",
+      "variant": "inline",
+      "eyebrow": "Measured progress",
+      "heading": "Less, by design.",
+      "items": [
+        { "value": "74%", "label": "recycled enclosure material" },
+        { "value": "42%", "label": "less packaging volume" },
+        { "value": "10 yr", "label": "repair support commitment" }
+      ]
+    },
+    {
+      "id": "reserve",
+      "type": "cta",
+      "theme": "light",
+      "variant": "centered",
+      "eyebrow": "Available this season",
+      "heading": "Bring calm into focus.",
+      "body": "Join the first release and receive a private material sample before your piece is finished.",
+      "action": { "label": "Reserve Stillform One", "href": "#top" }
+    },
+    {
+      "id": "footer",
+      "type": "footer",
+      "theme": "light",
+      "variant": "columns",
+      "brand": "Stillform",
+      "summary": "Objects for quieter, more intentional days.",
+      "columns": [
+        {
+          "heading": "Collection",
+          "links": [
+            { "label": "Stillform One", "href": "#hero" },
+            { "label": "Materials", "href": "#materials" }
+          ]
+        },
+        {
+          "heading": "Company",
+          "links": [
+            { "label": "Journal", "href": "#impact" },
+            { "label": "Responsibility", "href": "#impact" }
+          ]
+        }
+      ],
+      "legal": "© 2026 Stillform Studio. An original Praxis Flow demonstration brand."
+    }
+  ],
+  "assets": [
+    {
+      "source": "assets/stillform-stage.svg",
+      "alt": "Three abstract Stillform objects arranged on a quiet display plinth",
+      "width": 1600,
+      "height": 900
+    }
+  ],
+  "accessibility": { "reducedMotion": true, "skipLink": true }
+}

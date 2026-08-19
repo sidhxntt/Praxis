@@ -1,0 +1,228 @@
+{
+  "id": "expo",
+  "name": "Expo inspired",
+  "sourceDesign": "DESIGN-expo.md",
+  "description": "Ship the moment it works. One focused toolkit for building, testing, and delivering ambitious cross-platform experiences.",
+  "traits": [
+    "developer",
+    "mobile",
+    "technical"
+  ],
+  "theme": "dark",
+  "tokens": {
+    "colors": {
+      "background": "#ffffff",
+      "surface": "#18181c",
+      "foreground": "#171717",
+      "muted": "#999999",
+      "accent": "#000000",
+      "accentContrast": "#ffffff",
+      "darkSurface": "#171717",
+      "darkForeground": "#ffffff",
+      "border": "#f0f0f3"
+    },
+    "typography": {
+      "display": "'IBM Plex Sans', 'SFMono-Regular', ui-sans-serif, system-ui, sans-serif",
+      "body": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "displayWeight": 600,
+      "bodySize": "16px",
+      "displayTracking": "-0.035em"
+    },
+    "spacing": {
+      "container": "1280px",
+      "section": "clamp(4rem, 9vw, 8rem)"
+    },
+    "radii": {
+      "action": "10px",
+      "card": "12px"
+    },
+    "motion": {
+      "duration": "240ms",
+      "easing": "cubic-bezier(0.2, 0.8, 0.2, 1)"
+    }
+  },
+  "sections": [
+    {
+      "id": "top",
+      "type": "navigation",
+      "theme": "dark",
+      "variant": "global",
+      "brand": "Relay Mobile",
+      "links": [
+        {
+          "label": "Overview",
+          "href": "#overview"
+        },
+        {
+          "label": "Experience",
+          "href": "#experience"
+        },
+        {
+          "label": "Principles",
+          "href": "#principles"
+        }
+      ],
+      "action": {
+        "label": "Start building",
+        "href": "#begin"
+      }
+    },
+    {
+      "id": "overview",
+      "type": "hero",
+      "theme": "dark",
+      "variant": "centered-product",
+      "eyebrow": "Relay Mobile",
+      "heading": "Ship the moment it works.",
+      "body": "One focused toolkit for building, testing, and delivering ambitious cross-platform experiences.",
+      "primaryAction": {
+        "label": "Start building",
+        "href": "#experience"
+      },
+      "secondaryAction": {
+        "label": "See the story",
+        "href": "#principles"
+      },
+      "asset": "assets/expo-composition.svg"
+    },
+    {
+      "id": "proof",
+      "type": "metrics",
+      "theme": "dark",
+      "variant": "grid",
+      "eyebrow": "Measured in practice",
+      "heading": "Relay Mobile, by the numbers.",
+      "items": [
+        {
+          "value": "18 ms",
+          "label": "typical response"
+        },
+        {
+          "value": "99.99%",
+          "label": "service availability"
+        },
+        {
+          "value": "3×",
+          "label": "faster iteration"
+        }
+      ]
+    },
+    {
+      "id": "principles",
+      "type": "features",
+      "theme": "light",
+      "variant": "grid",
+      "eyebrow": "Guiding principles",
+      "heading": "What makes Relay Mobile feel different.",
+      "body": "A small set of strong decisions creates a recognizable experience across every screen and every moment.",
+      "items": [
+        {
+          "title": "Observable by default",
+          "description": "Relay Mobile presents the next useful action clearly, with nothing unnecessary competing for attention.",
+          "marker": "01"
+        },
+        {
+          "title": "Fast under pressure",
+          "description": "Flexible foundations adapt to real work while keeping the experience coherent and recognizable.",
+          "marker": "02"
+        },
+        {
+          "title": "Open at the edges",
+          "description": "Small interactions, responsive pacing, and accessible defaults make quality visible in everyday use.",
+          "marker": "03"
+        }
+      ]
+    },
+    {
+      "id": "experience",
+      "type": "showcase",
+      "theme": "dark",
+      "variant": "split",
+      "eyebrow": "The experience",
+      "heading": "Clarity at every layer.",
+      "body": "Relay Mobile brings its most important ideas forward and lets every supporting detail recede.",
+      "action": {
+        "label": "Explore the details",
+        "href": "#principles"
+      },
+      "asset": "assets/expo-composition.svg"
+    },
+    {
+      "id": "community",
+      "type": "logo-cloud",
+      "theme": "light",
+      "variant": "row",
+      "heading": "Trusted by teams building with Relay Mobile.",
+      "items": [
+        "Northstar",
+        "Common Ground",
+        "Bright Labs",
+        "Open Field",
+        "New Arc",
+        "Good Work"
+      ]
+    },
+    {
+      "id": "begin",
+      "type": "cta",
+      "theme": "light",
+      "variant": "band",
+      "eyebrow": "The next step",
+      "heading": "Put clarity into production.",
+      "body": "Discover how Relay Mobile can turn a clear idea into an experience people remember.",
+      "action": {
+        "label": "Start building",
+        "href": "#top"
+      }
+    },
+    {
+      "id": "footer",
+      "type": "footer",
+      "theme": "light",
+      "variant": "columns",
+      "brand": "Relay Mobile",
+      "summary": "One focused toolkit for building, testing, and delivering ambitious cross-platform experiences.",
+      "columns": [
+        {
+          "heading": "Explore",
+          "links": [
+            {
+              "label": "Overview",
+              "href": "#overview"
+            },
+            {
+              "label": "Experience",
+              "href": "#experience"
+            }
+          ]
+        },
+        {
+          "heading": "Company",
+          "links": [
+            {
+              "label": "Principles",
+              "href": "#principles"
+            },
+            {
+              "label": "Contact",
+              "href": "#begin"
+            }
+          ]
+        }
+      ],
+      "legal": "© 2026 Relay Mobile. An original Praxis Flow demonstration brand."
+    }
+  ],
+  "assets": [
+    {
+      "source": "assets/expo-composition.svg",
+      "alt": "Original abstract composition representing the Relay Mobile experience",
+      "width": 1600,
+      "height": 900
+    }
+  ],
+  "accessibility": {
+    "reducedMotion": true,
+    "skipLink": true
+  }
+}

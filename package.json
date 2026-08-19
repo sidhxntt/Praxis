@@ -12,12 +12,18 @@
     "test": "vitest run",
     "test:pro": "vitest run --exclude '.worktrees/**' tests/generator/pro*.test.ts",
     "test:watch": "vitest",
+    "ui:generate": "node scripts/ui/generate.mjs",
+    "ui:previews": "node scripts/ui/render-previews.mjs",
+    "ui:verify": "node scripts/ui/verify-generated.mjs",
+    "ui:matrix": "node scripts/ui/matrix.mjs",
     "check": "npm run test && npm run build",
     "prepublishOnly": "npm run check"
   },
   "files": [
     "dist/",
-    "templates/"
+    "templates/",
+    "!templates/designs/",
+    "!templates/ui.shared/"
   ],
   "dependencies": {
     "@clack/prompts": "^0.7.0",
@@ -27,9 +33,12 @@
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
     "@types/chalk-animation": "^1.6.3",
     "@types/figlet": "^1.7.0",
     "@types/node": "^22.10.0",
+    "playwright": "1.62.1",
+    "sharp": "0.35.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "vitest": "^2.1.9"

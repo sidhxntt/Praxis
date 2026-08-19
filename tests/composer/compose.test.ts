@@ -116,6 +116,35 @@ describe("composeProject", () => {
     await expect(readFile(destination)).rejects.toThrow();
   });
 
+  it("allows an explicitly marked overlay to replace an existing file", async () => {
+    const root = await fixtureRoot();
+    await addModule(
+      root,
+      "base",
+      { overlays: [{ scope: "frontend", source: "files/common" }] },
+      { "src/App.tsx": "starter" },
+    );
+    await addModule(
+      root,
+      "ui.apple",
+      { overlays: [{ scope: "frontend", source: "files/common", replace: true }] },
+      { "src/App.tsx": "designed landing page" },
+    );
+    const config = quickConfig("acme");
+    config.projectType = "frontend";
+    config.backend = undefined;
+    config.deployment = [];
+    const destination = path.join(root, "output", "acme");
+
+    await composeProject(config, ["base", "ui.apple"], {
+      templatesRoot: path.join(root, "templates"),
+      destination,
+    });
+
+    expect(await readFile(path.join(destination, "src/App.tsx"), "utf8"))
+      .toBe("designed landing page");
+  });
+
   it("applies ordered manifest patches", async () => {
     const root = await fixtureRoot();
     await addModule(

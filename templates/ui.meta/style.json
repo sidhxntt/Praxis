@@ -1,0 +1,230 @@
+{
+  "id": "meta",
+  "name": "Meta inspired",
+  "sourceDesign": "DESIGN-meta.md",
+  "description": "Feel closer, wherever you are. Open tools for sharing presence, making together, and turning distance into connection.",
+  "traits": [
+    "technology",
+    "social",
+    "gradient"
+  ],
+  "theme": "light",
+  "tokens": {
+    "colors": {
+      "background": "#ffffff",
+      "surface": "#f5f5f7",
+      "foreground": "#1c1e21",
+      "muted": "#696970",
+      "accent": "#0064e0",
+      "accentContrast": "#ffffff",
+      "darkSurface": "#111113",
+      "darkForeground": "#ffffff",
+      "border": "#ced0d4"
+    },
+    "typography": {
+      "display": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "body": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "displayWeight": 700,
+      "bodySize": "16px",
+      "displayTracking": "-0.025em"
+    },
+    "spacing": {
+      "container": "1440px",
+      "section": "clamp(4rem, 9vw, 8rem)"
+    },
+    "radii": {
+      "action": "9999px",
+      "card": "28px"
+    },
+    "motion": {
+      "duration": "240ms",
+      "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+    }
+  },
+  "sections": [
+    {
+      "id": "top",
+      "type": "navigation",
+      "theme": "light",
+      "variant": "global-frosted",
+      "brand": "Commonspace",
+      "links": [
+        {
+          "label": "Overview",
+          "href": "#overview"
+        },
+        {
+          "label": "Experience",
+          "href": "#experience"
+        },
+        {
+          "label": "Principles",
+          "href": "#principles"
+        }
+      ],
+      "action": {
+        "label": "Create something",
+        "href": "#begin"
+      }
+    },
+    {
+      "id": "overview",
+      "type": "hero",
+      "theme": "light",
+      "variant": "centered-product",
+      "eyebrow": "Commonspace",
+      "heading": "Feel closer, wherever you are.",
+      "body": "Open tools for sharing presence, making together, and turning distance into connection.",
+      "primaryAction": {
+        "label": "Create something",
+        "href": "#experience"
+      },
+      "secondaryAction": {
+        "label": "See the story",
+        "href": "#principles"
+      },
+      "asset": "assets/meta-composition.svg"
+    },
+    {
+      "id": "community",
+      "type": "logo-cloud",
+      "theme": "light",
+      "variant": "ticker",
+      "heading": "Trusted by teams building with Commonspace.",
+      "items": [
+        "Northstar",
+        "Common Ground",
+        "Bright Labs",
+        "Open Field",
+        "New Arc",
+        "Good Work"
+      ]
+    },
+    {
+      "id": "principles",
+      "type": "features",
+      "theme": "light",
+      "variant": "bento",
+      "eyebrow": "Guiding principles",
+      "heading": "What makes Commonspace feel different.",
+      "body": "A small set of strong decisions creates a recognizable experience across every screen and every moment.",
+      "items": [
+        {
+          "title": "Easy to enter",
+          "description": "Commonspace presents the next useful action clearly, with nothing unnecessary competing for attention.",
+          "marker": "01"
+        },
+        {
+          "title": "Flexible by nature",
+          "description": "Flexible foundations adapt to real work while keeping the experience coherent and recognizable.",
+          "marker": "02"
+        },
+        {
+          "title": "Delight in the details",
+          "description": "Small interactions, responsive pacing, and accessible defaults make quality visible in everyday use.",
+          "marker": "03"
+        }
+      ]
+    },
+    {
+      "id": "experience",
+      "type": "showcase",
+      "theme": "light",
+      "variant": "split",
+      "eyebrow": "The experience",
+      "heading": "Serious capability, joyful by default.",
+      "body": "Commonspace brings its most important ideas forward and lets every supporting detail recede.",
+      "action": {
+        "label": "Explore the details",
+        "href": "#principles"
+      },
+      "asset": "assets/meta-composition.svg"
+    },
+    {
+      "id": "voices",
+      "type": "testimonials",
+      "theme": "light",
+      "variant": "cards",
+      "heading": "What people notice about Commonspace.",
+      "items": [
+        {
+          "quote": "The experience feels considered from the first moment, but never asks us to learn its logic.",
+          "name": "Mara Chen",
+          "role": "Design lead"
+        },
+        {
+          "quote": "We moved faster without sacrificing the quality or clarity our customers expect.",
+          "name": "Jon Bell",
+          "role": "Product director"
+        },
+        {
+          "quote": "It gives the team enough structure to stay aligned and enough room to do original work.",
+          "name": "Amara Okafor",
+          "role": "Studio founder"
+        }
+      ]
+    },
+    {
+      "id": "begin",
+      "type": "cta",
+      "theme": "light",
+      "variant": "centered",
+      "eyebrow": "The next step",
+      "heading": "Make the next idea feel possible.",
+      "body": "Discover how Commonspace can turn a clear idea into an experience people remember.",
+      "action": {
+        "label": "Create something",
+        "href": "#top"
+      }
+    },
+    {
+      "id": "footer",
+      "type": "footer",
+      "theme": "light",
+      "variant": "minimal",
+      "brand": "Commonspace",
+      "summary": "Open tools for sharing presence, making together, and turning distance into connection.",
+      "columns": [
+        {
+          "heading": "Explore",
+          "links": [
+            {
+              "label": "Overview",
+              "href": "#overview"
+            },
+            {
+              "label": "Experience",
+              "href": "#experience"
+            }
+          ]
+        },
+        {
+          "heading": "Company",
+          "links": [
+            {
+              "label": "Principles",
+              "href": "#principles"
+            },
+            {
+              "label": "Contact",
+              "href": "#begin"
+            }
+          ]
+        }
+      ],
+      "legal": "© 2026 Commonspace. An original Praxis Flow demonstration brand."
+    }
+  ],
+  "assets": [
+    {
+      "source": "assets/meta-composition.svg",
+      "alt": "Original abstract composition representing the Commonspace experience",
+      "width": 1600,
+      "height": 900
+    }
+  ],
+  "accessibility": {
+    "reducedMotion": true,
+    "skipLink": true
+  }
+}

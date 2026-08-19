@@ -24,6 +24,7 @@ import {
 import { generateProject } from "../generator/generate";
 import { showRandomAnimation } from "../controllers/user_touch";
 import { answersToConfig, proAnswersToConfig } from "./answers";
+import { resolveUiStyle } from "../ui/resolveUi";
 
 type CreateCommand = Extract<ParsedCommand, { kind: "create" }>;
 
@@ -88,16 +89,43 @@ async function resolveCreateConfig(command: CreateCommand): Promise<PraxisConfig
   if (projectType === "pro-backend") {
     return resolveProAnswers(name, command.installDependencies);
   }
-  const language = await select<Language>("Language", [
+  let language = await select<Language>("Language", [
     ["typescript", "TypeScript"],
     ["javascript", "JavaScript"],
   ]);
-  const frontendFramework = projectType === "backend"
-    ? undefined
-    : await select<FrontendFramework>("Frontend framework", [
+  let frontendFramework: FrontendFramework | undefined;
+  if (projectType !== "backend") {
+    while (!frontendFramework) {
+      const candidate = await select<FrontendFramework>("Frontend framework", [
         ["next", "Next.js"],
-        ["vite", "Vite"],
+        ["vite", "Vite (React)"],
+        ["vue", "Vue"],
+        ["astro", "Astro"],
+        ["angular", "Angular (TypeScript only)"],
       ]);
+      if (candidate === "angular" && language === "javascript") {
+        const resolution = await select<"typescript" | "reselect">(
+          "Angular requires TypeScript",
+          [
+            ["typescript", "Continue with TypeScript"],
+            ["reselect", "Choose another framework"],
+          ],
+        );
+        if (resolution === "reselect") continue;
+        language = "typescript";
+      }
+      frontendFramework = candidate;
+    }
+  }
+  const uiMode = projectType === "backend"
+    ? undefined
+    : await select<"template" | "starter">("Use a landing page template?", [
+        ["template", "Yes — browse 40 visual styles"],
+        ["starter", "No — plain Tailwind + shadcn starter"],
+      ]);
+  const frontendUi = uiMode === "template"
+    ? { mode: "template" as const, style: await resolveUiStyle() }
+    : projectType === "backend" ? undefined : { mode: "starter" as const };
   const database = projectType === "frontend"
     ? undefined
     : await select<Database>("Database", [
@@ -138,6 +166,7 @@ async function resolveCreateConfig(command: CreateCommand): Promise<PraxisConfig
     projectType,
     language,
     frontendFramework,
+    frontendUi,
     database,
     auth,
     cache,

@@ -62,6 +62,25 @@ describe("resolveModules", () => {
     expect(resolveModules(quickConfig("acme"))).not.toContain("cache.none");
   });
 
+  it("appends the selected UI module after the frontend starter modules", () => {
+    const config = quickConfig("acme");
+    config.frontend!.ui = { mode: "template", style: "apple" };
+
+    const modules = resolveModules(config);
+
+    expect(modules.slice(0, 4)).toEqual([
+      "base.workspace",
+      "frontend.next",
+      "styling.tailwind-shadcn",
+      "ui.apple",
+    ]);
+  });
+
+  it("does not append a UI module in starter mode", () => {
+    expect(resolveModules(quickConfig("acme")).some((id) => id.startsWith("ui.")))
+      .toBe(false);
+  });
+
   it("resolves Pro modules in core, adapter, capability, and infrastructure order", () => {
     expect(resolveModules({
       schemaVersion: 2,

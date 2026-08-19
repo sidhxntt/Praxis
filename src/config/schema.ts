@@ -5,10 +5,14 @@ import {
   proStacks,
   resolveProCapabilities,
 } from "./pro";
+import { isUiStyleId, UiStyleId } from "../ui/catalog";
 
 export type ProjectType = "frontend" | "backend" | "fullstack";
 export type Language = "typescript" | "javascript";
-export type FrontendFramework = "next" | "vite";
+export type FrontendFramework = "next" | "vite" | "vue" | "astro" | "angular";
+export type FrontendUi =
+  | { mode: "starter" }
+  | { mode: "template"; style: UiStyleId };
 export type Database = "postgres" | "mongo" | "none";
 export type AuthProvider = "self-hosted" | "clerk" | "supabase" | "none";
 export type CacheProvider = "redis" | "memcached" | "none";
@@ -23,6 +27,7 @@ export interface LegacyPraxisConfig {
   frontend?: {
     framework: FrontendFramework;
     styling: "tailwind-shadcn";
+    ui?: FrontendUi;
   };
   backend?: {
     framework: "express";
@@ -66,7 +71,11 @@ export function quickConfig(name: string): LegacyPraxisConfig {
     name,
     projectType: "fullstack",
     language: "typescript",
-    frontend: { framework: "next", styling: "tailwind-shadcn" },
+    frontend: {
+      framework: "next",
+      styling: "tailwind-shadcn",
+      ui: { mode: "starter" },
+    },
     backend: {
       framework: "express",
       database: "postgres",
@@ -131,7 +140,7 @@ export function validateConfig(input: unknown): PraxisConfig {
     throw new Error("language must be typescript or javascript");
   }
 
-  validateFrontend(value.frontend);
+  validateFrontend(value.frontend, value.language as Language);
   validateBackend(value.backend);
 
   const deployments: DeploymentTarget[] = [
@@ -250,19 +259,50 @@ function validateCommonBooleans(value: Record<string, unknown>): void {
   }
 }
 
-function validateFrontend(value: unknown): void {
+function validateFrontend(value: unknown, language: Language): void {
   if (value === undefined) return;
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw new Error("frontend must be an object");
   }
   const frontend = value as Record<string, unknown>;
-  assertKnownKeys(frontend, ["framework", "styling"], "frontend");
-  if (frontend.framework !== "next" && frontend.framework !== "vite") {
-    throw new Error("frontend framework must be next or vite");
+  assertKnownKeys(frontend, ["framework", "styling", "ui"], "frontend");
+  const frameworks: FrontendFramework[] = [
+    "next",
+    "vite",
+    "vue",
+    "astro",
+    "angular",
+  ];
+  if (!frameworks.includes(frontend.framework as FrontendFramework)) {
+    throw new Error("frontend framework must be next, vite, vue, astro, or angular");
   }
   if (frontend.styling !== "tailwind-shadcn") {
     throw new Error("frontend styling must be tailwind-shadcn");
   }
+  if (frontend.framework === "angular" && language !== "typescript") {
+    throw new Error("Angular templates require TypeScript");
+  }
+  validateFrontendUi(frontend.ui);
+}
+
+function validateFrontendUi(value: unknown): void {
+  if (value === undefined) return;
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("frontend UI configuration must be an object");
+  }
+  const ui = value as Record<string, unknown>;
+  if (ui.mode === "starter") {
+    assertKnownKeys(ui, ["mode"], "starter UI");
+    return;
+  }
+  if (ui.mode === "template") {
+    assertKnownKeys(ui, ["mode", "style"], "template UI");
+    if (!isUiStyleId(ui.style)) {
+      throw new Error("frontend UI style is unsupported");
+    }
+    return;
+  }
+  throw new Error("frontend UI mode must be starter or template");
 }
 
 function validateBackend(value: unknown): void {

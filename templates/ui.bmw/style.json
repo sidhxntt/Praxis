@@ -1,0 +1,226 @@
+{
+  "id": "bmw",
+  "name": "Bmw inspired",
+  "sourceDesign": "DESIGN-bmw.md",
+  "description": "The road, reconsidered. A refined mobility concept that pairs quiet power with deliberate everyday comfort.",
+  "traits": [
+    "automotive",
+    "premium",
+    "structured"
+  ],
+  "theme": "light",
+  "tokens": {
+    "colors": {
+      "background": "#ffffff",
+      "surface": "#f5f5f7",
+      "foreground": "#262626",
+      "muted": "#6b6b6b",
+      "accent": "#1c69d4",
+      "accentContrast": "#ffffff",
+      "darkSurface": "#1a2129",
+      "darkForeground": "#ffffff",
+      "border": "#e6e6e6"
+    },
+    "typography": {
+      "display": "'Helvetica Neue', 'Arial Narrow', ui-sans-serif, system-ui, sans-serif",
+      "body": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "displayWeight": 500,
+      "bodySize": "16px",
+      "displayTracking": "-0.02em"
+    },
+    "spacing": {
+      "container": "1600px",
+      "section": "clamp(5rem, 11vw, 10rem)"
+    },
+    "radii": {
+      "action": "2px",
+      "card": "18px"
+    },
+    "motion": {
+      "duration": "500ms",
+      "easing": "cubic-bezier(0.2, 0.8, 0.2, 1)"
+    }
+  },
+  "sections": [
+    {
+      "id": "top",
+      "type": "navigation",
+      "theme": "dark",
+      "variant": "global",
+      "brand": "Northline",
+      "links": [
+        {
+          "label": "Overview",
+          "href": "#overview"
+        },
+        {
+          "label": "Experience",
+          "href": "#experience"
+        },
+        {
+          "label": "Principles",
+          "href": "#principles"
+        }
+      ],
+      "action": {
+        "label": "Discover the collection",
+        "href": "#begin"
+      }
+    },
+    {
+      "id": "overview",
+      "type": "hero",
+      "theme": "light",
+      "variant": "immersive",
+      "eyebrow": "Northline",
+      "heading": "The road, reconsidered.",
+      "body": "A refined mobility concept that pairs quiet power with deliberate everyday comfort.",
+      "primaryAction": {
+        "label": "Discover the collection",
+        "href": "#experience"
+      },
+      "secondaryAction": {
+        "label": "See the story",
+        "href": "#principles"
+      },
+      "asset": "assets/bmw-composition.svg"
+    },
+    {
+      "id": "experience",
+      "type": "showcase",
+      "theme": "light",
+      "variant": "full-bleed",
+      "eyebrow": "The experience",
+      "heading": "Crafted around a singular feeling.",
+      "body": "Northline brings its most important ideas forward and lets every supporting detail recede.",
+      "action": {
+        "label": "Explore the details",
+        "href": "#principles"
+      },
+      "asset": "assets/bmw-composition.svg"
+    },
+    {
+      "id": "craft",
+      "type": "showcase",
+      "theme": "light",
+      "variant": "light-stage",
+      "eyebrow": "The craft",
+      "heading": "Material, light, and motion in balance.",
+      "body": "Purposeful materials, durable choices, and a precise visual rhythm make the experience feel complete without feeling crowded.",
+      "action": {
+        "label": "Read the principles",
+        "href": "#principles"
+      }
+    },
+    {
+      "id": "principles",
+      "type": "features",
+      "theme": "light",
+      "variant": "alternating",
+      "eyebrow": "Guiding principles",
+      "heading": "What makes Northline feel different.",
+      "body": "A small set of strong decisions creates a recognizable experience across every screen and every moment.",
+      "items": [
+        {
+          "title": "Sculpted proportion",
+          "description": "Northline presents the next useful action clearly, with nothing unnecessary competing for attention.",
+          "marker": "01"
+        },
+        {
+          "title": "Purposeful material",
+          "description": "Flexible foundations adapt to real work while keeping the experience coherent and recognizable.",
+          "marker": "02"
+        },
+        {
+          "title": "Measured performance",
+          "description": "Small interactions, responsive pacing, and accessible defaults make quality visible in everyday use.",
+          "marker": "03"
+        }
+      ]
+    },
+    {
+      "id": "proof",
+      "type": "metrics",
+      "theme": "dark",
+      "variant": "inline",
+      "eyebrow": "Measured in practice",
+      "heading": "Northline, by the numbers.",
+      "items": [
+        {
+          "value": "42%",
+          "label": "less wasted effort"
+        },
+        {
+          "value": "8.7/10",
+          "label": "customer delight"
+        },
+        {
+          "value": "24/7",
+          "label": "ready when needed"
+        }
+      ]
+    },
+    {
+      "id": "begin",
+      "type": "cta",
+      "theme": "dark",
+      "variant": "centered",
+      "eyebrow": "The next step",
+      "heading": "Experience the work in its purest form.",
+      "body": "Discover how Northline can turn a clear idea into an experience people remember.",
+      "action": {
+        "label": "Discover the collection",
+        "href": "#top"
+      }
+    },
+    {
+      "id": "footer",
+      "type": "footer",
+      "theme": "light",
+      "variant": "minimal",
+      "brand": "Northline",
+      "summary": "A refined mobility concept that pairs quiet power with deliberate everyday comfort.",
+      "columns": [
+        {
+          "heading": "Explore",
+          "links": [
+            {
+              "label": "Overview",
+              "href": "#overview"
+            },
+            {
+              "label": "Experience",
+              "href": "#experience"
+            }
+          ]
+        },
+        {
+          "heading": "Company",
+          "links": [
+            {
+              "label": "Principles",
+              "href": "#principles"
+            },
+            {
+              "label": "Contact",
+              "href": "#begin"
+            }
+          ]
+        }
+      ],
+      "legal": "© 2026 Northline. An original Praxis Flow demonstration brand."
+    }
+  ],
+  "assets": [
+    {
+      "source": "assets/bmw-composition.svg",
+      "alt": "Original abstract composition representing the Northline experience",
+      "width": 1600,
+      "height": 900
+    }
+  ],
+  "accessibility": {
+    "reducedMotion": true,
+    "skipLink": true
+  }
+}

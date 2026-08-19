@@ -1,0 +1,58 @@
+name: UI Framework Matrix
+
+on:
+  pull_request:
+    branches: [cli]
+  push:
+    branches: [cli]
+  workflow_dispatch:
+
+jobs:
+  framework-builds:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - next-js
+          - next-ts
+          - vite-js
+          - vite-ts
+          - vue-js
+          - vue-ts
+          - astro-js
+          - astro-ts
+          - angular-ts
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build starter and all 40 styles
+        env:
+          TMPDIR: ${{ github.workspace }}/.matrix-tmp
+        run: |
+          mkdir -p "$TMPDIR"
+          npm run ui:matrix -- --target ${{ matrix.target }} --install --build
+      - name: Upload failed generated projects
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-matrix-${{ matrix.target }}
+          path: .matrix-tmp/
+          retention-days: 5
+
+  visual-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run ui:verify
+      - run: npx vitest run tests/ui/accessibility.test.ts tests/ui/responsive.test.ts tests/ui/visual.test.ts

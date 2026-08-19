@@ -44,7 +44,7 @@ export async function composeProject(
         const moduleRoot = path.resolve(options.templatesRoot, manifest.id);
         const source = confinedPath(moduleRoot, overlay.source, "overlay source");
         const output = outputDirectory(staging, overlay.scope, config);
-        await copyOverlay(source, output, config, staging);
+        await copyOverlay(source, output, config, staging, overlay.replace === true);
       }
       for (const patch of manifest.patches ?? []) {
         if (!selectorMatches(patch, config)) continue;
@@ -129,24 +129,26 @@ async function copyOverlay(
   destination: string,
   config: PraxisConfig,
   staging: string,
+  replace: boolean,
 ): Promise<void> {
   const entries = await readdir(source, { withFileTypes: true });
   for (const entry of entries) {
     const sourcePath = path.join(source, entry.name);
     const destinationPath = path.join(destination, entry.name);
     if (entry.isDirectory()) {
-      await copyOverlay(sourcePath, destinationPath, config, staging);
+      await copyOverlay(sourcePath, destinationPath, config, staging, replace);
       continue;
     }
     const contents = replaceTokens(await readFile(sourcePath, "utf8"), config);
     await mkdir(path.dirname(destinationPath), { recursive: true });
     try {
       const existing = await readFile(destinationPath, "utf8");
-      if (existing !== contents) {
+      if (existing !== contents && !replace) {
         throw new Error(
           `file conflict at "${path.relative(staging, destinationPath)}"`,
         );
       }
+      if (existing !== contents) await writeFile(destinationPath, contents);
     } catch (error) {
       if (error instanceof Error && error.message.startsWith("file conflict")) {
         throw error;

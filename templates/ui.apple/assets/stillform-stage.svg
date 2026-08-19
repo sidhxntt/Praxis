@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title description">
+  <title id="title">Stillform product composition</title>
+  <desc id="description">Three abstract objects arranged on a pale architectural plinth.</desc>
+  <defs>
+    <filter id="product-shadow" x="-30%" y="-30%" width="160%" height="180%">
+      <feDropShadow dx="3" dy="12" stdDeviation="22" flood-color="#000000" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="#f5f5f7"/>
+  <path d="M140 720h1320v90H140z" fill="#e8e8ed"/>
+  <g filter="url(#product-shadow)">
+    <rect x="290" y="250" width="310" height="470" rx="72" fill="#1d1d1f"/>
+    <circle cx="445" cy="375" r="76" fill="#fafafc"/>
+    <rect x="690" y="150" width="420" height="570" rx="92" fill="#ffffff" stroke="#d2d2d7" stroke-width="4"/>
+    <circle cx="900" cy="350" r="118" fill="#272729"/>
+    <rect x="1180" y="330" width="170" height="390" rx="85" fill="#0066cc"/>
+  </g>
+  <circle cx="900" cy="350" r="32" fill="#2997ff"/>
+</svg>

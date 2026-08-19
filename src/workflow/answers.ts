@@ -4,6 +4,7 @@ import {
   Database,
   DeploymentTarget,
   FrontendFramework,
+  FrontendUi,
   Language,
   PackageManager,
   PraxisConfig,
@@ -22,6 +23,7 @@ export interface CreateAnswers {
   projectType: ProjectType;
   language: Language;
   frontendFramework?: FrontendFramework;
+  frontendUi?: FrontendUi;
   database?: Database;
   auth?: AuthProvider;
   cache?: CacheProvider;
@@ -50,6 +52,7 @@ export function answersToConfig(answers: CreateAnswers): PraxisConfig {
       frontend: {
         framework: answers.frontendFramework,
         styling: "tailwind-shadcn",
+        ui: answers.frontendUi ?? { mode: "starter" },
       },
     }),
     ...(answers.projectType !== "frontend" && {

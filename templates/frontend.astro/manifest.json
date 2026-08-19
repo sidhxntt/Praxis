@@ -1,0 +1,28 @@
+{
+  "id": "frontend.astro",
+  "overlays": [
+    { "scope": "frontend", "source": "files/common" },
+    { "scope": "frontend", "source": "files/javascript", "language": "javascript" },
+    { "scope": "frontend", "source": "files/typescript", "language": "typescript" }
+  ],
+  "packages": [
+    {
+      "scope": "frontend",
+      "dependencies": { "astro": "7.2.3" },
+      "scripts": {
+        "dev": "astro dev",
+        "build": "astro build",
+        "preview": "astro preview"
+      }
+    },
+    {
+      "scope": "frontend",
+      "language": "typescript",
+      "devDependencies": {
+        "@astrojs/check": "0.9.6",
+        "typescript": "^5.9.3"
+      },
+      "scripts": { "build": "astro check && astro build" }
+    }
+  ]
+}

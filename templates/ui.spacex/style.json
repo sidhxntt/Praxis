@@ -1,0 +1,226 @@
+{
+  "id": "spacex",
+  "name": "Spacex inspired",
+  "sourceDesign": "DESIGN-spacex.md",
+  "description": "Make distance feel possible. A mission-driven aerospace program building reusable systems for the next era of exploration.",
+  "traits": [
+    "aerospace",
+    "cinematic",
+    "minimal"
+  ],
+  "theme": "dark",
+  "tokens": {
+    "colors": {
+      "background": "#0b0b0d",
+      "surface": "#18181c",
+      "foreground": "#000000",
+      "muted": "#a3a3aa",
+      "accent": "#000000",
+      "accentContrast": "#ffffff",
+      "darkSurface": "#0b0b0d",
+      "darkForeground": "#ffffff",
+      "border": "#303036"
+    },
+    "typography": {
+      "display": "'Helvetica Neue', 'Arial Narrow', ui-sans-serif, system-ui, sans-serif",
+      "body": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "displayWeight": 500,
+      "bodySize": "16px",
+      "displayTracking": "-0.02em"
+    },
+    "spacing": {
+      "container": "1600px",
+      "section": "clamp(5rem, 11vw, 10rem)"
+    },
+    "radii": {
+      "action": "2px",
+      "card": "18px"
+    },
+    "motion": {
+      "duration": "500ms",
+      "easing": "cubic-bezier(0.2, 0.8, 0.2, 1)"
+    }
+  },
+  "sections": [
+    {
+      "id": "top",
+      "type": "navigation",
+      "theme": "dark",
+      "variant": "global",
+      "brand": "Altitude",
+      "links": [
+        {
+          "label": "Overview",
+          "href": "#overview"
+        },
+        {
+          "label": "Experience",
+          "href": "#experience"
+        },
+        {
+          "label": "Principles",
+          "href": "#principles"
+        }
+      ],
+      "action": {
+        "label": "Discover the collection",
+        "href": "#begin"
+      }
+    },
+    {
+      "id": "overview",
+      "type": "hero",
+      "theme": "dark",
+      "variant": "immersive",
+      "eyebrow": "Altitude",
+      "heading": "Make distance feel possible.",
+      "body": "A mission-driven aerospace program building reusable systems for the next era of exploration.",
+      "primaryAction": {
+        "label": "Discover the collection",
+        "href": "#experience"
+      },
+      "secondaryAction": {
+        "label": "See the story",
+        "href": "#principles"
+      },
+      "asset": "assets/spacex-composition.svg"
+    },
+    {
+      "id": "experience",
+      "type": "showcase",
+      "theme": "dark",
+      "variant": "full-bleed",
+      "eyebrow": "The experience",
+      "heading": "Crafted around a singular feeling.",
+      "body": "Altitude brings its most important ideas forward and lets every supporting detail recede.",
+      "action": {
+        "label": "Explore the details",
+        "href": "#principles"
+      },
+      "asset": "assets/spacex-composition.svg"
+    },
+    {
+      "id": "craft",
+      "type": "showcase",
+      "theme": "light",
+      "variant": "light-stage",
+      "eyebrow": "The craft",
+      "heading": "Material, light, and motion in balance.",
+      "body": "Purposeful materials, durable choices, and a precise visual rhythm make the experience feel complete without feeling crowded.",
+      "action": {
+        "label": "Read the principles",
+        "href": "#principles"
+      }
+    },
+    {
+      "id": "principles",
+      "type": "features",
+      "theme": "light",
+      "variant": "alternating",
+      "eyebrow": "Guiding principles",
+      "heading": "What makes Altitude feel different.",
+      "body": "A small set of strong decisions creates a recognizable experience across every screen and every moment.",
+      "items": [
+        {
+          "title": "Sculpted proportion",
+          "description": "Altitude presents the next useful action clearly, with nothing unnecessary competing for attention.",
+          "marker": "01"
+        },
+        {
+          "title": "Purposeful material",
+          "description": "Flexible foundations adapt to real work while keeping the experience coherent and recognizable.",
+          "marker": "02"
+        },
+        {
+          "title": "Measured performance",
+          "description": "Small interactions, responsive pacing, and accessible defaults make quality visible in everyday use.",
+          "marker": "03"
+        }
+      ]
+    },
+    {
+      "id": "proof",
+      "type": "metrics",
+      "theme": "dark",
+      "variant": "inline",
+      "eyebrow": "Measured in practice",
+      "heading": "Altitude, by the numbers.",
+      "items": [
+        {
+          "value": "42%",
+          "label": "less wasted effort"
+        },
+        {
+          "value": "8.7/10",
+          "label": "customer delight"
+        },
+        {
+          "value": "24/7",
+          "label": "ready when needed"
+        }
+      ]
+    },
+    {
+      "id": "begin",
+      "type": "cta",
+      "theme": "dark",
+      "variant": "centered",
+      "eyebrow": "The next step",
+      "heading": "Experience the work in its purest form.",
+      "body": "Discover how Altitude can turn a clear idea into an experience people remember.",
+      "action": {
+        "label": "Discover the collection",
+        "href": "#top"
+      }
+    },
+    {
+      "id": "footer",
+      "type": "footer",
+      "theme": "light",
+      "variant": "minimal",
+      "brand": "Altitude",
+      "summary": "A mission-driven aerospace program building reusable systems for the next era of exploration.",
+      "columns": [
+        {
+          "heading": "Explore",
+          "links": [
+            {
+              "label": "Overview",
+              "href": "#overview"
+            },
+            {
+              "label": "Experience",
+              "href": "#experience"
+            }
+          ]
+        },
+        {
+          "heading": "Company",
+          "links": [
+            {
+              "label": "Principles",
+              "href": "#principles"
+            },
+            {
+              "label": "Contact",
+              "href": "#begin"
+            }
+          ]
+        }
+      ],
+      "legal": "© 2026 Altitude. An original Praxis Flow demonstration brand."
+    }
+  ],
+  "assets": [
+    {
+      "source": "assets/spacex-composition.svg",
+      "alt": "Original abstract composition representing the Altitude experience",
+      "width": 1600,
+      "height": 900
+    }
+  ],
+  "accessibility": {
+    "reducedMotion": true,
+    "skipLink": true
+  }
+}
