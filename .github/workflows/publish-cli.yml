@@ -23,8 +23,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          registry-url: https://npm.pkg.github.com
-          scope: "@sidhxntt"
+          registry-url: https://registry.npmjs.org
       - run: npm ci
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
@@ -39,8 +38,8 @@ jobs:
       - name: Publish package
         working-directory: cli
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm publish --ignore-scripts
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --ignore-scripts
       - name: Create GitHub release
         if: github.event_name == 'push'
         run: gh release create "$GITHUB_REF_NAME" --title "Praxis Flow CLI $GITHUB_REF_NAME" --generate-notes

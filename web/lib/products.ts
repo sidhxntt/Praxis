@@ -8,7 +8,7 @@ export const products = {
     headline: "Build the project you actually want.",
     description:
       "Praxis Flow turns explicit frontend, backend, language, infrastructure, and UI choices into one coherent, reproducible project foundation.",
-    command: "npx @sidhxntt/praxiflow",
+    command: "npm i -g praxiflow",
     previewTitle: "Create a project",
     previewItems: [
       ["Frontend framework", "Next.js · Vite · Vue · Astro · Angular"],
@@ -43,7 +43,7 @@ export const products = {
     headline: "Generate the backend your operations require.",
     description:
       "Praxis Pro composes a production-oriented Django/DRF or Go/Gin backend from capabilities—not a fixed starter repository.",
-    command: "npx @sidhxntt/praxiflow",
+    command: "npm i -g praxiflow",
     previewTitle: "Production Backend (Praxis Pro)",
     previewItems: [
       ["Backend stack", "Django + DRF · Go + Gin"],

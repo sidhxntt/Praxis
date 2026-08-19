@@ -81,24 +81,17 @@ The generated project contains pinned dependencies, health/readiness/startup pro
 
 ## Installation
 
-Praxis Flow is published to GitHub Packages as `@sidhxntt/praxiflow`. Configure npm authentication for GitHub Packages in `~/.npmrc`:
-
-```ini
-@sidhxntt:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
-```
-
-The token must be a classic GitHub personal access token with `read:packages`.
+Praxis Flow is published publicly on npm as `praxiflow`. No registry configuration or authentication is required to install it.
 
 ```bash
-npm install --global @sidhxntt/praxiflow
+npm install --global praxiflow
 praxiflow
 ```
 
 Or run it without a global installation:
 
 ```bash
-npx @sidhxntt/praxiflow
+npx praxiflow
 ```
 
 During local development:

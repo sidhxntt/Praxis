@@ -9,11 +9,12 @@ import packageJson from "../package.json";
 const run = promisify(execFile);
 
 describe("published package contents", () => {
-  it("targets the repository-owned GitHub Packages scope", () => {
-    expect(packageJson.name).toBe("@sidhxntt/praxiflow");
-    expect(packageJson.publishConfig.registry).toBe("https://npm.pkg.github.com");
+  it("targets the public npm registry", () => {
+    expect(packageJson.name).toBe("praxiflow");
+    expect(packageJson.publishConfig.registry).toBe("https://registry.npmjs.org");
+    expect(packageJson.publishConfig.access).toBe("public");
     expect(packageJson.repository.url).toBe("git+https://github.com/sidhxntt/Praxis.git");
-    expect(packageJson.bin.praxiflow).toBe("./dist/index.js");
+    expect(packageJson.bin.praxiflow).toBe("dist/index.js");
   });
 
   it("ships every runtime UI artifact and excludes authoring/test sources", async () => {
