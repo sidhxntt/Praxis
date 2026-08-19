@@ -152,6 +152,33 @@ describe("Pro capability parity", () => {
   );
 
   it.each(["python-django", "go-gin"] as const)(
+    "wires Redis-backed realtime WebSockets into the %s runtime",
+    async (stack) => {
+      const destination = await generate(stack, ["realtime"]);
+      expect(await readFile(path.join(destination, "docker-compose.yml"), "utf8"))
+        .toContain("redis:8.8-alpine");
+      if (stack === "python-django") {
+        const project = await readFile(path.join(destination, "pyproject.toml"), "utf8");
+        expect(project).toContain("channels==4.3.2");
+        expect(project).toContain("channels-redis==4.3.0");
+        expect(await readFile(path.join(destination, "config/asgi.py"), "utf8"))
+          .toContain("ProtocolTypeRouter");
+        expect(await readFile(path.join(destination, "core/consumers.py"), "utf8"))
+          .toContain("group_send");
+      } else {
+        const module = await readFile(path.join(destination, "go.mod"), "utf8");
+        expect(module).toContain("github.com/coder/websocket v1.8.14");
+        const realtime = await readFile(path.join(destination, "internal/httpserver/realtime.go"), "utf8");
+        expect(realtime).toContain("websocket.Accept");
+        expect(realtime).toContain("Subscribe");
+        expect(realtime).toContain("Publish");
+        expect(await readFile(path.join(destination, "internal/httpserver/router.go"), "utf8"))
+          .toContain("registerRealtimeRoute");
+      }
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
     "wires Redis into the %s runtime and local Compose stack",
     async (stack) => {
       const destination = await generate(stack, ["redis-cache"]);
