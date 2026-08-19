@@ -53,6 +53,20 @@ describe("loopback UI gallery", () => {
     await expect(fetch(session.url)).rejects.toThrow();
   });
 
+  it("serves only catalog-declared preview filenames", async () => {
+    const session = await startGallery({ timeoutMs: 2_000 });
+    const preview = await fetch(`${session.url}previews/apple-thumbnail.webp`);
+    expect(preview.status).toBe(200);
+    expect(preview.headers.get("content-type")).toBe("image/webp");
+    expect((await preview.arrayBuffer()).byteLength).toBeGreaterThan(1_000);
+    expect(await fetch(`${session.url}previews/not-a-style-thumbnail.webp`))
+      .toMatchObject({ status: 404 });
+    expect(await fetch(`${session.url}previews/apple-secret.webp`))
+      .toMatchObject({ status: 404 });
+    await session.close();
+    await expect(session.selection).rejects.toThrow("closed");
+  });
+
   it("rejects duplicate concurrent selection attempts", async () => {
     const session = await startGallery({
       galleryRoot: await galleryRoot(),

@@ -1,0 +1,1402 @@
+[
+  {
+    "id": "airbnb",
+    "label": "Airbnb inspired",
+    "designFile": "DESIGN-airbnb.md",
+    "description": "Stay somewhere that stays with you. A thoughtful travel collection shaped around local character and effortless arrival.",
+    "traits": [
+      "editorial",
+      "travel",
+      "warm"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/airbnb-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "209d2531641ebc68a3ddfac8eca13856c10f32157778e23920e3a00852ed03c3",
+        "alt": "Airbnb inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/airbnb-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "6dd0c17a75fc1ff9953357d149c9a932c7c98dc7336d692c4bcc1b106a2086cc",
+        "alt": "Airbnb inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/airbnb-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "cee16e6ae5dd2efccac7bc0b868c2068bbb03ddd797311d3602620eb78294ff5",
+        "alt": "Airbnb inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "airtable",
+    "label": "Airtable inspired",
+    "designFile": "DESIGN-airtable.md",
+    "description": "Make every moving part visible. A flexible workspace that turns complex projects into a clear, colorful shared rhythm.",
+    "traits": [
+      "colorful",
+      "modular",
+      "playful"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/airtable-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "d5470b9c31c6899113c4bddbc2bf8ac8bc93a6c5393fb8819d5bc3f4417925db",
+        "alt": "Airtable inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/airtable-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "663556032a7972091df31e3d2cee0bd7f90e01b0ab31290ddef2a41b76e8c654",
+        "alt": "Airtable inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/airtable-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "4d67141b19e1e86466fc86ea64c782d3439e5e43481686bec933b505b53c5275",
+        "alt": "Airtable inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "apple",
+    "label": "Apple inspired",
+    "designFile": "DESIGN-apple.md",
+    "description": "A photography-first product story with near-invisible chrome, alternating light and dark stages, and one quiet blue action color.",
+    "traits": [
+      "minimal",
+      "premium",
+      "editorial"
+    ],
+    "theme": "mixed",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/apple-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "5c801e52bf5669cc9a1fb6af3a7f7e93bb432551757061738876e680db55daf5",
+        "alt": "Apple inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/apple-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "b8379e84eefcdb9f87c17bb1896674deed471f037638334977a3ccdb3f0edfe1",
+        "alt": "Apple inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/apple-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "a76fd5b8799693891e2fecd306c7343255211b3ea3a66e1dd87379b16a01a099",
+        "alt": "Apple inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "binance",
+    "label": "Binance inspired",
+    "designFile": "DESIGN-binance.md",
+    "description": "Move value with confidence. A precise financial platform for seeing markets clearly and acting without friction.",
+    "traits": [
+      "finance",
+      "technical",
+      "bold"
+    ],
+    "theme": "dark",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/binance-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "e9c2592cefa508c192d2fe7c41f88128c40648df342dd0b923d0e24ff3c3aa50",
+        "alt": "Binance inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/binance-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "724c917212faf02f22e4cbcb706b2e08fa15c36d25efd97a08adcffc8c9c4a59",
+        "alt": "Binance inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/binance-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "29da3632754039076fbffdd7a399a73c332e49d596768b5385a7e4cfed8591ec",
+        "alt": "Binance inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "bmw-m",
+    "label": "Bmw M inspired",
+    "designFile": "DESIGN-bmw-m.md",
+    "description": "Performance, distilled. A limited electric grand tourer engineered around balance, response, and a singular line.",
+    "traits": [
+      "automotive",
+      "performance",
+      "bold"
+    ],
+    "theme": "dark",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/bmw-m-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "0d99126868f041baee7952f37ec00347d94cac4f4e5ea4c2fa6989abaf64eca3",
+        "alt": "Bmw M inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/bmw-m-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "88a48ca2d2ce4031e4a571c2fd863618cd49c796f4d455e33760f738e5e6112b",
+        "alt": "Bmw M inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/bmw-m-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "b1f95742b23c0cb3434d7097d959b78145c2195d70ee557df26ced0bc16f755b",
+        "alt": "Bmw M inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "bmw",
+    "label": "Bmw inspired",
+    "designFile": "DESIGN-bmw.md",
+    "description": "The road, reconsidered. A refined mobility concept that pairs quiet power with deliberate everyday comfort.",
+    "traits": [
+      "automotive",
+      "premium",
+      "structured"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/bmw-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "e651bcc33b61ff27d5896b59f8160eb7c2d2fe7d4384464015d24e0ccb3e5a35",
+        "alt": "Bmw inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/bmw-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "148f738eae4a688a4cc275c4623a06e318c600a4e0130cc9947353f6c1bf6658",
+        "alt": "Bmw inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/bmw-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "ec761b068b479a1902c50f80830047732a42f59e18f0412bab34c97b70c424c1",
+        "alt": "Bmw inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "bugatti",
+    "label": "Bugatti inspired",
+    "designFile": "DESIGN-bugatti.md",
+    "description": "An object in motion. A work at rest. A hand-finished performance study where material, proportion, and velocity meet.",
+    "traits": [
+      "luxury",
+      "automotive",
+      "dramatic"
+    ],
+    "theme": "dark",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/bugatti-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "adde12dc1f13ac930aef5aae51a0691121443a2d6b8f8c0759e28a711064fb07",
+        "alt": "Bugatti inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/bugatti-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "8efe94aa27114e95da223e03d84272cffe6c4a6b273a1d06d982499090c45183",
+        "alt": "Bugatti inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/bugatti-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "ef96fbc93d4c37aa9b307c3a4e5feed129c39ada1d462e5850aee41901ef060a",
+        "alt": "Bugatti inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "cal",
+    "label": "Cal inspired",
+    "designFile": "DESIGN-cal.md",
+    "description": "Time that feels like yours. A calmer way to shape meetings, protect focus, and keep a team in step.",
+    "traits": [
+      "minimal",
+      "productivity",
+      "calm"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/cal-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "5b5ceb8dd9bce8f0cb56d1625aa52cb5057759c9a233992e057922826d853117",
+        "alt": "Cal inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/cal-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "f3ec99f3dde8729b4aaa89134686afa9714a9b7bd34467dd31ac4a091db00827",
+        "alt": "Cal inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/cal-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "ff2edefde9c63e5b4fd87e8a3477fa97a412d3555df2f16d80ccc8a697c9b050",
+        "alt": "Cal inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "claude",
+    "label": "Claude inspired",
+    "designFile": "DESIGN-claude.md",
+    "description": "Thoughtful work starts with a better conversation. A warm, clear thinking space for exploring ideas and turning them into useful work.",
+    "traits": [
+      "editorial",
+      "warm",
+      "human"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/claude-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "7dc1e33b70b6b17c82387982bdc7ca0fba65c0ac0740bf68064c575efa23800c",
+        "alt": "Claude inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/claude-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "9ba5fc4f69e45281608c35d4bf9b13fcf4ef28d0c4edf4180519bcf372b5b945",
+        "alt": "Claude inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/claude-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "77c5cae634dbc1737ed30d73ffde62d413e3d5b23113eecb696bb353aa6ef465",
+        "alt": "Claude inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "clay",
+    "label": "Clay inspired",
+    "designFile": "DESIGN-clay.md",
+    "description": "Turn good signals into great relationships. A creative growth workspace that helps teams research, enrich, and reach the right people.",
+    "traits": [
+      "colorful",
+      "saas",
+      "expressive"
+    ],
+    "theme": "mixed",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/clay-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "f29bdba8538adeed6496ca182b3ebeff234f6ac490a3bfa1808a778f2e3cbd31",
+        "alt": "Clay inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/clay-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "91786dc25a7c2f6650123129a405f723d3baf73e1564d9b21fa81c42196961b3",
+        "alt": "Clay inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/clay-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "862e16956d2d3cf7ddde42aee366ad6b61a9ca0b6630cdf9b559610e0c4a93e9",
+        "alt": "Clay inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "clickhouse",
+    "label": "Clickhouse inspired",
+    "designFile": "DESIGN-clickhouse.md",
+    "description": "Answers at the speed of curiosity. A high-performance analytics engine built for deep questions over enormous live datasets.",
+    "traits": [
+      "data",
+      "technical",
+      "bold"
+    ],
+    "theme": "dark",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/clickhouse-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "b528d3fff6e13d895581c16b9bfad470e4d63d818ede02d911b7ae4b84282fc2",
+        "alt": "Clickhouse inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/clickhouse-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "d9a54b3080cf8b0c6cb8a385e6a8238fb6f5021b48c252c602af30bdf13e6846",
+        "alt": "Clickhouse inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/clickhouse-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "1d1d92aaed1b3cdf4f51319f7919b212b4927de52a5a51a2c531c0f1a3e5b95b",
+        "alt": "Clickhouse inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "coinbase",
+    "label": "Coinbase inspired",
+    "designFile": "DESIGN-coinbase.md",
+    "description": "A clearer way into digital finance. Secure tools and plain-language guidance for holding, moving, and understanding value.",
+    "traits": [
+      "finance",
+      "clean",
+      "trustworthy"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/coinbase-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "dce13e53927bc3ecea59dbdf880ffaa732caa6372d127fa9a2bc22885116f791",
+        "alt": "Coinbase inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/coinbase-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "ff74c98f54fb63210a3eecc641ca668151b6ca13930b58036d3a7e29b13b9cb6",
+        "alt": "Coinbase inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/coinbase-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "7e936aa2aa7fdcea1cfc246472cd5799370f3416d98197581fb2cb6b94852a7f",
+        "alt": "Coinbase inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "cursor",
+    "label": "Cursor inspired",
+    "designFile": "DESIGN-cursor.md",
+    "description": "Build in the flow of thought. An intelligent code workspace that keeps context close and friction out of the way.",
+    "traits": [
+      "developer",
+      "technical",
+      "dark"
+    ],
+    "theme": "dark",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/cursor-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "a7103906e9cae4b00c2b6fed0592a6d19b8895dc8a7e41ac093b8c882ab9c7de",
+        "alt": "Cursor inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/cursor-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "2fabde62d4eebccaa50c97d9eb20b1ee9000acc840cd2b9e85e3d4c802e7496a",
+        "alt": "Cursor inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/cursor-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "5d7ccc8b258629fd4c0ab04fa1dc1af105569bb5caf792d5aac143dd2569d57a",
+        "alt": "Cursor inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "dell-1996",
+    "label": "Dell 1996 inspired",
+    "designFile": "DESIGN-dell-1996.md",
+    "description": "The future just dialed in. A joyful desktop gateway packed with bright ideas, useful tools, and unmistakable web nostalgia.",
+    "traits": [
+      "retro",
+      "playful",
+      "nostalgic"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/dell-1996-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "bf335e6e4f29572f023430ffbd2aacc8e4ce8e1aea373e58379855a88e109eb2",
+        "alt": "Dell 1996 inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/dell-1996-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "1cac44d3b41c5568c7e13f3be7a64727e590789e1155b396bf36235b5b917fb2",
+        "alt": "Dell 1996 inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/dell-1996-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "f51389169d8f91470cdbdedf48d72d6b90c328d181b30f2d1b593b4e6de7e501",
+        "alt": "Dell 1996 inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "discord",
+    "label": "Discord inspired",
+    "designFile": "DESIGN-discord.md",
+    "description": "Your people, all in one place. A lively home for communities to talk, create, play, and keep their shared culture close.",
+    "traits": [
+      "community",
+      "playful",
+      "bold"
+    ],
+    "theme": "mixed",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/discord-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "b114aad8918a7be0868ec5aeda9ca201593474ee30cb556131e22dc50495958d",
+        "alt": "Discord inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/discord-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "f126a4a8ecb7d5caea876284c32af4beb079d74bc7e7a591ffe5ec94849c0eaf",
+        "alt": "Discord inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/discord-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "0b5e6f067abf884776b93c35309cb893fe74249ce7a7d958f81110e53de9f291",
+        "alt": "Discord inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "elevenlabs",
+    "label": "Elevenlabs inspired",
+    "designFile": "DESIGN-elevenlabs.md",
+    "description": "Give every idea a voice. A studio for creating expressive, natural audio across stories, products, and languages.",
+    "traits": [
+      "audio",
+      "atmospheric",
+      "premium"
+    ],
+    "theme": "dark",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/elevenlabs-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "38faf639597e50ac3e59735c278e456fd66e97ccff821f89fdd1000778ecc3ac",
+        "alt": "Elevenlabs inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/elevenlabs-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "8ee44ead33c72efe15ced29226ddaffb904fbc5302e74d35a4a9b6fe375881a6",
+        "alt": "Elevenlabs inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/elevenlabs-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "eb53ab65c47d0aed4de3c832f642173fb452643d96bec962ac5abc6d4d713905",
+        "alt": "Elevenlabs inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "expo",
+    "label": "Expo inspired",
+    "designFile": "DESIGN-expo.md",
+    "description": "Ship the moment it works. One focused toolkit for building, testing, and delivering ambitious cross-platform experiences.",
+    "traits": [
+      "developer",
+      "mobile",
+      "technical"
+    ],
+    "theme": "dark",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/expo-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "909a6c54686ebf9374155c0aed121980b5068ad41e3d46264b03f4d58e67bf62",
+        "alt": "Expo inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/expo-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "bc221c59b553061d0fb6b6fb341879de610314ca6a631ef54dc4891e1c46103c",
+        "alt": "Expo inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/expo-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "732a86e5ac0dd7b1cc54a5a8b0efa8b51f1b616499e946cded0daa490d2387e8",
+        "alt": "Expo inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "ferrari",
+    "label": "Ferrari inspired",
+    "designFile": "DESIGN-ferrari.md",
+    "description": "Born from the racing line. A modern performance atelier translating track discipline into an unforgettable road experience.",
+    "traits": [
+      "automotive",
+      "editorial",
+      "dramatic"
+    ],
+    "theme": "mixed",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/ferrari-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "49102c3519f2c188c745a206b44e7d55758f754b68c0cbc18f8535f6ebb63a31",
+        "alt": "Ferrari inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/ferrari-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "e5c07eab5ee6af3ff8b640b2ca699367ba1389f64bbc4c066aec010c2c890f68",
+        "alt": "Ferrari inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/ferrari-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "500b22df050e5a62e4618bdd20ba133ba8dfb9fc9f595decc13fbd19bf9c28aa",
+        "alt": "Ferrari inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "figma",
+    "label": "Figma inspired",
+    "designFile": "DESIGN-figma.md",
+    "description": "Make together, from the first mark. A shared creative canvas where teams can explore, prototype, and bring every voice into the work.",
+    "traits": [
+      "creative",
+      "colorful",
+      "collaborative"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/figma-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "60a61efeb345653e612b9a1abf23f5691b35722ae342c00297ff95180608b38a",
+        "alt": "Figma inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/figma-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "4aa292b4697925b2a5ab71d984c96dfdb65df3555115ac6b7affebc5ed82556a",
+        "alt": "Figma inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/figma-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "b1e3ae6b96c87fd30edc12f73ae817db54095cdd96735e6978fb9813262c1ea3",
+        "alt": "Figma inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "framer",
+    "label": "Framer inspired",
+    "designFile": "DESIGN-framer.md",
+    "description": "Publish at the speed of imagination. A visual website studio for shaping expressive, responsive experiences without losing momentum.",
+    "traits": [
+      "creative",
+      "saas",
+      "gradient"
+    ],
+    "theme": "dark",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/framer-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "173fdccee862fcaa808f6a031a8c068b05bf5068ebc56b0e74196dc72ddd798d",
+        "alt": "Framer inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/framer-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "17dc5ee147368a9ee2d9b9c0fe930004897f2c7696056513f4a3dda84a605bd9",
+        "alt": "Framer inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/framer-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "b49d65f736d9a27dcad21fcadefd255bf5433d4c000d4e32c7efa9502f189718",
+        "alt": "Framer inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "hp",
+    "label": "HP inspired",
+    "designFile": "DESIGN-hp.md",
+    "description": "Technology made more human. Reliable tools designed to help people learn, create, and do their best work anywhere.",
+    "traits": [
+      "technology",
+      "friendly",
+      "editorial"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/hp-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "08a087811e0740e95f952399c5ebae5fd3c0158f809cf140d4bfd3547821cf31",
+        "alt": "HP inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/hp-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "5d207fabdc8185239bec91ec78fd24d0d33cf08e2b9e6b06359da8dc7d843eae",
+        "alt": "HP inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/hp-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "0a212a5ec02fe476baf8873c59dd50b04a2b325ce55f105599fb53134c9087d7",
+        "alt": "HP inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "lamborghini",
+    "label": "Lamborghini inspired",
+    "designFile": "DESIGN-lamborghini.md",
+    "description": "Defy the ordinary line. An uncompromising electric performance concept cut from light, sound, and angular motion.",
+    "traits": [
+      "automotive",
+      "luxury",
+      "angular"
+    ],
+    "theme": "dark",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/lamborghini-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "9ec420c61670ee75b6108c5d272cae0757edf439a561b3c04f4aed18f50808ad",
+        "alt": "Lamborghini inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/lamborghini-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "79739c4835b4a31e6c2b7ea8e6ef4cac2f288b6269a40bc1c68c3fc9bb8ce251",
+        "alt": "Lamborghini inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/lamborghini-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "59b3af4a762251ae583519f3bc9a8bbde4aa365c5160f5dbe7ebd44497775234",
+        "alt": "Lamborghini inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "lovable",
+    "label": "Lovable inspired",
+    "designFile": "DESIGN-lovable.md",
+    "description": "Turn an idea into something people can use. A friendly building space that helps small teams move from a sentence to a polished product.",
+    "traits": [
+      "ai",
+      "soft",
+      "playful"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/lovable-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "07b61a58741511a66bc1eb735bfe328d0695053b89be4588ec31d9fc43998e18",
+        "alt": "Lovable inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/lovable-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "4221ca88641ddd70477ac1def57a8fffa916bd18db3cf434c4c3c39cac475c1c",
+        "alt": "Lovable inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/lovable-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "cd31a7501bae77c6d8d795b1d5b27341addb820309b0c3f2327932688440d255",
+        "alt": "Lovable inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "mastercard",
+    "label": "Mastercard inspired",
+    "designFile": "DESIGN-mastercard.md",
+    "description": "A world of moments, moving freely. Human-centered payment experiences that connect everyday choices with global possibility.",
+    "traits": [
+      "finance",
+      "warm",
+      "geometric"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/mastercard-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "5e63bd2eb8f89c06ea41c5edfd403fd46e94a220af3ca10860cc786ebb68274b",
+        "alt": "Mastercard inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/mastercard-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "99942e6b54ecf95b6e3332ad03a88c7ee20510c26368f0891c5225d90c4eda13",
+        "alt": "Mastercard inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/mastercard-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "3edb37c81be66cd845121ee509ffa8e21fecb147686764113fec5d7391c17b9c",
+        "alt": "Mastercard inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "meta",
+    "label": "Meta inspired",
+    "designFile": "DESIGN-meta.md",
+    "description": "Feel closer, wherever you are. Open tools for sharing presence, making together, and turning distance into connection.",
+    "traits": [
+      "technology",
+      "social",
+      "gradient"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/meta-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "a1baa57e4d1a5ca4c3d69eb07514d03a8ee7dee5da2a6e331790ab4693641215",
+        "alt": "Meta inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/meta-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "0bc88f8e497c372e1a442527ea52dfd0453a4a54bb6a287e337ee8d6fa007541",
+        "alt": "Meta inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/meta-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "7a5cbf14b0c486907a7b7dcaea74038311b973d6403c96afcd883bb6bfd1fe7c",
+        "alt": "Meta inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "mongodb",
+    "label": "Mongodb inspired",
+    "designFile": "DESIGN-mongodb.md",
+    "description": "Data that grows with the idea. A flexible developer data platform built to make the first prototype and the millionth request feel natural.",
+    "traits": [
+      "developer",
+      "data",
+      "editorial"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/mongodb-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "97dc82128f863b1ad2c670e3793271a1699b7f33045c6d24916d461a6590ee12",
+        "alt": "Mongodb inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/mongodb-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "b987be02ae195a396533f6998aa6e55f46bef12e35da50cc944dbe2c39b2ef59",
+        "alt": "Mongodb inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/mongodb-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "82d026ce116b98d45178613e171e6bba7969d5542feba33341b0356a16e876ff",
+        "alt": "Mongodb inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "notion",
+    "label": "Notion inspired",
+    "designFile": "DESIGN-notion.md",
+    "description": "A quieter place for everything you know. Documents, projects, and team memory arranged in one calm, adaptable workspace.",
+    "traits": [
+      "productivity",
+      "minimal",
+      "editorial"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/notion-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "877091577b5c6e6ed564c3e90f2ad2ac4989145aaf7af197e5b28f9d85768d5b",
+        "alt": "Notion inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/notion-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "b5a9713f0cc42c48d832c7273fe2bf0afa6f3486dc8fcdcb9d5d102484a6ba79",
+        "alt": "Notion inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/notion-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "506c2b4a4c150dc1d928aac0b93a461ddaa4ca914ac9be021604d8b23874bd04",
+        "alt": "Notion inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "nvidia",
+    "label": "Nvidia inspired",
+    "designFile": "DESIGN-nvidia.md",
+    "description": "Compute what comes next. Accelerated systems for researchers and builders working at the edge of simulation and intelligence.",
+    "traits": [
+      "technology",
+      "performance",
+      "bold"
+    ],
+    "theme": "dark",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/nvidia-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "321a26f938dc6c21253ef1b3d1fd778dbcaa6c6f41e698be1233872aadb80bfd",
+        "alt": "Nvidia inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/nvidia-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "ca1416ea02c508617178b42dac2819e25ebc6ecc2553488ec286adcdb4ced6c5",
+        "alt": "Nvidia inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/nvidia-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "ccbd94c68f3d7be39f7cd3fc5682398d26857f2ffe4b15f78c8518b9878b67fb",
+        "alt": "Nvidia inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "ollama",
+    "label": "Ollama inspired",
+    "designFile": "DESIGN-ollama.md",
+    "description": "Intelligence, close to home. A simple local runtime that keeps powerful models private, portable, and ready to explore.",
+    "traits": [
+      "developer",
+      "minimal",
+      "calm"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/ollama-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "d65d0366a0cc10c27c4c46b7502d2807bb694b0e1b01cef7a992411f8187b06f",
+        "alt": "Ollama inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/ollama-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "05abe0e5d7835158df64b218b583b9e90fa7076ca07704e2c990903c0ccb2509",
+        "alt": "Ollama inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/ollama-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "befc069c2b6e4d0909b9995feabf5744d4c3485ac6c49e1ef3181a26845a4054",
+        "alt": "Ollama inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "pinterest",
+    "label": "Pinterest inspired",
+    "designFile": "DESIGN-pinterest.md",
+    "description": "Find the idea behind your next idea. A visual place to collect possibilities, follow curiosity, and shape inspiration into a plan.",
+    "traits": [
+      "visual",
+      "editorial",
+      "discovery"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/pinterest-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "0fe5e07120cdef79b180c6fcd8525aa109c5ac66e6a642b6964a1fd50add724c",
+        "alt": "Pinterest inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/pinterest-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "6bd2c623e31d5c49c024db8eb22c413eaee066f7fc8bca27c560d200002c6195",
+        "alt": "Pinterest inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/pinterest-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "d6adb8732b74c5e4f42943d9992aeb516064ce6becd0a687554784e501a4bc29",
+        "alt": "Pinterest inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "playstation",
+    "label": "Playstation inspired",
+    "designFile": "DESIGN-playstation.md",
+    "description": "Enter a world worth staying in. A cinematic home for new stories, shared adventures, and unforgettable ways to play.",
+    "traits": [
+      "gaming",
+      "cinematic",
+      "bold"
+    ],
+    "theme": "dark",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/playstation-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "e3a0494731550b4ffb68f68e1e24a273df8cf39deda51da4076bf821f713b5f4",
+        "alt": "Playstation inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/playstation-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "48c18dc9fea1dde66f38821deb0886eec0648e406deabf276955339cda93a17d",
+        "alt": "Playstation inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/playstation-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "327518421e814c4be568f66e7bea33335a8f4aaa6975d66a4bde665288026f39",
+        "alt": "Playstation inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "raycast",
+    "label": "Raycast inspired",
+    "designFile": "DESIGN-raycast.md",
+    "description": "Everything you need, one thought away. A polished command space that turns daily tools and tiny actions into effortless momentum.",
+    "traits": [
+      "productivity",
+      "gradient",
+      "premium"
+    ],
+    "theme": "dark",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/raycast-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "68fed198a9665660d0e56f10e9719e1cf00c64b53497714723b282673a422998",
+        "alt": "Raycast inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/raycast-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "53c3a907f9876a67ec28e1d1739073446e22e225e10abce64cfbdcbc7bf62553",
+        "alt": "Raycast inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/raycast-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "c1b5e40a5e35f183418abd8453e96cddad9591c0ee098f20d8c2bd7f685ea6ef",
+        "alt": "Raycast inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "revolut",
+    "label": "Revolut inspired",
+    "designFile": "DESIGN-revolut.md",
+    "description": "Money without the old boundaries. One modern account for spending, saving, exchanging, and seeing the whole picture clearly.",
+    "traits": [
+      "finance",
+      "bold",
+      "modern"
+    ],
+    "theme": "mixed",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/revolut-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "ee1ea16f7b14075d5d9ccf92e89c0edb70568d00c121e8581ab5a3573d03bc45",
+        "alt": "Revolut inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/revolut-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "9ff432e1cbf322540397748e9a13e3abbcdf12c405f6d51be89096e60963709d",
+        "alt": "Revolut inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/revolut-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "793489cf2e818c2db6e3171917af23943405f24d3efaac6e74f52e5fc7eec6e9",
+        "alt": "Revolut inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "sentry",
+    "label": "Sentry inspired",
+    "designFile": "DESIGN-sentry.md",
+    "description": "See the problem before it becomes the story. Observability that connects errors, performance, and releases into one useful path to a fix.",
+    "traits": [
+      "developer",
+      "observability",
+      "illustrated"
+    ],
+    "theme": "mixed",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/sentry-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "d3fbb228d32a333acb85219b41b35bef2c1fd61cce8d9aa4d01ffa3cbaa50d74",
+        "alt": "Sentry inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/sentry-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "6a57ef2fdabd558c7564e20df0b96f04ab468a40c324c0b21520058b2fac9c44",
+        "alt": "Sentry inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/sentry-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "feaf7248869f3515be1a276781f5224568deff2abd85fae861e20d628ec48576",
+        "alt": "Sentry inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "spacex",
+    "label": "Spacex inspired",
+    "designFile": "DESIGN-spacex.md",
+    "description": "Make distance feel possible. A mission-driven aerospace program building reusable systems for the next era of exploration.",
+    "traits": [
+      "aerospace",
+      "cinematic",
+      "minimal"
+    ],
+    "theme": "dark",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/spacex-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "bbf08502fb01cd8d28e9e9f9a753c36f34b8dc74e5bfc60fee71029ba85c3a03",
+        "alt": "Spacex inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/spacex-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "9c0aea24f5c68ec030697d5eaa47637cd0d368e7bb1c92dec35fdf05a028bab8",
+        "alt": "Spacex inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/spacex-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "bff9194612f8d1f59216d6bdaaec34f1fc711e8e188838c070dbf443fecfe161",
+        "alt": "Spacex inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "supabase",
+    "label": "Supabase inspired",
+    "designFile": "DESIGN-supabase.md",
+    "description": "Build openly. Scale confidently. A developer platform pairing a powerful database with the tools every modern product needs.",
+    "traits": [
+      "developer",
+      "open-source",
+      "technical"
+    ],
+    "theme": "dark",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/supabase-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "0e521d2659d8e0a26a56f66b0384ecf626f3920abb1f2237bd1e50c9461cb5d2",
+        "alt": "Supabase inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/supabase-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "32e714098135bdf333a8e5af519f040dfd9cbb656ce34f2d9a727998d1f56c39",
+        "alt": "Supabase inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/supabase-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "05bbf7e430cd470ee483362d466452bf65dfc467413a3dbbab8f68cec69f6ef1",
+        "alt": "Supabase inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "tesla",
+    "label": "Tesla inspired",
+    "designFile": "DESIGN-tesla.md",
+    "description": "Electric, without compromise. A clean-sheet vehicle shaped around range, simplicity, and the pleasure of instant response.",
+    "traits": [
+      "automotive",
+      "minimal",
+      "cinematic"
+    ],
+    "theme": "mixed",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/tesla-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "d218d596d9c2483c92303f6ea607401353617a863300ce7199c3af40ece51aab",
+        "alt": "Tesla inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/tesla-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "f2810e6e28d784d635042d81a003ad80c327f231d0d74f0e342675897a00b886",
+        "alt": "Tesla inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/tesla-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "d92bf34c3f5702eb6d304bfb4c33ea05dd543565271c2da8f75a2ded99727f31",
+        "alt": "Tesla inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "uber",
+    "label": "Uber inspired",
+    "designFile": "DESIGN-uber.md",
+    "description": "Go where the day takes you. A direct, dependable way to move through the city, from the first mile to the last.",
+    "traits": [
+      "urban",
+      "bold",
+      "editorial"
+    ],
+    "theme": "light",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/uber-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "454b5ded01f643af5e5a5ae27dc14de5ee478c2679b7bc57e6cd5c26bc3d9553",
+        "alt": "Uber inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/uber-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "a952829c33a6278732e7f4cb818682a8e26d13aa41034bdb46c49b5d64106d97",
+        "alt": "Uber inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/uber-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "8c9bcf5bcef5e9a8d419a6fcf53d3df4dcdb3d739be45a82342c8acdcf1a0bcb",
+        "alt": "Uber inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "vercel",
+    "label": "Vercel inspired",
+    "designFile": "DESIGN-vercel.md",
+    "description": "The web, at your pace. A precise delivery platform that helps product teams turn code into fast, resilient experiences.",
+    "traits": [
+      "developer",
+      "minimal",
+      "geometric"
+    ],
+    "theme": "mixed",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/vercel-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "acc904aff3f5cfa36c86d2090be07bead63e74901ed50ae9a94c79b9b33dc6b8",
+        "alt": "Vercel inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/vercel-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "5e4ece6c2104aceca0c01101373575835b9a75ed69cff8cc7f7213f72b06b2ef",
+        "alt": "Vercel inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/vercel-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "b66e357e72af7382c37e64ae93fb37af9843c4af9af9fb1e8524d581f758db7b",
+        "alt": "Vercel inspired landing page preview"
+      }
+    }
+  },
+  {
+    "id": "warp",
+    "label": "Warp inspired",
+    "designFile": "DESIGN-warp.md",
+    "description": "The command line, moving with you. A modern terminal workspace that brings context, collaboration, and speed to every command.",
+    "traits": [
+      "developer",
+      "terminal",
+      "gradient"
+    ],
+    "theme": "dark",
+    "previews": {
+      "thumbnail": {
+        "path": "previews/warp-thumbnail.webp",
+        "width": 640,
+        "height": 400,
+        "sha256": "1eeb97d13362d7494c0ac2db8cfc50ec1d39e648b62039582c123a3e20eca68a",
+        "alt": "Warp inspired landing page preview"
+      },
+      "desktop": {
+        "path": "previews/warp-desktop.webp",
+        "width": 1440,
+        "height": 900,
+        "sha256": "64bf0c6da3843374b3566f64237fdf9dcf614f377d8cff98b6795c60f3d4bd38",
+        "alt": "Warp inspired landing page preview"
+      },
+      "mobile": {
+        "path": "previews/warp-mobile.webp",
+        "width": 390,
+        "height": 844,
+        "sha256": "5c7afed8ac8a46b9e90dc83f37e0d60fe1ab79134e75a2f55fa723326901ac5d",
+        "alt": "Warp inspired landing page preview"
+      }
+    }
+  }
+]

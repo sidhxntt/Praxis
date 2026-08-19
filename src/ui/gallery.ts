@@ -111,7 +111,23 @@ async function handleRequest(
     if (pathname === "/catalog.json") {
       response.setHeader("content-type", "application/json; charset=utf-8");
       response.setHeader("cache-control", "no-store");
-      return send(response, 200, JSON.stringify(UI_STYLES));
+      let catalog: string;
+      try {
+        catalog = await readFile(path.resolve(root, "../catalog.json"), "utf8");
+      } catch {
+        catalog = JSON.stringify(UI_STYLES);
+      }
+      return send(response, 200, catalog);
+    }
+    const preview = pathname.match(/^\/previews\/([a-z0-9-]+)-(thumbnail|desktop|mobile)\.webp$/);
+    if (preview && isUiStyleId(preview[1])) {
+      try {
+        response.setHeader("content-type", "image/webp");
+        response.setHeader("cache-control", "public, max-age=31536000, immutable");
+        return send(response, 200, await readFile(path.join(root, pathname)));
+      } catch {
+        return send(response, 404, "Not found");
+      }
     }
     const resource = STATIC_FILES.get(pathname as StaticPath);
     if (!resource) return send(response, 404, "Not found");

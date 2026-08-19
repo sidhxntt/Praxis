@@ -4,7 +4,6 @@ const search=document.querySelector("#search");
 const traits=document.querySelector("#traits");
 const count=document.querySelector("#count");
 const preview=document.querySelector("#preview");
-const palette=["#d8ff57","#ff6f61","#7657ff","#00d49a","#ffcc35","#38a8ff"];
 
 fetch("/catalog.json").then((response)=>response.json()).then((styles)=>{state.styles=styles;renderTraits();render();});
 search.addEventListener("input",()=>{state.query=search.value.trim().toLowerCase();render();});
@@ -31,8 +30,8 @@ function render(){
 }
 function card(style,index){
   const button=document.createElement("button");button.type="button";button.className="card";
-  button.style.setProperty("--card-accent",palette[index%palette.length]);button.style.setProperty("--card-bg",style.theme==="light"?"#dddcd3":"#24242a");
-  button.innerHTML=`<span class="swatch"></span><span class="card-copy"><h2></h2><p></p><span class="tag"></span></span>`;
+  button.innerHTML=`<img class="swatch" loading="lazy" width="640" height="400"><span class="card-copy"><h2></h2><p></p><span class="tag"></span></span>`;
+  const image=button.querySelector("img");image.src=style.previews.thumbnail.path;image.alt=style.previews.thumbnail.alt;
   button.querySelector("h2").textContent=style.label;button.querySelector("p").textContent=style.description;button.querySelector(".tag").textContent=style.traits.join(" · ");
   button.addEventListener("click",()=>openPreview(style,index));return button;
 }
@@ -40,7 +39,8 @@ function openPreview(style,index){
   state.active=style;document.querySelector("#preview-title").textContent=style.label;document.querySelector("#preview-description").textContent=style.description;
   document.querySelector("#preview-theme").textContent=`${style.theme} direction`;
   document.querySelector("#preview-traits").textContent=style.traits.join(" · ");
-  document.querySelector("#preview-art").style.setProperty("--preview-accent",palette[index%palette.length]);document.querySelector("#preview-art").style.setProperty("--preview-bg",style.theme==="light"?"#d7d6cd":"#22222a");
+  const image=document.querySelector("#preview-image");image.src=style.previews.desktop.path;image.alt=style.previews.desktop.alt;
+  const mobile=document.querySelector("#preview-mobile");mobile.srcset=style.previews.mobile.path;mobile.type="image/webp";
   document.querySelector("#status").textContent="";preview.showModal();
 }
 async function selectStyle(){

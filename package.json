@@ -12,6 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "ui:generate": "node scripts/ui/generate.mjs",
+    "ui:previews": "node scripts/ui/render-previews.mjs",
+    "ui:verify": "node scripts/ui/verify-generated.mjs",
     "check": "npm run test && npm run build",
     "prepublishOnly": "npm run check"
   },
@@ -30,6 +32,8 @@
     "@types/chalk-animation": "^1.6.3",
     "@types/figlet": "^1.7.0",
     "@types/node": "^22.10.0",
+    "playwright": "1.62.1",
+    "sharp": "0.35.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "vitest": "^2.1.9"
