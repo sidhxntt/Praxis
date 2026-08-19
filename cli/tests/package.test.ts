@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
 import { describe, expect, it } from "vitest";
@@ -13,7 +14,7 @@ describe("published package contents", () => {
       "--dry-run",
       "--json",
       "--cache",
-      "/private/tmp/praxis-ui-npm-cache",
+      path.join(os.tmpdir(), "praxis-ui-npm-cache"),
     ], { cwd: path.resolve("."), maxBuffer: 20 * 1024 * 1024 });
     const report = JSON.parse(stdout) as Array<{ files: Array<{ path: string }> }>;
     const files = report[0].files.map(({ path: file }) => file);
