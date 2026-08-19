@@ -32,6 +32,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run docs:check
       - run: npm --workspace cli exec -- playwright install --with-deps chromium
       - run: npm --workspace cli run ui:verify
       - run: npm run test:cli
