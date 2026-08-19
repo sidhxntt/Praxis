@@ -4,7 +4,7 @@
 
 | Path | Owner and purpose | Published? |
 | --- | --- | --- |
-| `cli/` | Praxis Flow CLI, generator, manifests, UI artifacts, and tests | npm package `praxiflow` |
+| `cli/` | Praxis Flow CLI, generator, manifests, UI artifacts, and tests | GitHub npm package `@sidhxntt/praxiflow` |
 | `web/` | Public Next.js product website | Vercel application |
 | `docs/` | Human/agent documentation source and design records | Rendered to GitHub Wiki |
 | `scripts/` | Repository documentation tooling | Repository only |
@@ -54,4 +54,3 @@
 The contents of `cli/templates/ui.<style>/` and `cli/templates/ui.catalog/` are generated from design sources and scripts. Edit the canonical sources and renderer under `cli/scripts/ui/`; then run `npm --workspace cli run ui:generate` and `ui:previews`. `ui:verify` proves committed artifacts are current.
 
 Generated application directories are disposable test fixtures unless a test explicitly preserves them for failure diagnosis. Do not treat `cli/dist/` as source; it is rebuilt from TypeScript.
-

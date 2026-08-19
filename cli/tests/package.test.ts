@@ -4,10 +4,18 @@ import path from "node:path";
 import { promisify } from "node:util";
 import { describe, expect, it } from "vitest";
 import { UI_STYLE_IDS } from "../src/ui/catalog";
+import packageJson from "../package.json";
 
 const run = promisify(execFile);
 
 describe("published package contents", () => {
+  it("targets the repository-owned GitHub Packages scope", () => {
+    expect(packageJson.name).toBe("@sidhxntt/praxiflow");
+    expect(packageJson.publishConfig.registry).toBe("https://npm.pkg.github.com");
+    expect(packageJson.repository.url).toBe("git+https://github.com/sidhxntt/Praxis.git");
+    expect(packageJson.bin.praxiflow).toBe("./dist/index.js");
+  });
+
   it("ships every runtime UI artifact and excludes authoring/test sources", async () => {
     const { stdout } = await run("npm", [
       "pack",
@@ -28,6 +36,8 @@ describe("published package contents", () => {
         .toBe(true);
     }
     expect(files).toContain("templates/ui.catalog/catalog.json");
+    expect(files).toContain("README.md");
+    expect(files).toContain("LICENSE.txt");
     expect(files).toContain("templates/ui.catalog/gallery/index.html");
     expect(files.some((file) => file.startsWith("templates/ui.catalog/gallery/_next/static/") && file.endsWith(".js")))
       .toBe(true);
@@ -36,6 +46,8 @@ describe("published package contents", () => {
     expect(files.filter((file) => file.startsWith("templates/ui.catalog/gallery/previews/")))
       .toHaveLength(120);
     expect(files.some((file) => file.startsWith("templates/designs/"))).toBe(false);
+    expect(files.some((file) => /templates\/ui\.[^/]+\/(DESIGN\.md|style\.json)$/.test(file))).toBe(false);
+    expect(files.some((file) => /templates\/ui\.[^/]+\/assets\//.test(file))).toBe(false);
     expect(files.some((file) => file.startsWith("tests/"))).toBe(false);
     expect(files.some((file) => file.startsWith("scripts/"))).toBe(false);
   }, 30_000);

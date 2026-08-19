@@ -1,6 +1,34 @@
 {
-  "name": "praxiflow",
+  "name": "@sidhxntt/praxiflow",
   "version": "1.4.0",
+  "description": "Composable frontend, backend, full-stack, and production-backend project generator.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sidhxntt/Praxis.git",
+    "directory": "cli"
+  },
+  "homepage": "https://github.com/sidhxntt/Praxis#readme",
+  "bugs": {
+    "url": "https://github.com/sidhxntt/Praxis/issues"
+  },
+  "keywords": [
+    "cli",
+    "scaffolding",
+    "code-generator",
+    "nextjs",
+    "vue",
+    "astro",
+    "angular",
+    "express",
+    "django",
+    "golang"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "bin": {
     "praxiflow": "./dist/index.js"
   },
@@ -24,7 +52,10 @@
     "dist/",
     "templates/",
     "!templates/designs/",
-    "!templates/ui.shared/"
+    "!templates/ui.shared/",
+    "!templates/ui.*/DESIGN.md",
+    "!templates/ui.*/style.json",
+    "!templates/ui.*/assets/"
   ],
   "dependencies": {
     "@clack/prompts": "^0.7.0",
