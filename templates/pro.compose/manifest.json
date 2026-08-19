@@ -64,6 +64,20 @@
       "replace": "  scheduler:\n    build:\n      context: .\n    entrypoint: [\"/scheduler\"]\n    environment:\n      REDIS_URL: redis://redis:6379/0\n    depends_on:\n      redis:\n        condition: service_healthy\n    restart: unless-stopped\n  # @praxis:services",
       "proStack": "go-gin",
       "capability": "scheduled-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  prometheus:\n    image: prom/prometheus:v3.13.2\n    command: [\"--config.file=/etc/prometheus/prometheus.yml\", \"--storage.tsdb.path=/prometheus\"]\n    ports:\n      - \"9090:9090\"\n    volumes:\n      - ./ops/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro\n      - ./ops/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro\n      - prometheus-data:/prometheus\n    depends_on:\n      api:\n        condition: service_healthy\n    healthcheck:\n      test: [\"CMD-SHELL\", \"wget -q --spider http://localhost:9090/-/ready\"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n    restart: unless-stopped\n  # @praxis:services",
+      "capability": "prometheus"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "volumes:\n  postgres-data:",
+      "replace": "volumes:\n  postgres-data:\n  prometheus-data:",
+      "capability": "prometheus"
     }
   ]
 }

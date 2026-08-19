@@ -7,6 +7,7 @@ DEBUG = False
 ALLOWED_HOSTS = [item for item in os.getenv("ALLOWED_HOSTS", "").split(",") if item]
 
 INSTALLED_APPS = [
+    # @praxis:installed-apps
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -19,6 +20,7 @@ INSTALLED_APPS = [
     "core",
 ]
 MIDDLEWARE = [
+    # @praxis:middleware-before
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -28,6 +30,7 @@ MIDDLEWARE = [
     "core.middleware.CorrelationIdMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # @praxis:middleware-after
 ]
 ROOT_URLCONF = "config.urls"
 TEMPLATES = [{

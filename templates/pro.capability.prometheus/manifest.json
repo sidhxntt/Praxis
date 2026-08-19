@@ -1,0 +1,83 @@
+{
+  "id": "pro.capability.prometheus",
+  "overlays": [
+    {
+      "scope": "root",
+      "source": "files/django",
+      "proStack": "python-django",
+      "capability": "prometheus"
+    },
+    {
+      "scope": "root",
+      "source": "files/go",
+      "proStack": "go-gin",
+      "capability": "prometheus"
+    }
+  ],
+  "patches": [
+    {
+      "scope": "root",
+      "file": "pyproject.toml",
+      "find": "  # @praxis:dependencies",
+      "replace": "  \"django-prometheus==2.5.0\",\n  # @praxis:dependencies",
+      "proStack": "python-django",
+      "capability": "prometheus"
+    },
+    {
+      "scope": "root",
+      "file": "config/settings/base.py",
+      "find": "    # @praxis:installed-apps",
+      "replace": "    \"django_prometheus\",\n    # @praxis:installed-apps",
+      "proStack": "python-django",
+      "capability": "prometheus"
+    },
+    {
+      "scope": "root",
+      "file": "config/settings/base.py",
+      "find": "    # @praxis:middleware-before",
+      "replace": "    \"django_prometheus.middleware.PrometheusBeforeMiddleware\",\n    # @praxis:middleware-before",
+      "proStack": "python-django",
+      "capability": "prometheus"
+    },
+    {
+      "scope": "root",
+      "file": "config/settings/base.py",
+      "find": "    # @praxis:middleware-after",
+      "replace": "    \"django_prometheus.middleware.PrometheusAfterMiddleware\",\n    # @praxis:middleware-after",
+      "proStack": "python-django",
+      "capability": "prometheus"
+    },
+    {
+      "scope": "root",
+      "file": "config/urls.py",
+      "find": "    # @praxis:urls",
+      "replace": "    path(\"metrics/\", include(\"django_prometheus.urls\")),\n    # @praxis:urls",
+      "proStack": "python-django",
+      "capability": "prometheus"
+    },
+    {
+      "scope": "root",
+      "file": "go.mod",
+      "find": "\t// @praxis:dependencies",
+      "replace": "\tgithub.com/prometheus/client_golang v1.24.1\n\t// @praxis:dependencies",
+      "proStack": "go-gin",
+      "capability": "prometheus"
+    },
+    {
+      "scope": "root",
+      "file": "internal/httpserver/router.go",
+      "find": "\t// @praxis:imports",
+      "replace": "\t\"github.com/prometheus/client_golang/prometheus/promhttp\"\n\t// @praxis:imports",
+      "proStack": "go-gin",
+      "capability": "prometheus"
+    },
+    {
+      "scope": "root",
+      "file": "internal/httpserver/router.go",
+      "find": "\t// @praxis:routes",
+      "replace": "\trouter.GET(\"/metrics\", gin.WrapH(promhttp.Handler()))\n\t// @praxis:routes",
+      "proStack": "go-gin",
+      "capability": "prometheus"
+    }
+  ]
+}

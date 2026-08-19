@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	// @praxis:imports
 )
 
 type Check func(context.Context) error
@@ -14,6 +15,7 @@ func New(log *slog.Logger, trustedProxies []string, checks ...Check) (*gin.Engin
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.New()
 	router.Use(gin.Recovery(), requestContext(log))
+	// @praxis:routes
 	if err := router.SetTrustedProxies(trustedProxies); err != nil {
 		return nil, err
 	}

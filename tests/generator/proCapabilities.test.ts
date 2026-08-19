@@ -137,4 +137,45 @@ describe("Pro capability parity", () => {
       }
     },
   );
+
+  it.each(["python-django", "go-gin"] as const)(
+    "wires Prometheus metrics into the %s runtime and local Compose stack",
+    async (stack) => {
+      const destination = await generate(stack, ["prometheus"]);
+      const compose = await readFile(path.join(destination, "docker-compose.yml"), "utf8");
+      expect(compose).toContain("prom/prometheus:v3.13.2");
+      expect(compose).toContain("prometheus-data:/prometheus");
+      expect(compose).toContain("condition: service_healthy");
+      expect(compose).toContain("http://localhost:9090/-/ready");
+      expect(await readFile(path.join(destination, "ops/prometheus/prometheus.yml"), "utf8"))
+        .toContain(stack === "python-django" ? "api:8000" : "api:8080");
+      expect(await readFile(path.join(destination, "ops/prometheus/alerts.yml"), "utf8"))
+        .toContain("PraxisApiDown");
+
+      if (stack === "python-django") {
+        expect(await readFile(path.join(destination, "pyproject.toml"), "utf8"))
+          .toContain("django-prometheus==2.5.0");
+        expect(await readFile(path.join(destination, "config/settings/base.py"), "utf8"))
+          .toContain("django_prometheus.middleware.PrometheusBeforeMiddleware");
+        expect(await readFile(path.join(destination, "config/urls.py"), "utf8"))
+          .toContain('path("metrics/", include("django_prometheus.urls"))');
+      } else {
+        expect(await readFile(path.join(destination, "go.mod"), "utf8"))
+          .toContain("github.com/prometheus/client_golang v1.24.1");
+        expect(await readFile(path.join(destination, "internal/httpserver/router.go"), "utf8"))
+          .toContain('router.GET("/metrics", gin.WrapH(promhttp.Handler()))');
+      }
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
+    "leaves no Prometheus artifacts in a minimal %s project",
+    async (stack) => {
+      const destination = await generate(stack, []);
+      const compose = await readFile(path.join(destination, "docker-compose.yml"), "utf8");
+      expect(compose).not.toContain("prom/prometheus");
+      await expect(readFile(path.join(destination, "ops/prometheus/prometheus.yml"), "utf8"))
+        .rejects.toMatchObject({ code: "ENOENT" });
+    },
+  );
 });
