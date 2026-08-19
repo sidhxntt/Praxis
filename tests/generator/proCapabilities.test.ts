@@ -92,4 +92,24 @@ describe("Pro capability parity", () => {
       }
     },
   );
+
+  it.each(["python-django", "go-gin"] as const)(
+    "wires scheduled jobs into the %s runtime and Compose stack",
+    async (stack) => {
+      const destination = await generate(stack, ["scheduled-jobs"]);
+      const compose = await readFile(path.join(destination, "docker-compose.yml"), "utf8");
+      expect(compose).toContain("scheduler:");
+      expect(compose).toContain("condition: service_healthy");
+
+      if (stack === "python-django") {
+        expect(compose).toContain('"beat"');
+        expect(await readFile(path.join(destination, "config/settings/base.py"), "utf8"))
+          .toContain("CELERY_BEAT_SCHEDULE");
+      } else {
+        expect(compose).toContain('entrypoint: ["/scheduler"]');
+        expect(await readFile(path.join(destination, "cmd/scheduler/main.go"), "utf8"))
+          .toContain("scheduler.Register");
+      }
+    },
+  );
 });

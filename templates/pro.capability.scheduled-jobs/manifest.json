@@ -1,0 +1,32 @@
+{
+  "id": "pro.capability.scheduled-jobs",
+  "overlays": [
+    { "scope": "root", "source": "files/go", "proStack": "go-gin", "capability": "scheduled-jobs" }
+  ],
+  "patches": [
+    {
+      "scope": "root",
+      "file": "config/settings/base.py",
+      "find": "# @praxis:settings",
+      "replace": "CELERY_BEAT_SCHEDULE = {\n    \"example-every-five-minutes\": {\n        \"task\": \"core.tasks.example_task\",\n        \"schedule\": 300.0,\n        \"args\": (\"scheduled-example\",),\n    }\n}\n# @praxis:settings",
+      "proStack": "python-django",
+      "capability": "scheduled-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "Dockerfile",
+      "find": "    CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags=\"-s -w\" -o /out/worker ./cmd/worker",
+      "replace": "    CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags=\"-s -w\" -o /out/worker ./cmd/worker && \\\n    CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags=\"-s -w\" -o /out/scheduler ./cmd/scheduler",
+      "proStack": "go-gin",
+      "capability": "scheduled-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "Dockerfile",
+      "find": "COPY --from=builder /out/worker /worker",
+      "replace": "COPY --from=builder /out/worker /worker\nCOPY --from=builder /out/scheduler /scheduler",
+      "proStack": "go-gin",
+      "capability": "scheduled-jobs"
+    }
+  ]
+}

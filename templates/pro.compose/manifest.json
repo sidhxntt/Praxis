@@ -48,6 +48,22 @@
       "replace": "  worker:\n    build:\n      context: .\n    entrypoint: [\"/worker\"]\n    environment:\n      REDIS_URL: redis://redis:6379/0\n    depends_on:\n      redis:\n        condition: service_healthy\n    restart: unless-stopped\n  # @praxis:services",
       "proStack": "go-gin",
       "capability": "background-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  scheduler:\n    build:\n      context: .\n    environment:\n      DJANGO_SETTINGS_MODULE: config.settings.development\n      DJANGO_SECRET_KEY: local-development-only-secret-key\n      DATABASE_HOST: postgres\n      DATABASE_NAME: app\n      DATABASE_USER: app\n      DATABASE_PASSWORD: app\n      REDIS_URL: redis://redis:6379/0\n    command: [\"celery\", \"-A\", \"config\", \"beat\", \"--loglevel=INFO\", \"--schedule=/tmp/celerybeat-schedule\"]\n    depends_on:\n      postgres:\n        condition: service_healthy\n      redis:\n        condition: service_healthy\n    restart: unless-stopped\n  # @praxis:services",
+      "proStack": "python-django",
+      "capability": "scheduled-jobs"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  scheduler:\n    build:\n      context: .\n    entrypoint: [\"/scheduler\"]\n    environment:\n      REDIS_URL: redis://redis:6379/0\n    depends_on:\n      redis:\n        condition: service_healthy\n    restart: unless-stopped\n  # @praxis:services",
+      "proStack": "go-gin",
+      "capability": "scheduled-jobs"
     }
   ]
 }

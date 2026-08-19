@@ -16,16 +16,24 @@ type ExamplePayload struct {
 }
 
 func EnqueueExample(client *asynq.Client, payload ExamplePayload) (*asynq.TaskInfo, error) {
-	encoded, err := json.Marshal(payload)
+	task, err := NewExampleTask(payload)
 	if err != nil {
-		return nil, fmt.Errorf("encode example task: %w", err)
+		return nil, err
 	}
 	return client.Enqueue(
-		asynq.NewTask(TypeExample, encoded),
+		task,
 		asynq.MaxRetry(5),
 		asynq.Timeout(5*time.Minute),
 		asynq.Unique(5*time.Minute),
 	)
+}
+
+func NewExampleTask(payload ExamplePayload) (*asynq.Task, error) {
+	encoded, err := json.Marshal(payload)
+	if err != nil {
+		return nil, fmt.Errorf("encode example task: %w", err)
+	}
+	return asynq.NewTask(TypeExample, encoded), nil
 }
 
 func HandleExample(ctx context.Context, task *asynq.Task) error {
