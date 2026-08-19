@@ -14,6 +14,7 @@
     "ui:generate": "node scripts/ui/generate.mjs",
     "ui:previews": "node scripts/ui/render-previews.mjs",
     "ui:verify": "node scripts/ui/verify-generated.mjs",
+    "ui:matrix": "node scripts/ui/matrix.mjs",
     "check": "npm run test && npm run build",
     "prepublishOnly": "npm run check"
   },
