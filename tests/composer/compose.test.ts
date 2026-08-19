@@ -228,6 +228,71 @@ describe("composeProject", () => {
       .toBe("MEMCACHED_ONLY=\n");
   });
 
+  it("filters and tokenizes Pro contributions by stack, capability, and cloud", async () => {
+    const root = await fixtureRoot();
+    await addModule(
+      root,
+      "pro",
+      {
+        overlays: [
+          {
+            scope: "root",
+            source: "files/common",
+            proStack: "go-gin",
+            capability: "terraform",
+            cloud: "aws",
+          },
+          {
+            scope: "root",
+            source: "files/common",
+            proStack: "python-django",
+          },
+        ],
+        env: [
+          {
+            scope: "root",
+            keys: ["AWS_REGION"],
+            capability: "terraform",
+            cloud: "aws",
+          },
+          { scope: "root", keys: ["AZURE_REGION"], cloud: "azure" },
+        ],
+      },
+      { "profile.txt": "{{proStack}}/{{cloud}}" },
+    );
+    const destination = path.join(root, "output", "acme");
+
+    await composeProject({
+      schemaVersion: 2,
+      name: "acme",
+      projectType: "pro-backend",
+      pro: {
+        stack: "go-gin",
+        requestedCapabilities: ["terraform"],
+        resolvedCapabilities: [
+          "kubernetes",
+          "terraform",
+          "autoscaling",
+          "high-availability",
+          "edge-protection",
+          "database-resilience",
+          "cloud-secrets",
+        ],
+        cloud: "aws",
+      },
+      installDependencies: false,
+      initializeGit: false,
+    }, ["pro"], {
+      templatesRoot: path.join(root, "templates"),
+      destination,
+    });
+
+    expect(await readFile(path.join(destination, "profile.txt"), "utf8"))
+      .toBe("go-gin/aws");
+    expect(await readFile(path.join(destination, ".env.example"), "utf8"))
+      .toBe("AWS_REGION=\n");
+  });
+
   it("rejects manifest paths outside their allowed directories", async () => {
     const root = await fixtureRoot();
     await addModule(root, "unsafe", {

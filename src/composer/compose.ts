@@ -12,6 +12,7 @@ import path from "node:path";
 import { PraxisConfig } from "../config/schema";
 import {
   EnvironmentContribution,
+  ManifestSelector,
   OutputScope,
   PackageContribution,
   TemplateManifest,
@@ -39,20 +40,14 @@ export async function composeProject(
     );
     for (const manifest of manifests) {
       for (const overlay of manifest.overlays ?? []) {
-        if (overlay.language && overlay.language !== config.language) continue;
-        if (overlay.framework && overlay.framework !== config.frontend?.framework) continue;
-        if (overlay.projectType && overlay.projectType !== config.projectType) continue;
-        if (overlay.cache && overlay.cache !== config.backend?.cache) continue;
+        if (!selectorMatches(overlay, config)) continue;
         const moduleRoot = path.resolve(options.templatesRoot, manifest.id);
         const source = confinedPath(moduleRoot, overlay.source, "overlay source");
         const output = outputDirectory(staging, overlay.scope, config);
         await copyOverlay(source, output, config, staging);
       }
       for (const patch of manifest.patches ?? []) {
-        if (patch.language && patch.language !== config.language) continue;
-        if (patch.framework && patch.framework !== config.frontend?.framework) continue;
-        if (patch.projectType && patch.projectType !== config.projectType) continue;
-        if (patch.cache && patch.cache !== config.backend?.cache) continue;
+        if (!selectorMatches(patch, config)) continue;
         const output = outputDirectory(staging, patch.scope, config);
         const filePath = confinedPath(output, patch.file, "patch target");
         const contents = await readFile(filePath, "utf8");
@@ -161,7 +156,12 @@ async function copyOverlay(
 function replaceTokens(contents: string, config: PraxisConfig): string {
   const tokens: Record<string, string> = {
     projectName: config.name,
-    packageManager: config.packageManager,
+    packageManager:
+      config.projectType === "pro-backend"
+        ? config.pro.stack === "python-django" ? "pdm" : "go"
+        : config.packageManager,
+    proStack: config.projectType === "pro-backend" ? config.pro.stack : "",
+    cloud: config.projectType === "pro-backend" ? config.pro.cloud ?? "" : "",
   };
   return Object.entries(tokens).reduce(
     (result, [name, value]) => result.split(`{{${name}}}`).join(value),
@@ -227,10 +227,31 @@ function contributionMatches(
   contribution: PackageContribution | EnvironmentContribution,
   config: PraxisConfig,
 ): boolean {
-  return (!contribution.language || contribution.language === config.language)
-    && (!contribution.framework || contribution.framework === config.frontend?.framework)
-    && (!contribution.projectType || contribution.projectType === config.projectType)
-    && (!contribution.cache || contribution.cache === config.backend?.cache);
+  return selectorMatches(contribution, config);
+}
+
+function selectorMatches(
+  selector: ManifestSelector,
+  config: PraxisConfig,
+): boolean {
+  if (selector.projectType && selector.projectType !== config.projectType) {
+    return false;
+  }
+  if (config.projectType === "pro-backend") {
+    return !selector.language
+      && !selector.framework
+      && !selector.cache
+      && (!selector.proStack || selector.proStack === config.pro.stack)
+      && (!selector.capability
+        || config.pro.resolvedCapabilities.includes(selector.capability))
+      && (!selector.cloud || selector.cloud === config.pro.cloud);
+  }
+  return (!selector.language || selector.language === config.language)
+    && (!selector.framework || selector.framework === config.frontend?.framework)
+    && (!selector.cache || selector.cache === config.backend?.cache)
+    && !selector.proStack
+    && !selector.capability
+    && !selector.cloud;
 }
 
 function mergeRecord(

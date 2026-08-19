@@ -3,6 +3,25 @@ import { PraxisConfig, validateConfig } from "./schema";
 export function resolveModules(config: PraxisConfig): string[] {
   validateConfig(config);
 
+  if (config.projectType === "pro-backend") {
+    const modules = [
+      "pro.core",
+      config.pro.stack === "python-django" ? "pro.django" : "pro.gin",
+    ];
+    for (const capability of config.pro.resolvedCapabilities) {
+      if (capability === "kubernetes" || capability === "terraform") continue;
+      modules.push(`pro.capability.${capability}`);
+    }
+    modules.push("pro.compose");
+    if (config.pro.resolvedCapabilities.includes("kubernetes")) {
+      modules.push("pro.kubernetes");
+    }
+    if (config.pro.resolvedCapabilities.includes("terraform")) {
+      modules.push("pro.terraform.shared", `pro.terraform.${config.pro.cloud}`);
+    }
+    return modules;
+  }
+
   if (config.backend?.auth === "self-hosted" && config.backend.database === "none") {
     throw new Error("self-hosted authentication requires a database");
   }

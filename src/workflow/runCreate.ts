@@ -15,9 +15,15 @@ import {
   quickConfig,
   validateConfig,
 } from "../config/schema";
+import {
+  CloudProvider,
+  ProCapability,
+  ProStack,
+  recommendedProCapabilities,
+} from "../config/pro";
 import { generateProject } from "../generator/generate";
 import { showRandomAnimation } from "../controllers/user_touch";
-import { answersToConfig } from "./answers";
+import { answersToConfig, proAnswersToConfig } from "./answers";
 
 type CreateCommand = Extract<ParsedCommand, { kind: "create" }>;
 
@@ -73,11 +79,15 @@ async function resolveCreateConfig(command: CreateCommand): Promise<PraxisConfig
     };
   }
 
-  const projectType = await select<ProjectType>("Project type", [
+  const projectType = await select<ProjectType | "pro-backend">("Project type", [
     ["fullstack", "Fullstack"],
     ["frontend", "Frontend"],
     ["backend", "Backend"],
+    ["pro-backend", "Production Backend (Pro)"],
   ]);
+  if (projectType === "pro-backend") {
+    return resolveProAnswers(name, command.installDependencies);
+  }
   const language = await select<Language>("Language", [
     ["typescript", "TypeScript"],
     ["javascript", "JavaScript"],
@@ -138,6 +148,84 @@ async function resolveCreateConfig(command: CreateCommand): Promise<PraxisConfig
   });
 }
 
+async function resolveProAnswers(
+  name: string,
+  mayInstall: boolean,
+): Promise<PraxisConfig> {
+  const stack = await select<ProStack>("Backend stack", [
+    ["python-django", "Python + Django/DRF"],
+    ["go-gin", "Go + Gin"],
+  ]);
+  const authentication = await selectCapabilities(
+    "Authentication and access",
+    [
+      ["jwt-auth", "JWT authentication"],
+      ["social-auth", "Social authentication"],
+      ["fine-grained-auth", "Fine-grained authorization"],
+    ],
+  );
+  const application = await selectCapabilities("Application services", [
+    ["redis-cache", "Redis caching"],
+    ["background-jobs", "Background jobs"],
+    ["scheduled-jobs", "Scheduled jobs"],
+    ["email-tasks", "Asynchronous email"],
+    ["object-storage", "Object storage"],
+    ["search", "Elasticsearch search"],
+    ["realtime", "Realtime WebSockets"],
+    ["kafka", "Kafka event streaming"],
+    ["feature-flags", "Feature flags"],
+    ["seed-data", "Development seed data"],
+  ]);
+  const observability = await selectCapabilities(
+    "Observability and operations",
+    [
+      ["sentry", "Sentry error monitoring"],
+      ["prometheus", "Prometheus metrics"],
+      ["opentelemetry", "OpenTelemetry tracing"],
+      ["elk", "ELK log aggregation"],
+      ["synthetic-monitoring", "Synthetic uptime checks"],
+      ["load-testing", "Load testing"],
+      ["compliance-audit", "Compliance audit controls"],
+    ],
+  );
+  const deployment = await selectCapabilities("Deployment and reliability", [
+    ["nginx", "Nginx reverse proxy"],
+    ["kubernetes", "Kubernetes"],
+    ["terraform", "Terraform managed cloud"],
+    ["autoscaling", "Autoscaling"],
+    ["high-availability", "High availability"],
+    ["edge-protection", "Edge protection"],
+    ["database-resilience", "Database resilience"],
+    ["disaster-recovery", "Multi-region disaster recovery"],
+    ["cloud-secrets", "Cloud secrets"],
+  ]);
+  const capabilities = [
+    ...authentication,
+    ...application,
+    ...observability,
+    ...deployment,
+  ];
+  const cloud = capabilities.includes("terraform")
+    ? await select<CloudProvider>("Terraform cloud", [
+        ["aws", "AWS"],
+        ["azure", "Azure"],
+        ["gcp", "GCP"],
+      ])
+    : undefined;
+  const installDependencies = mayInstall
+    ? await confirm("Install dependencies?", true)
+    : false;
+  const initializeGit = await confirm("Initialize a Git repository?", true);
+  return proAnswersToConfig({
+    name,
+    stack,
+    capabilities,
+    cloud,
+    installDependencies,
+    initializeGit,
+  });
+}
+
 async function requiredText(message: string, placeholder: string): Promise<string> {
   const result = await p.text({
     message,
@@ -156,6 +244,21 @@ async function select<T extends string>(
     options: options.map(([value, label]) => ({ value, label })),
   });
   return cancelled(result) as T;
+}
+
+async function selectCapabilities(
+  message: string,
+  options: Array<[ProCapability, string]>,
+): Promise<ProCapability[]> {
+  const result = await p.multiselect({
+    message,
+    options: options.map(([value, label]) => ({ value, label })) as never,
+    initialValues: options
+      .map(([value]) => value)
+      .filter((value) => recommendedProCapabilities.includes(value)),
+    required: false,
+  });
+  return cancelled(result) as ProCapability[];
 }
 
 async function selectDeployments(projectType: ProjectType): Promise<DeploymentTarget[]> {
@@ -189,6 +292,19 @@ function cancelled<T>(value: T | symbol): T {
 function nextSteps(config: PraxisConfig, destination: string): string {
   const relative = path.relative(process.cwd(), destination);
   const commands = [`cd ${relative}`];
+  if (config.projectType === "pro-backend") {
+    if (!config.installDependencies) {
+      commands.push(
+        config.pro.stack === "python-django" ? "pdm install" : "go mod download",
+      );
+    }
+    commands.push(
+      config.pro.stack === "python-django"
+        ? "pdm run python manage.py runserver"
+        : "go run ./cmd/api",
+    );
+    return commands.join("\n");
+  }
   if (!config.installDependencies) commands.push(`${config.packageManager} install`);
   commands.push(
     config.projectType === "fullstack"

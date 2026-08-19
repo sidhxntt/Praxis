@@ -61,4 +61,44 @@ describe("resolveModules", () => {
   it("does not append a cache module when cache is none", () => {
     expect(resolveModules(quickConfig("acme"))).not.toContain("cache.none");
   });
+
+  it("resolves Pro modules in core, adapter, capability, and infrastructure order", () => {
+    expect(resolveModules({
+      schemaVersion: 2,
+      name: "acme-api",
+      projectType: "pro-backend",
+      pro: {
+        stack: "go-gin",
+        requestedCapabilities: ["realtime", "terraform"],
+        resolvedCapabilities: [
+          "redis-cache",
+          "realtime",
+          "kubernetes",
+          "terraform",
+          "autoscaling",
+          "high-availability",
+          "edge-protection",
+          "database-resilience",
+          "cloud-secrets",
+        ],
+        cloud: "gcp",
+      },
+      installDependencies: false,
+      initializeGit: false,
+    })).toEqual([
+      "pro.core",
+      "pro.gin",
+      "pro.capability.redis-cache",
+      "pro.capability.realtime",
+      "pro.capability.autoscaling",
+      "pro.capability.high-availability",
+      "pro.capability.edge-protection",
+      "pro.capability.database-resilience",
+      "pro.capability.cloud-secrets",
+      "pro.compose",
+      "pro.kubernetes",
+      "pro.terraform.shared",
+      "pro.terraform.gcp",
+    ]);
+  });
 });

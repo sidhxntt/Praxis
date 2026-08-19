@@ -10,6 +10,12 @@ import {
   ProjectType,
   validateConfig,
 } from "../config/schema";
+import {
+  CloudProvider,
+  ProCapability,
+  ProStack,
+  resolveProCapabilities,
+} from "../config/pro";
 
 export interface CreateAnswers {
   name: string;
@@ -21,6 +27,15 @@ export interface CreateAnswers {
   cache?: CacheProvider;
   deployment: DeploymentTarget[];
   packageManager: PackageManager;
+  installDependencies: boolean;
+  initializeGit: boolean;
+}
+
+export interface ProCreateAnswers {
+  name: string;
+  stack: ProStack;
+  capabilities: ProCapability[];
+  cloud?: CloudProvider;
   installDependencies: boolean;
   initializeGit: boolean;
 }
@@ -47,6 +62,22 @@ export function answersToConfig(answers: CreateAnswers): PraxisConfig {
     }),
     deployment: answers.deployment,
     packageManager: answers.packageManager,
+    installDependencies: answers.installDependencies,
+    initializeGit: answers.initializeGit,
+  });
+}
+
+export function proAnswersToConfig(answers: ProCreateAnswers): PraxisConfig {
+  return validateConfig({
+    schemaVersion: 2,
+    name: answers.name,
+    projectType: "pro-backend",
+    pro: {
+      stack: answers.stack,
+      requestedCapabilities: answers.capabilities,
+      resolvedCapabilities: resolveProCapabilities(answers.capabilities),
+      ...(answers.cloud ? { cloud: answers.cloud } : {}),
+    },
     installDependencies: answers.installDependencies,
     initializeGit: answers.initializeGit,
   });

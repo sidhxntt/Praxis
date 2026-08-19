@@ -1,43 +1,37 @@
 export type OutputScope = "root" | "frontend" | "backend";
 
-export interface OverlayDefinition {
-  scope: OutputScope;
-  source: string;
+export interface ManifestSelector {
   language?: "typescript" | "javascript";
   framework?: "next" | "vite";
-  projectType?: "frontend" | "backend" | "fullstack";
+  projectType?: "frontend" | "backend" | "fullstack" | "pro-backend";
   cache?: "redis" | "memcached" | "none";
+  proStack?: "python-django" | "go-gin";
+  capability?: import("../config/pro").ProCapability;
+  cloud?: "aws" | "azure" | "gcp";
 }
 
-export interface PackageContribution {
+export interface OverlayDefinition extends ManifestSelector {
   scope: OutputScope;
-  language?: "typescript" | "javascript";
-  framework?: "next" | "vite";
-  projectType?: "frontend" | "backend" | "fullstack";
-  cache?: "redis" | "memcached" | "none";
+  source: string;
+}
+
+export interface PackageContribution extends ManifestSelector {
+  scope: OutputScope;
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
   scripts?: Record<string, string>;
 }
 
-export interface EnvironmentContribution {
+export interface EnvironmentContribution extends ManifestSelector {
   scope: OutputScope;
   keys: string[];
-  language?: "typescript" | "javascript";
-  framework?: "next" | "vite";
-  projectType?: "frontend" | "backend" | "fullstack";
-  cache?: "redis" | "memcached" | "none";
 }
 
-export interface PatchDefinition {
+export interface PatchDefinition extends ManifestSelector {
   scope: OutputScope;
   file: string;
   find: string;
   replace: string;
-  language?: "typescript" | "javascript";
-  framework?: "next" | "vite";
-  projectType?: "frontend" | "backend" | "fullstack";
-  cache?: "redis" | "memcached" | "none";
 }
 
 export interface TemplateManifest {

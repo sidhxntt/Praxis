@@ -91,4 +91,38 @@ describe("runCreate", () => {
         "Package manager",
       ]);
   });
+
+  it("runs the Pro stack and capability flow with conditional cloud selection", async () => {
+    vi.mocked(p.text).mockResolvedValue("acme-api" as never);
+    vi.mocked(p.select)
+      .mockResolvedValueOnce("pro-backend" as never)
+      .mockResolvedValueOnce("go-gin" as never)
+      .mockResolvedValueOnce("aws" as never);
+    vi.mocked(p.multiselect)
+      .mockResolvedValueOnce(["jwt-auth"] as never)
+      .mockResolvedValueOnce(["redis-cache"] as never)
+      .mockResolvedValueOnce(["sentry"] as never)
+      .mockResolvedValueOnce(["terraform"] as never);
+    vi.mocked(p.confirm)
+      .mockResolvedValueOnce(false as never)
+      .mockResolvedValueOnce(false as never);
+
+    await runCreate({
+      kind: "create",
+      projectName: undefined,
+      mode: "custom",
+      configPath: undefined,
+      installDependencies: true,
+    });
+
+    expect(vi.mocked(p.select).mock.calls.map(([options]) => options.message))
+      .toEqual(["Project type", "Backend stack", "Terraform cloud"]);
+    expect(vi.mocked(p.multiselect).mock.calls.map(([options]) => options.message))
+      .toEqual([
+        "Authentication and access",
+        "Application services",
+        "Observability and operations",
+        "Deployment and reliability",
+      ]);
+  });
 });

@@ -1,3 +1,11 @@
+import {
+  cloudProviders,
+  isProCapability,
+  ProConfig,
+  proStacks,
+  resolveProCapabilities,
+} from "./pro";
+
 export type ProjectType = "frontend" | "backend" | "fullstack";
 export type Language = "typescript" | "javascript";
 export type FrontendFramework = "next" | "vite";
@@ -7,7 +15,7 @@ export type CacheProvider = "redis" | "memcached" | "none";
 export type DeploymentTarget = "vercel" | "railway" | "render" | "docker";
 export type PackageManager = "npm" | "pnpm" | "yarn" | "bun";
 
-export interface PraxisConfig {
+export interface LegacyPraxisConfig {
   schemaVersion: 1;
   name: string;
   projectType: ProjectType;
@@ -28,6 +36,17 @@ export interface PraxisConfig {
   initializeGit: boolean;
 }
 
+export interface ProPraxisConfig {
+  schemaVersion: 2;
+  name: string;
+  projectType: "pro-backend";
+  pro: ProConfig;
+  installDependencies: boolean;
+  initializeGit: boolean;
+}
+
+export type PraxisConfig = LegacyPraxisConfig | ProPraxisConfig;
+
 const topLevelKeys = new Set([
   "schemaVersion",
   "name",
@@ -41,7 +60,7 @@ const topLevelKeys = new Set([
   "initializeGit",
 ]);
 
-export function quickConfig(name: string): PraxisConfig {
+export function quickConfig(name: string): LegacyPraxisConfig {
   return {
     schemaVersion: 1,
     name,
@@ -67,6 +86,9 @@ export function validateConfig(input: unknown): PraxisConfig {
   }
 
   const value = input as Record<string, unknown>;
+  if (value.projectType === "pro-backend") {
+    return validateProConfig(value);
+  }
   for (const key of Object.keys(value)) {
     if (!topLevelKeys.has(key)) {
       throw new Error(`unknown configuration key "${key}"`);
@@ -140,6 +162,92 @@ export function validateConfig(input: unknown): PraxisConfig {
   }
 
   return value as unknown as PraxisConfig;
+}
+
+function validateProConfig(value: Record<string, unknown>): ProPraxisConfig {
+  const keys = new Set([
+    "schemaVersion",
+    "name",
+    "projectType",
+    "pro",
+    "installDependencies",
+    "initializeGit",
+  ]);
+  for (const key of Object.keys(value)) {
+    if (!keys.has(key)) throw new Error(`unknown configuration key "${key}"`);
+  }
+  if (value.schemaVersion !== 2) {
+    throw new Error("pro-backend requires schemaVersion 2");
+  }
+  validateName(value.name);
+  if (!value.pro || typeof value.pro !== "object" || Array.isArray(value.pro)) {
+    throw new Error("pro configuration is required");
+  }
+  const pro = value.pro as Record<string, unknown>;
+  assertKnownKeys(
+    pro,
+    ["stack", "requestedCapabilities", "resolvedCapabilities", "cloud"],
+    "pro",
+  );
+  if (!proStacks.includes(pro.stack as never)) {
+    throw new Error("pro stack is unsupported");
+  }
+  const requested = validateCapabilityList(
+    pro.requestedCapabilities,
+    "requested Pro capabilities",
+  );
+  const resolved = validateCapabilityList(
+    pro.resolvedCapabilities,
+    "resolved Pro capabilities",
+  );
+  const expected = resolveProCapabilities(requested);
+  if (JSON.stringify(resolved) !== JSON.stringify(expected)) {
+    throw new Error(
+      "resolved Pro capabilities do not match requested capabilities",
+    );
+  }
+  const terraform = resolved.includes("terraform");
+  if (terraform && !cloudProviders.includes(pro.cloud as never)) {
+    throw new Error("cloud is required when Terraform is selected");
+  }
+  if (!terraform && pro.cloud !== undefined) {
+    throw new Error("cloud is only allowed when Terraform is selected");
+  }
+  validateCommonBooleans(value);
+  return value as unknown as ProPraxisConfig;
+}
+
+function validateCapabilityList(
+  value: unknown,
+  label: string,
+): import("./pro").ProCapability[] {
+  if (!Array.isArray(value) || value.some((item) => !isProCapability(item))) {
+    throw new Error(`${label} contain an unsupported capability`);
+  }
+  if (new Set(value).size !== value.length) {
+    throw new Error(`${label} must be unique`);
+  }
+  return value;
+}
+
+function validateName(value: unknown): void {
+  if (
+    typeof value !== "string" ||
+    !/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(value) ||
+    value === "." ||
+    value === ".."
+  ) {
+    throw new Error("name must be a safe directory name");
+  }
+}
+
+function validateCommonBooleans(value: Record<string, unknown>): void {
+  if (typeof value.installDependencies !== "boolean") {
+    throw new Error("installDependencies must be boolean");
+  }
+  if (typeof value.initializeGit !== "boolean") {
+    throw new Error("initializeGit must be boolean");
+  }
 }
 
 function validateFrontend(value: unknown): void {

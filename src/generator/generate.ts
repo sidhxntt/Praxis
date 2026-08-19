@@ -32,7 +32,11 @@ export async function generateProject(
   try {
     const run = options.runCommand ?? runCommand;
     if (config.installDependencies) {
-      const install = installCommand(config.packageManager);
+      const install = config.projectType === "pro-backend"
+        ? config.pro.stack === "python-django"
+          ? { command: "pdm", args: ["install"] }
+          : { command: "go", args: ["mod", "download"] }
+        : installCommand(config.packageManager);
       await run(install.command, install.args, destination);
     }
     if (config.initializeGit) {
@@ -45,7 +49,7 @@ export async function generateProject(
   return destination;
 }
 
-function installCommand(packageManager: PraxisConfig["packageManager"]): {
+function installCommand(packageManager: import("../config/schema").PackageManager): {
   command: string;
   args: string[];
 } {
