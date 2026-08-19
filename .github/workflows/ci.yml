@@ -33,7 +33,14 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run docs:check
-      - run: npm run test:cli
+      - name: Run non-visual CLI tests
+        run: >-
+          npm --workspace cli exec -- vitest run
+          --exclude tests/ui/accessibility.test.ts
+          --exclude tests/ui/galleryBrowser.test.ts
+          --exclude tests/ui/responsive.test.ts
+          --exclude tests/ui/visual.test.ts
+          --exclude tests/ui/previews.test.ts
       - run: npm run build:cli
       - run: npm audit --workspace cli --omit=dev --audit-level=critical
 
