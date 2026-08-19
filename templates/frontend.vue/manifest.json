@@ -1,0 +1,33 @@
+{
+  "id": "frontend.vue",
+  "overlays": [
+    { "scope": "frontend", "source": "files/common" },
+    { "scope": "frontend", "source": "files/javascript", "language": "javascript" },
+    { "scope": "frontend", "source": "files/typescript", "language": "typescript" }
+  ],
+  "packages": [
+    {
+      "scope": "frontend",
+      "dependencies": { "vue": "3.5.41" },
+      "devDependencies": {
+        "@vitejs/plugin-vue": "6.0.8",
+        "vite": "8.2.1"
+      },
+      "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+      }
+    },
+    {
+      "scope": "frontend",
+      "language": "typescript",
+      "devDependencies": {
+        "typescript": "^5.9.3",
+        "vue-tsc": "3.3.10"
+      },
+      "scripts": { "build": "vue-tsc -b && vite build" }
+    }
+  ],
+  "env": [{ "scope": "frontend", "keys": ["VITE_APP_URL"] }]
+}

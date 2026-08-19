@@ -2,7 +2,7 @@ export type OutputScope = "root" | "frontend" | "backend";
 
 export interface ManifestSelector {
   language?: "typescript" | "javascript";
-  framework?: "next" | "vite";
+  framework?: "next" | "vite" | "vue" | "astro" | "angular";
   projectType?: "frontend" | "backend" | "fullstack" | "pro-backend";
   cache?: "redis" | "memcached" | "none";
   proStack?: "python-django" | "go-gin";
