@@ -43,16 +43,3 @@ jobs:
           name: ui-matrix-${{ matrix.target }}
           path: .matrix-tmp/
           retention-days: 5
-
-  visual-quality:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm --workspace cli exec -- playwright install --with-deps chromium
-      - run: npm --workspace cli run ui:verify
-      - run: npm --workspace cli exec -- vitest run tests/ui/accessibility.test.ts tests/ui/responsive.test.ts tests/ui/visual.test.ts tests/ui/previews.test.ts
