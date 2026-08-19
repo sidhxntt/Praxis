@@ -2,9 +2,9 @@ name: UI Framework Matrix
 
 on:
   pull_request:
-    branches: [cli]
+    branches: [main]
   push:
-    branches: [cli]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
           TMPDIR: ${{ github.workspace }}/.matrix-tmp
         run: |
           mkdir -p "$TMPDIR"
-          npm run ui:matrix -- --target ${{ matrix.target }} --install --build
+          npm --workspace cli run ui:matrix -- --target ${{ matrix.target }} --install --build
       - name: Upload failed generated projects
         if: failure()
         uses: actions/upload-artifact@v4
@@ -53,6 +53,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - run: npm run ui:verify
-      - run: npx vitest run tests/ui/accessibility.test.ts tests/ui/responsive.test.ts tests/ui/visual.test.ts
+      - run: npm --workspace cli exec -- playwright install --with-deps chromium
+      - run: npm --workspace cli run ui:verify
+      - run: npm --workspace cli exec -- vitest run tests/ui/accessibility.test.ts tests/ui/responsive.test.ts tests/ui/visual.test.ts

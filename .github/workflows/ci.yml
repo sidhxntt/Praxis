@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [cli]
+    branches: [main]
   pull_request:
-    branches: [cli]
+    branches: [main]
 
 jobs:
   cross-platform:
@@ -20,8 +20,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run build
-      - run: npx vitest run tests/ui/gallery.test.ts tests/ui/resolveUi.test.ts tests/workflow/runCreate.test.ts
+      - run: npm run build:cli
+      - run: npm --workspace cli exec -- vitest run tests/ui/gallery.test.ts tests/ui/resolveUi.test.ts tests/workflow/runCreate.test.ts
 
   verify:
     runs-on: ubuntu-latest
@@ -32,8 +32,19 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - run: npm run ui:verify
-      - run: npm test
-      - run: npm run build
-      - run: npm audit --omit=dev --audit-level=critical
+      - run: npm --workspace cli exec -- playwright install --with-deps chromium
+      - run: npm --workspace cli run ui:verify
+      - run: npm run test:cli
+      - run: npm run build:cli
+      - run: npm audit --workspace cli --omit=dev --audit-level=critical
+
+  web-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:web

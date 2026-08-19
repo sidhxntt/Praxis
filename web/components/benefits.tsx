@@ -604,7 +604,7 @@ const OrbitingIcons = ({
               rotate: {
                 duration: speed,
                 repeat: Infinity,
-                ease: "linear",
+                ease: "linear" as const,
                 delay: randomDelay + orbitDelay,
               },
               scale: {
@@ -627,7 +627,7 @@ const OrbitingIcons = ({
               transition: {
                 duration: speed,
                 repeat: Infinity,
-                ease: "linear",
+                ease: "linear" as const,
                 delay: randomDelay + orbitDelay,
               },
             },
@@ -745,4 +745,3 @@ const LogoOrbit = () => {
     />
   );
 };
-

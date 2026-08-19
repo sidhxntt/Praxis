@@ -1,4 +1,9 @@
-node_modules
+/node_modules/
+.DS_Store
+/cli/node_modules/
+/web/node_modules/
+/cli/dist/
+/web/.next/
 .env
-dist
+.env.local
 .worktrees/

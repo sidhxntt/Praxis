@@ -4,6 +4,12 @@ Praxis Flow is an interactive, composable CLI for scaffolding modern frontend, b
 
 It also includes Praxis Pro, a capability-driven production backend generator for Django/DRF and Go/Gin.
 
+## Repository layout
+
+- `cli/` contains the publishable Praxis Flow CLI, Praxis Pro, generators, templates, tests, and CLI documentation.
+- `web/` contains the Praxis website and its Next.js application.
+- The repository root is a private npm workspace that owns shared commands, CI, and project documentation.
+
 ## Features
 
 - Next.js, Vite (React), Vue, Astro, and Angular frontends
@@ -75,7 +81,8 @@ During local development:
 
 ```bash
 npm install
-npm run build
+npm run build:cli
+cd cli
 npm link
 ```
 
@@ -250,9 +257,11 @@ For a fullstack project, environment files live in the relevant `frontend` and `
 
 ```bash
 npm install
-npm run dev
-npm test
-npm run build
+npm run dev:cli
+npm run dev:web
+npm run test:cli
+npm run build:cli
+npm run build:web
 npm run check
 ```
 

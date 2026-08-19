@@ -1,0 +1,46 @@
+{
+  "name": "praxiflow",
+  "version": "1.4.0",
+  "bin": {
+    "praxiflow": "./dist/index.js"
+  },
+  "license": "MIT",
+  "scripts": {
+    "dev": "ts-node ./src/index.ts",
+    "prod": "node ./dist/index.js",
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc && node -e \"require('node:fs').chmodSync('dist/index.js',0o755)\"",
+    "test": "vitest run",
+    "test:pro": "vitest run --exclude '.worktrees/**' tests/generator/pro*.test.ts",
+    "test:watch": "vitest",
+    "ui:generate": "node scripts/ui/generate.mjs",
+    "ui:previews": "node scripts/ui/render-previews.mjs",
+    "ui:verify": "node scripts/ui/verify-generated.mjs",
+    "ui:matrix": "node scripts/ui/matrix.mjs",
+    "check": "npm run test && npm run build",
+    "prepublishOnly": "npm run check"
+  },
+  "files": [
+    "dist/",
+    "templates/",
+    "!templates/designs/",
+    "!templates/ui.shared/"
+  ],
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "chalk": "^5.4.1",
+    "chalk-animation": "^2.0.3",
+    "figlet": "^1.8.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@types/chalk-animation": "^1.6.3",
+    "@types/figlet": "^1.7.0",
+    "@types/node": "^22.10.0",
+    "playwright": "1.62.1",
+    "sharp": "0.35.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4",
+    "vitest": "4.1.11"
+  }
+}
