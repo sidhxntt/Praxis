@@ -8,6 +8,18 @@
     {
       "scope": "root", "file": "docker-compose.yml",
       "find": "  # @praxis:services",
+      "replace": "  logs-elasticsearch:\n    image: docker.elastic.co/elasticsearch/elasticsearch:9.5.0\n    environment:\n      discovery.type: single-node\n      xpack.security.enabled: \"false\"\n      ES_JAVA_OPTS: -Xms512m -Xmx512m\n    volumes:\n      - logs-elasticsearch-data:/usr/share/elasticsearch/data\n    healthcheck:\n      test: [\"CMD-SHELL\", \"curl -fsS 'http://localhost:9200/_cluster/health?wait_for_status=yellow' >/dev/null\"]\n      interval: 10s\n      timeout: 5s\n      retries: 20\n      start_period: 30s\n    restart: unless-stopped\n  logstash:\n    image: docker.elastic.co/logstash/logstash:9.5.0\n    volumes:\n      - ./ops/elk/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro\n    depends_on:\n      logs-elasticsearch:\n        condition: service_healthy\n    healthcheck:\n      test: [\"CMD-SHELL\", \"curl -fsS http://localhost:9600/_node/pipelines >/dev/null\"]\n      interval: 10s\n      timeout: 5s\n      retries: 20\n    restart: unless-stopped\n  kibana:\n    image: docker.elastic.co/kibana/kibana:9.5.0\n    environment:\n      ELASTICSEARCH_HOSTS: http://logs-elasticsearch:9200\n    ports:\n      - \"5601:5601\"\n    depends_on:\n      logs-elasticsearch:\n        condition: service_healthy\n    healthcheck:\n      test: [\"CMD-SHELL\", \"curl -fsS http://localhost:5601/api/status >/dev/null\"]\n      interval: 10s\n      timeout: 5s\n      retries: 30\n    restart: unless-stopped\n  filebeat:\n    image: docker.elastic.co/beats/filebeat:9.5.0\n    user: root\n    command: [\"filebeat\", \"-e\", \"--strict.perms=false\"]\n    volumes:\n      - ./ops/elk/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro\n      - /var/lib/docker/containers:/var/lib/docker/containers:ro\n      - /var/run/docker.sock:/var/run/docker.sock:ro\n    depends_on:\n      logstash:\n        condition: service_healthy\n    restart: unless-stopped\n  # @praxis:services",
+      "capability": "elk"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "volumes:\n  postgres-data:",
+      "replace": "volumes:\n  postgres-data:\n  logs-elasticsearch-data:",
+      "capability": "elk"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
       "replace": "  seed:\n    profiles: [\"tools\"]\n    build:\n      context: .\n    environment:\n      DJANGO_SETTINGS_MODULE: config.settings.development\n      DJANGO_SECRET_KEY: local-development-only-secret-key\n      DATABASE_HOST: postgres\n      DATABASE_NAME: app\n      DATABASE_USER: app\n      DATABASE_PASSWORD: app\n      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:-}\n      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-}\n    command: [\"python\", \"manage.py\", \"seed\"]\n    depends_on:\n      postgres:\n        condition: service_healthy\n    restart: \"no\"\n  # @praxis:services",
       "proStack": "python-django", "capability": "seed-data"
     },

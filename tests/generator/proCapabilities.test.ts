@@ -250,6 +250,22 @@ describe("Pro capability parity", () => {
   );
 
   it.each(["python-django", "go-gin"] as const)(
+    "adds centralized ELK logging for %s",
+    async (stack) => {
+      const destination = await generate(stack, ["elk"]);
+      const compose = await readFile(path.join(destination, "docker-compose.yml"), "utf8");
+      expect(compose).toContain("docker.elastic.co/logstash/logstash:9.5.0");
+      expect(compose).toContain("docker.elastic.co/kibana/kibana:9.5.0");
+      expect(compose).toContain("docker.elastic.co/beats/filebeat:9.5.0");
+      expect(compose).toContain("logs-elasticsearch");
+      expect(await readFile(path.join(destination, "ops/elk/logstash.conf"), "utf8"))
+        .toContain('index => "praxis-%{+YYYY.MM.dd}"');
+      expect(await readFile(path.join(destination, "ops/elk/filebeat.yml"), "utf8"))
+        .toContain("*-json.log");
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
     "wires Redis into the %s runtime and local Compose stack",
     async (stack) => {
       const destination = await generate(stack, ["redis-cache"]);

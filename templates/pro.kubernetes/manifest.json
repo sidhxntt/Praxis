@@ -49,8 +49,15 @@
     { "scope": "root", "source": "files/cloud-secrets", "capability": "cloud-secrets" }
     ,{ "scope": "root", "source": "files/object-storage", "capability": "object-storage" }
     ,{ "scope": "root", "source": "files/search", "capability": "search" }
+    ,{ "scope": "root", "source": "files/elk", "capability": "elk" }
   ],
   "patches": [
+    {
+      "scope": "root", "file": "k8s/base/kustomization.yaml",
+      "find": "  # @praxis:resources",
+      "replace": "  - log-forwarder.yaml\n  # @praxis:resources",
+      "capability": "elk"
+    },
     {
       "scope": "root", "file": "k8s/base/deployment.yaml",
       "find": "            # @praxis:container-env",

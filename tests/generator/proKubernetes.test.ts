@@ -48,6 +48,16 @@ describe("Praxis Pro Kubernetes output", () => {
       expect(base).not.toContain("tools/seed-job.yaml");
     },
   );
+  it("adds a hardened cluster log forwarder when ELK is selected", async () => {
+    const destination = await generate("go-gin", ["kubernetes", "elk"]);
+    const forwarder = await readFile(path.join(destination, "k8s/base/log-forwarder.yaml"), "utf8");
+    expect(forwarder).toContain("kind: DaemonSet");
+    expect(forwarder).toContain("fluent/fluent-bit:4.2.2");
+    expect(forwarder).toContain("readOnlyRootFilesystem: true");
+    expect(forwarder).toContain("key: elastic-log-host");
+    expect(await readFile(path.join(destination, "k8s/base/kustomization.yaml"), "utf8"))
+      .toContain("log-forwarder.yaml");
+  });
   it.each(["python-django", "go-gin"] as const)(
     "generates a secure, stack-aware %s application workload",
     async (stack) => {

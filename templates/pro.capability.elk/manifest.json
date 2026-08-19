@@ -1,0 +1,6 @@
+{
+  "id": "pro.capability.elk",
+  "overlays": [
+    { "scope": "root", "source": "files/common", "capability": "elk" }
+  ]
+}
