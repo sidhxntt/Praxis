@@ -165,6 +165,10 @@ function replaceTokens(contents: string, config: PraxisConfig): string {
         : config.packageManager,
     proStack: config.projectType === "pro-backend" ? config.pro.stack : "",
     cloud: config.projectType === "pro-backend" ? config.pro.cloud ?? "" : "",
+    backendPort:
+      config.projectType === "pro-backend"
+        ? config.pro.stack === "python-django" ? "8000" : "8080"
+        : "",
   };
   return Object.entries(tokens).reduce(
     (result, [name, value]) => result.split(`{{${name}}}`).join(value),

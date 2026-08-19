@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: {{projectName}}
+resources:
+  - namespace.yaml
+  - service-account.yaml
+  - configmap.yaml
+  - deployment.yaml
+  - service.yaml
+  - postgres.yaml
+  - network-policy.yaml
+  # @praxis:resources
+labels:
+  - pairs:
+      app.kubernetes.io/part-of: {{projectName}}
+    includeSelectors: false
+images:
+  - name: praxis-api
+    newName: ghcr.io/your-org/{{projectName}}
+    newTag: latest
+  # @praxis:images

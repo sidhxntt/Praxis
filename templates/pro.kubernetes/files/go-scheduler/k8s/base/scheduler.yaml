@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app.kubernetes.io/name: {{projectName}}, app.kubernetes.io/component: scheduler }
+  template:
+    metadata:
+      labels: { app.kubernetes.io/name: {{projectName}}, app.kubernetes.io/component: scheduler }
+    spec:
+      serviceAccountName: {{projectName}}
+      automountServiceAccountToken: false
+      securityContext: { runAsNonRoot: true, seccompProfile: { type: RuntimeDefault } }
+      containers:
+        - name: scheduler
+          image: praxis-api
+          command: ["/scheduler"]
+          env:
+            - name: REDIS_URL
+              value: redis://redis:6379/0
+          resources:
+            requests: { cpu: 50m, memory: 64Mi }
+            limits: { cpu: 500m, memory: 256Mi }
+          securityContext: { allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: { drop: ["ALL"] } }
