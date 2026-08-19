@@ -1,0 +1,74 @@
+{
+  "id": "pro.capability.object-storage",
+  "overlays": [
+    {
+      "scope": "root",
+      "source": "files/go",
+      "proStack": "go-gin",
+      "capability": "object-storage"
+    }
+  ],
+  "patches": [
+    {
+      "scope": "root",
+      "file": "pyproject.toml",
+      "find": "  # @praxis:dependencies",
+      "replace": "  \"django-storages[s3]==1.14.6\",\n  \"boto3==1.43.55\",\n  # @praxis:dependencies",
+      "proStack": "python-django",
+      "capability": "object-storage"
+    },
+    {
+      "scope": "root",
+      "file": "config/settings/base.py",
+      "find": "    # @praxis:installed-apps",
+      "replace": "    \"storages\",\n    # @praxis:installed-apps",
+      "proStack": "python-django",
+      "capability": "object-storage"
+    },
+    {
+      "scope": "root",
+      "file": "config/settings/base.py",
+      "find": "# @praxis:settings",
+      "replace": "STORAGES = {\n    \"default\": {\n        \"BACKEND\": \"storages.backends.s3.S3Storage\",\n        \"OPTIONS\": {\n            \"bucket_name\": os.getenv(\"S3_BUCKET\", \"praxis\"),\n            \"endpoint_url\": os.getenv(\"S3_ENDPOINT\") or None,\n            \"region_name\": os.getenv(\"S3_REGION\", \"us-east-1\"),\n            \"access_key\": os.getenv(\"S3_ACCESS_KEY\") or None,\n            \"secret_key\": os.getenv(\"S3_SECRET_KEY\") or None,\n            \"default_acl\": None,\n            \"querystring_auth\": True,\n        },\n    },\n    \"staticfiles\": {\"BACKEND\": \"django.contrib.staticfiles.storage.StaticFilesStorage\"},\n}\n# @praxis:settings",
+      "proStack": "python-django",
+      "capability": "object-storage"
+    },
+    {
+      "scope": "root",
+      "file": "go.mod",
+      "find": "\t// @praxis:dependencies",
+      "replace": "\tgithub.com/aws/aws-sdk-go-v2 v1.40.0\n\tgithub.com/aws/aws-sdk-go-v2/config v1.32.0\n\tgithub.com/aws/aws-sdk-go-v2/credentials v1.19.0\n\tgithub.com/aws/aws-sdk-go-v2/service/s3 v1.106.2\n\t// @praxis:dependencies",
+      "proStack": "go-gin",
+      "capability": "object-storage"
+    },
+    {
+      "scope": "root",
+      "file": "cmd/api/main.go",
+      "find": "\t// @praxis:imports",
+      "replace": "\t\"example.com/{{projectName}}/internal/storage\"\n\t// @praxis:imports",
+      "proStack": "go-gin",
+      "capability": "object-storage"
+    },
+    {
+      "scope": "root",
+      "file": "cmd/api/main.go",
+      "find": "\t// @praxis:startup",
+      "replace": "\tstorageClient, err := storage.Open(ctx, os.Getenv(\"S3_ENDPOINT\"), os.Getenv(\"S3_REGION\"), os.Getenv(\"S3_ACCESS_KEY\"), os.Getenv(\"S3_SECRET_KEY\"))\n\tif err != nil {\n\t\tlog.Error(\"object storage startup failed\", \"error\", err)\n\t\tos.Exit(1)\n\t}\n\tif err := storage.Check(ctx, storageClient, os.Getenv(\"S3_BUCKET\")); err != nil {\n\t\tlog.Error(\"object storage readiness failed\", \"error\", err)\n\t\tos.Exit(1)\n\t}\n\t// @praxis:startup",
+      "proStack": "go-gin",
+      "capability": "object-storage"
+    }
+  ],
+  "env": [
+    {
+      "scope": "root",
+      "keys": [
+        "S3_ENDPOINT=http://minio:9000",
+        "S3_REGION=us-east-1",
+        "S3_BUCKET=praxis",
+        "S3_ACCESS_KEY=minio",
+        "S3_SECRET_KEY="
+      ],
+      "capability": "object-storage"
+    }
+  ]
+}

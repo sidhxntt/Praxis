@@ -249,4 +249,44 @@ describe("Pro capability parity", () => {
         .rejects.toMatchObject({ code: "ENOENT" });
     },
   );
+
+  it.each(["python-django", "go-gin"] as const)(
+    "wires object storage into the %s runtime and local Compose stack",
+    async (stack) => {
+      const destination = await generate(stack, ["object-storage"]);
+      const compose = await readFile(path.join(destination, "docker-compose.yml"), "utf8");
+      expect(compose).toContain("minio/minio:RELEASE.2025-09-07T16-13-09Z");
+      expect(compose).toContain("minio/mc:RELEASE.2025-08-13T08-35-41Z");
+      expect(compose).toContain("minio-data:/data");
+      expect(compose).toContain("mc mb --ignore-existing local/praxis");
+      expect(compose).toContain("http://localhost:9000/minio/health/live");
+      expect(compose).toContain("S3_ENDPOINT: http://minio:9000");
+      expect(await readFile(path.join(destination, ".env.example"), "utf8"))
+        .toContain("S3_BUCKET=praxis");
+
+      if (stack === "python-django") {
+        const project = await readFile(path.join(destination, "pyproject.toml"), "utf8");
+        expect(project).toContain("django-storages[s3]==1.14.6");
+        expect(project).toContain("boto3==1.43.55");
+        expect(await readFile(path.join(destination, "config/settings/base.py"), "utf8"))
+          .toContain("storages.backends.s3.S3Storage");
+      } else {
+        expect(await readFile(path.join(destination, "go.mod"), "utf8"))
+          .toContain("github.com/aws/aws-sdk-go-v2/service/s3 v1.106.2");
+        expect(await readFile(path.join(destination, "internal/storage/s3.go"), "utf8"))
+          .toContain("options.UsePathStyle = true");
+      }
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
+    "leaves no object-storage artifacts in a minimal %s project",
+    async (stack) => {
+      const destination = await generate(stack, []);
+      expect(await readFile(path.join(destination, "docker-compose.yml"), "utf8"))
+        .not.toContain("minio/minio");
+      expect(await readFile(path.join(destination, ".env.example"), "utf8"))
+        .not.toContain("S3_BUCKET");
+    },
+  );
 });
