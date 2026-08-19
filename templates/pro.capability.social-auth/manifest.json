@@ -1,0 +1,57 @@
+{
+  "id": "pro.capability.social-auth",
+  "overlays": [
+    { "scope": "root", "source": "files/go", "proStack": "go-gin", "capability": "social-auth" }
+  ],
+  "patches": [
+    {
+      "scope": "root", "file": "pyproject.toml",
+      "find": "  # @praxis:dependencies",
+      "replace": "  \"django-allauth[socialaccount]==65.14.1\",\n  # @praxis:dependencies",
+      "proStack": "python-django", "capability": "social-auth"
+    },
+    {
+      "scope": "root", "file": "config/settings/base.py",
+      "find": "    # @praxis:installed-apps",
+      "replace": "    \"django.contrib.sites\",\n    \"allauth\",\n    \"allauth.account\",\n    \"allauth.socialaccount\",\n    \"allauth.socialaccount.providers.github\",\n    # @praxis:installed-apps",
+      "proStack": "python-django", "capability": "social-auth"
+    },
+    {
+      "scope": "root", "file": "config/settings/base.py",
+      "find": "    \"django.contrib.auth.middleware.AuthenticationMiddleware\",",
+      "replace": "    \"django.contrib.auth.middleware.AuthenticationMiddleware\",\n    \"allauth.account.middleware.AccountMiddleware\",",
+      "proStack": "python-django", "capability": "social-auth"
+    },
+    {
+      "scope": "root", "file": "config/settings/base.py",
+      "find": "# @praxis:settings",
+      "replace": "SITE_ID = 1\nAUTHENTICATION_BACKENDS = [\n    \"django.contrib.auth.backends.ModelBackend\",\n    \"allauth.account.auth_backends.AuthenticationBackend\",\n]\nSOCIALACCOUNT_PROVIDERS = {\n    \"github\": {\n        \"APP\": {\n            \"client_id\": os.environ[\"OAUTH_GITHUB_CLIENT_ID\"],\n            \"secret\": os.environ[\"OAUTH_GITHUB_CLIENT_SECRET\"],\n            \"key\": \"\",\n        },\n        \"SCOPE\": [\"user:email\"],\n    }\n}\n# @praxis:settings",
+      "proStack": "python-django", "capability": "social-auth"
+    },
+    {
+      "scope": "root", "file": "config/urls.py",
+      "find": "    # @praxis:urls",
+      "replace": "    path(\"api/v1/auth/social/\", include(\"allauth.urls\")),\n    # @praxis:urls",
+      "proStack": "python-django", "capability": "social-auth"
+    },
+    {
+      "scope": "root", "file": "go.mod",
+      "find": "\t// @praxis:dependencies",
+      "replace": "\tgithub.com/markbates/goth v1.82.0\n\tgithub.com/gorilla/sessions v1.4.0\n\t// @praxis:dependencies",
+      "proStack": "go-gin", "capability": "social-auth"
+    },
+    {
+      "scope": "root", "file": "internal/httpserver/router.go",
+      "find": "\t// @praxis:routes",
+      "replace": "\tregisterSocialRoutes(router)\n\t// @praxis:routes",
+      "proStack": "go-gin", "capability": "social-auth"
+    }
+  ],
+  "env": [
+    {
+      "scope": "root",
+      "keys": ["OAUTH_GITHUB_CLIENT_ID=", "OAUTH_GITHUB_CLIENT_SECRET=", "OAUTH_CALLBACK_URL=http://localhost:8080/api/v1/auth/social/github/callback", "SESSION_SECRET="],
+      "capability": "social-auth"
+    }
+  ]
+}

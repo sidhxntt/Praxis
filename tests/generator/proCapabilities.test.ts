@@ -72,6 +72,35 @@ describe("Pro capability parity", () => {
   );
 
   it.each(["python-django", "go-gin"] as const)(
+    "wires social authentication into the %s runtime",
+    async (stack) => {
+      const destination = await generate(stack, ["social-auth"]);
+      const environment = await readFile(path.join(destination, ".env.example"), "utf8");
+      expect(environment).toContain("OAUTH_GITHUB_CLIENT_ID=");
+      expect(environment).toContain("OAUTH_GITHUB_CLIENT_SECRET=");
+
+      if (stack === "python-django") {
+        expect(await readFile(path.join(destination, "pyproject.toml"), "utf8"))
+          .toContain("django-allauth[socialaccount]==65.14.1");
+        const settings = await readFile(path.join(destination, "config/settings/base.py"), "utf8");
+        expect(settings).toContain('"allauth.socialaccount.providers.github"');
+        expect(settings).toContain("SOCIALACCOUNT_PROVIDERS");
+        expect(await readFile(path.join(destination, "config/urls.py"), "utf8"))
+          .toContain('path("api/v1/auth/social/", include("allauth.urls"))');
+      } else {
+        const module = await readFile(path.join(destination, "go.mod"), "utf8");
+        expect(module).toContain("github.com/markbates/goth v1.82.0");
+        const social = await readFile(path.join(destination, "internal/httpserver/social.go"), "utf8");
+        expect(social).toContain("github.New");
+        expect(social).toContain("CompleteUserAuth");
+        expect(social).toContain("SESSION_SECRET");
+        expect(await readFile(path.join(destination, "internal/httpserver/router.go"), "utf8"))
+          .toContain("registerSocialRoutes");
+      }
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
     "wires Redis into the %s runtime and local Compose stack",
     async (stack) => {
       const destination = await generate(stack, ["redis-cache"]);
