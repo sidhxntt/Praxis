@@ -1,0 +1,19 @@
+{
+  "id": "pro.gin",
+  "overlays": [
+    { "scope": "root", "source": "files/common", "proStack": "go-gin" }
+  ],
+  "env": [
+    {
+      "scope": "root",
+      "proStack": "go-gin",
+      "keys": [
+        "APP_ENV=development",
+        "DATABASE_URL=postgres://app:app@postgres:5432/app?sslmode=disable",
+        "HTTP_ADDRESS=:8080",
+        "LOG_LEVEL=INFO",
+        "TRUSTED_PROXIES="
+      ]
+    }
+  ]
+}

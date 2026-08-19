@@ -1,0 +1,46 @@
+name: {{projectName}}
+services:
+  migrate:
+    image: migrate/migrate:v4.18.3
+    volumes:
+      - ./db/migrations:/migrations:ro
+    command: ["-path", "/migrations", "-database", "postgres://app:app@postgres:5432/app?sslmode=disable", "up"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+  api:
+    build:
+      context: .
+    environment:
+      APP_ENV: development
+      DATABASE_URL: postgres://app:app@postgres:5432/app?sslmode=disable
+      HTTP_ADDRESS: :8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "/api", "healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d app"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+volumes:
+  postgres-data:

@@ -1,6 +1,7 @@
 {
   "id": "pro.compose",
   "overlays": [
-    { "scope": "root", "source": "files/django", "proStack": "python-django" }
+    { "scope": "root", "source": "files/django", "proStack": "python-django" },
+    { "scope": "root", "source": "files/go", "proStack": "go-gin" }
   ]
 }
