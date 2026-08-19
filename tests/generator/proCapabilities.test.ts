@@ -29,6 +29,49 @@ async function generate(stack: ProStack, capabilities: ProCapability[]) {
 
 describe("Pro capability parity", () => {
   it.each(["python-django", "go-gin"] as const)(
+    "wires JWT authentication into the %s runtime",
+    async (stack) => {
+      const destination = await generate(stack, ["jwt-auth"]);
+      const environment = await readFile(path.join(destination, ".env.example"), "utf8");
+      expect(environment).toContain("JWT_SIGNING_KEY=");
+
+      if (stack === "python-django") {
+        expect(await readFile(path.join(destination, "pyproject.toml"), "utf8"))
+          .toContain("djangorestframework-simplejwt==5.5.1");
+        const settings = await readFile(path.join(destination, "config/settings/base.py"), "utf8");
+        expect(settings).toContain("JWTAuthentication");
+        expect(settings).toContain('os.environ["JWT_SIGNING_KEY"]');
+        const urls = await readFile(path.join(destination, "config/urls.py"), "utf8");
+        expect(urls).toContain('path("api/v1/auth/token/"');
+        expect(urls).toContain('path("api/v1/auth/token/refresh/"');
+      } else {
+        expect(await readFile(path.join(destination, "go.mod"), "utf8"))
+          .toContain("github.com/golang-jwt/jwt/v5 v5.3.1");
+        const jwt = await readFile(path.join(destination, "internal/auth/jwt.go"), "utf8");
+        expect(jwt).toContain("jwt.NewWithClaims");
+        expect(jwt).toContain("jwt.WithValidMethods");
+        expect(jwt).toContain("sub");
+        const router = await readFile(path.join(destination, "internal/httpserver/router.go"), "utf8");
+        expect(router).toContain('router.GET("/api/v1/auth/me"');
+        expect(router).toContain("auth.RequireBearer");
+      }
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
+    "leaves no JWT artifacts in a minimal %s project",
+    async (stack) => {
+      const destination = await generate(stack, []);
+      expect(await readFile(path.join(destination, ".env.example"), "utf8"))
+        .not.toContain("JWT_SIGNING_KEY");
+      if (stack === "go-gin") {
+        await expect(readFile(path.join(destination, "internal/auth/jwt.go"), "utf8"))
+          .rejects.toMatchObject({ code: "ENOENT" });
+      }
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
     "wires Redis into the %s runtime and local Compose stack",
     async (stack) => {
       const destination = await generate(stack, ["redis-cache"]);

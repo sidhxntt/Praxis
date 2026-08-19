@@ -1,0 +1,84 @@
+{
+  "id": "pro.capability.jwt-auth",
+  "overlays": [
+    {
+      "scope": "root",
+      "source": "files/go",
+      "proStack": "go-gin",
+      "capability": "jwt-auth"
+    }
+  ],
+  "patches": [
+    {
+      "scope": "root",
+      "file": "pyproject.toml",
+      "find": "  # @praxis:dependencies",
+      "replace": "  \"djangorestframework-simplejwt==5.5.1\",\n  # @praxis:dependencies",
+      "proStack": "python-django",
+      "capability": "jwt-auth"
+    },
+    {
+      "scope": "root",
+      "file": "config/settings/base.py",
+      "find": "\"DEFAULT_SCHEMA_CLASS\": \"drf_spectacular.openapi.AutoSchema\",",
+      "replace": "\"DEFAULT_SCHEMA_CLASS\": \"drf_spectacular.openapi.AutoSchema\",\n    \"DEFAULT_AUTHENTICATION_CLASSES\": [\n        \"rest_framework_simplejwt.authentication.JWTAuthentication\",\n    ],",
+      "proStack": "python-django",
+      "capability": "jwt-auth"
+    },
+    {
+      "scope": "root",
+      "file": "config/settings/base.py",
+      "find": "# @praxis:settings",
+      "replace": "SIMPLE_JWT = {\n    \"SIGNING_KEY\": os.environ[\"JWT_SIGNING_KEY\"],\n    \"ALGORITHM\": \"HS256\",\n    \"ACCESS_TOKEN_LIFETIME\": __import__(\"datetime\").timedelta(minutes=15),\n    \"REFRESH_TOKEN_LIFETIME\": __import__(\"datetime\").timedelta(days=7),\n    \"ROTATE_REFRESH_TOKENS\": True,\n    \"BLACKLIST_AFTER_ROTATION\": False,\n}\n# @praxis:settings",
+      "proStack": "python-django",
+      "capability": "jwt-auth"
+    },
+    {
+      "scope": "root",
+      "file": "config/urls.py",
+      "find": "from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView\n",
+      "replace": "from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView\nfrom rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView\n",
+      "proStack": "python-django",
+      "capability": "jwt-auth"
+    },
+    {
+      "scope": "root",
+      "file": "config/urls.py",
+      "find": "    # @praxis:urls",
+      "replace": "    path(\"api/v1/auth/token/\", TokenObtainPairView.as_view(), name=\"token\"),\n    path(\"api/v1/auth/token/refresh/\", TokenRefreshView.as_view(), name=\"token-refresh\"),\n    # @praxis:urls",
+      "proStack": "python-django",
+      "capability": "jwt-auth"
+    },
+    {
+      "scope": "root",
+      "file": "go.mod",
+      "find": "\t// @praxis:dependencies",
+      "replace": "\tgithub.com/golang-jwt/jwt/v5 v5.3.1\n\t// @praxis:dependencies",
+      "proStack": "go-gin",
+      "capability": "jwt-auth"
+    },
+    {
+      "scope": "root",
+      "file": "internal/httpserver/router.go",
+      "find": "\t\"github.com/gin-gonic/gin\"\n",
+      "replace": "\t\"github.com/gin-gonic/gin\"\n\t\"example.com/{{projectName}}/internal/auth\"\n",
+      "proStack": "go-gin",
+      "capability": "jwt-auth"
+    },
+    {
+      "scope": "root",
+      "file": "internal/httpserver/router.go",
+      "find": "\t// @praxis:routes",
+      "replace": "\trouter.GET(\"/api/v1/auth/me\", auth.RequireBearer(), func(c *gin.Context) {\n\t\tc.JSON(http.StatusOK, gin.H{\"subject\": c.GetString(auth.SubjectKey)})\n\t})\n\t// @praxis:routes",
+      "proStack": "go-gin",
+      "capability": "jwt-auth"
+    }
+  ],
+  "env": [
+    {
+      "scope": "root",
+      "keys": ["JWT_SIGNING_KEY="],
+      "capability": "jwt-auth"
+    }
+  ]
+}
