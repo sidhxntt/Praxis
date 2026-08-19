@@ -4,6 +4,44 @@ This page is a deterministic orientation path for Claude, Codex, and other codin
 
 For any generated-template task, the mandatory entry point is the [Template Agent Guide](template-agent-guide.md). Resolve the exact bounded context from `praxis.config.json` instead of attempting to load the whole Wiki indiscriminately.
 
+## Prompt for a new agent session
+
+Use the following prompt when starting Codex, Claude Code, or another coding agent inside a Praxis checkout. Replace the config path and final task before sending it:
+
+```text
+Read `AGENTS.md` and `docs/template-agent-guide.md` completely before taking action.
+
+Resolve the exact bounded template context with:
+node scripts/resolve-template-context.mjs --config <path-to-praxis.config.json>
+
+Read every architecture page returned by the resolver, inspect every returned authoritative source and contract test, and do not infer behavior from directory names alone. State the loaded bundle IDs and the behavior boundary before editing. Preserve the invariants in AGENTS.md, make the smallest source-of-truth change, and run every returned verification command before claiming completion.
+
+Task: <describe the requested change, diagnosis, or review>
+```
+
+If no generated `praxis.config.json` exists, resolve explicit concerns with repeated `--bundle <id>` arguments instead:
+
+```text
+Read `AGENTS.md` and `docs/template-agent-guide.md` completely. Run:
+node scripts/resolve-template-context.mjs --bundle <id> --bundle <id>
+
+Read every returned page, source, and contract test. State the loaded bundles and scope, perform the task, and run every returned verification command.
+
+Task: <describe the requested change, diagnosis, or review>
+```
+
+Do not ask an agent to load the entire Wiki into context. The resolver expands prerequisites and returns the smallest complete bundle for the selected stack and capabilities. This reduces irrelevant context while keeping configuration, resolver order, manifests, overlays, patches, runtime paths, and tests aligned.
+
+For a GitHub-only session without a checkout, use this prompt:
+
+```text
+Begin at https://github.com/sidhxntt/Praxis/wiki/Template-Agent-Guide and follow its bounded-context workflow. Inspect the linked files on the main branch and treat source plus tests as authoritative. State the loaded context before editing or reviewing, and report the verification evidence with the result.
+
+Task: <describe the requested change, diagnosis, or review>
+```
+
+For non-template work, still require the agent to read `AGENTS.md`, inspect repository status, route the task to the owning directory, preserve unrelated changes, and run the owning package's focused tests and build.
+
 ## First five minutes
 
 1. Read [`README.md`](../README.md) for supported product surface.
