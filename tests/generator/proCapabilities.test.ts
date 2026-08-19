@@ -289,4 +289,42 @@ describe("Pro capability parity", () => {
         .not.toContain("S3_BUCKET");
     },
   );
+
+  it.each(["python-django", "go-gin"] as const)(
+    "wires Elasticsearch search into the %s runtime and local Compose stack",
+    async (stack) => {
+      const destination = await generate(stack, ["search"]);
+      const compose = await readFile(path.join(destination, "docker-compose.yml"), "utf8");
+      expect(compose).toContain("docker.elastic.co/elasticsearch/elasticsearch:9.5.0");
+      expect(compose).toContain("elasticsearch-data:/usr/share/elasticsearch/data");
+      expect(compose).toContain("_cluster/health?wait_for_status=yellow");
+      expect(compose).toContain("ELASTICSEARCH_URL: http://elasticsearch:9200");
+      expect(await readFile(path.join(destination, ".env.example"), "utf8"))
+        .toContain("ELASTICSEARCH_URL=http://elasticsearch:9200");
+
+      if (stack === "python-django") {
+        expect(await readFile(path.join(destination, "pyproject.toml"), "utf8"))
+          .toContain("django-elasticsearch-dsl==9.0");
+        expect(await readFile(path.join(destination, "config/settings/base.py"), "utf8"))
+          .toContain("ELASTICSEARCH_DSL");
+      } else {
+        expect(await readFile(path.join(destination, "go.mod"), "utf8"))
+          .toContain("github.com/elastic/go-elasticsearch/v9 v9.5.0");
+        const adapter = await readFile(path.join(destination, "internal/search/elasticsearch.go"), "utf8");
+        expect(adapter).toContain("elasticsearch.NewClient");
+        expect(adapter).toContain("client.Ping");
+      }
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
+    "leaves no search artifacts in a minimal %s project",
+    async (stack) => {
+      const destination = await generate(stack, []);
+      expect(await readFile(path.join(destination, "docker-compose.yml"), "utf8"))
+        .not.toContain("docker.elastic.co/elasticsearch");
+      expect(await readFile(path.join(destination, ".env.example"), "utf8"))
+        .not.toContain("ELASTICSEARCH_URL");
+    },
+  );
 });

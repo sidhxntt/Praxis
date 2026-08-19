@@ -134,6 +134,34 @@
       "find": "volumes:\n  postgres-data:",
       "replace": "volumes:\n  postgres-data:\n  minio-data:",
       "capability": "object-storage"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      # @praxis:api-environment",
+      "replace": "      ELASTICSEARCH_URL: http://elasticsearch:9200\n      # @praxis:api-environment",
+      "capability": "search"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      # @praxis:api-dependencies",
+      "replace": "      elasticsearch:\n        condition: service_healthy\n      # @praxis:api-dependencies",
+      "capability": "search"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  elasticsearch:\n    image: docker.elastic.co/elasticsearch/elasticsearch:9.5.0\n    environment:\n      discovery.type: single-node\n      xpack.security.enabled: \"false\"\n      ES_JAVA_OPTS: -Xms512m -Xmx512m\n    ports:\n      - \"9200:9200\"\n    volumes:\n      - elasticsearch-data:/usr/share/elasticsearch/data\n    healthcheck:\n      test: [\"CMD-SHELL\", \"curl -fsS 'http://localhost:9200/_cluster/health?wait_for_status=yellow' >/dev/null\"]\n      interval: 10s\n      timeout: 5s\n      retries: 20\n      start_period: 30s\n    restart: unless-stopped\n  # @praxis:services",
+      "capability": "search"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "volumes:\n  postgres-data:",
+      "replace": "volumes:\n  postgres-data:\n  elasticsearch-data:",
+      "capability": "search"
     }
   ]
 }
