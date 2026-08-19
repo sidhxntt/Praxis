@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import React, { useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { Button } from "./button";
 import { Logo } from "./logo";
 
 interface NavbarProps {
@@ -157,21 +158,14 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
                 },
               }}
             >
-              <a
-                href="https://www.producthunt.com/products/praxis-4/launches/praxis-4?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-praxis-4"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden md:block"
+              <Button
+                as={Link}
+                href="https://github.com/sidhxntt/Praxis/wiki/Agent-Guide"
+                variant="primary"
+                className="hidden md:block rounded-full bg-white/20 hover:bg-white/30 text-white border-0"
               >
-                {/* Product Hunt requires its official externally hosted badge embed. */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  alt="Praxis  - Ship your SaaS in days not in months. | Product Hunt"
-                  width="250"
-                  height="54"
-                  src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1007579&amp;theme=dark&amp;t=1787151168808"
-                />
-              </a>
+                Agent Wiki
+              </Button>
             </motion.div>
           )}
         </AnimatePresence>
