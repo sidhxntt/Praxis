@@ -1,6 +1,6 @@
 {
   "name": "@sidhxntt/praxiflow",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Composable frontend, backend, full-stack, and production-backend project generator.",
   "repository": {
     "type": "git",
