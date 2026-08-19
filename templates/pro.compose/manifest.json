@@ -3,5 +3,35 @@
   "overlays": [
     { "scope": "root", "source": "files/django", "proStack": "python-django" },
     { "scope": "root", "source": "files/go", "proStack": "go-gin" }
+  ],
+  "patches": [
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      # @praxis:api-environment",
+      "replace": "      REDIS_URL: redis://redis:6379/0\n      # @praxis:api-environment",
+      "capability": "redis-cache"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "      # @praxis:api-dependencies",
+      "replace": "      redis:\n        condition: service_healthy\n      # @praxis:api-dependencies",
+      "capability": "redis-cache"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  redis:\n    image: redis:8.8-alpine\n    command: [\"redis-server\", \"--appendonly\", \"yes\"]\n    volumes:\n      - redis-data:/data\n    healthcheck:\n      test: [\"CMD\", \"redis-cli\", \"ping\"]\n      interval: 5s\n      timeout: 3s\n      retries: 10\n    restart: unless-stopped\n  # @praxis:services",
+      "capability": "redis-cache"
+    },
+    {
+      "scope": "root",
+      "file": "docker-compose.yml",
+      "find": "volumes:\n  postgres-data:",
+      "replace": "volumes:\n  postgres-data:\n  redis-data:",
+      "capability": "redis-cache"
+    }
   ]
 }

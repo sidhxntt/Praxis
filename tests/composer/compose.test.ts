@@ -130,7 +130,7 @@ describe("composeProject", () => {
           scope: "root",
           file: "src/app.ts",
           find: "// modules",
-          replace: '// modules\nimport "./feature";',
+          replace: '// modules\nimport "./{{projectName}}";',
         },
       ],
     });
@@ -142,7 +142,7 @@ describe("composeProject", () => {
     });
 
     expect(await readFile(path.join(destination, "src/app.ts"), "utf8")).toBe(
-      '// modules\nimport "./feature";\nexport const modules = [];\n',
+      '// modules\nimport "./acme";\nexport const modules = [];\n',
     );
   });
 

@@ -56,7 +56,10 @@ export async function composeProject(
             `patch target not found in "${path.relative(staging, filePath)}"`,
           );
         }
-        await writeFile(filePath, contents.replace(patch.find, patch.replace));
+        await writeFile(
+          filePath,
+          contents.replace(patch.find, replaceTokens(patch.replace, config)),
+        );
       }
     }
 

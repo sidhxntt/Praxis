@@ -1,14 +1,16 @@
 package httpserver
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func New(pool *pgxpool.Pool, log *slog.Logger, trustedProxies []string) (*gin.Engine, error) {
+type Check func(context.Context) error
+
+func New(log *slog.Logger, trustedProxies []string, checks ...Check) (*gin.Engine, error) {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.New()
 	router.Use(gin.Recovery(), requestContext(log))
@@ -23,9 +25,11 @@ func New(pool *pgxpool.Pool, log *slog.Logger, trustedProxies []string) (*gin.En
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
 	ready := func(c *gin.Context) {
-		if err := pool.Ping(c.Request.Context()); err != nil {
-			c.JSON(http.StatusServiceUnavailable, gin.H{"status": "unavailable"})
-			return
+		for _, check := range checks {
+			if err := check(c.Request.Context()); err != nil {
+				c.JSON(http.StatusServiceUnavailable, gin.H{"status": "unavailable"})
+				return
+			}
 		}
 		c.JSON(http.StatusOK, gin.H{"status": "ready"})
 	}

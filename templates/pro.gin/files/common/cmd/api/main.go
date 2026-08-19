@@ -13,6 +13,7 @@ import (
 	"example.com/{{projectName}}/internal/config"
 	"example.com/{{projectName}}/internal/database"
 	"example.com/{{projectName}}/internal/httpserver"
+	// @praxis:imports
 )
 
 func main() {
@@ -41,8 +42,9 @@ func main() {
 		os.Exit(1)
 	}
 	defer pool.Close()
+	// @praxis:startup
 
-	router, err := httpserver.New(pool, log, cfg.TrustedProxies)
+	router, err := httpserver.New(log, cfg.TrustedProxies, pool.Ping)
 	if err != nil {
 		log.Error("router startup failed", "error", err)
 		os.Exit(1)

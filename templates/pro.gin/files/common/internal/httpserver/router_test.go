@@ -11,7 +11,7 @@ import (
 )
 
 func TestNotFoundUsesStableErrorShape(t *testing.T) {
-	router, err := New(nil, slog.New(slog.NewJSONHandler(io.Discard, nil)), nil)
+	router, err := New(slog.New(slog.NewJSONHandler(io.Discard, nil)), nil)
 	require.NoError(t, err)
 	recorder := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodGet, "/missing", nil)

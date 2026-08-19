@@ -11,7 +11,8 @@ dependencies = [
   "django-cors-headers==4.9.0",
   "gunicorn==26.0.0",
   "uvicorn==0.52.0",
-  "uvicorn-worker==0.4.0"
+  "uvicorn-worker==0.4.0",
+  # @praxis:dependencies
 ]
 
 [dependency-groups]
@@ -22,8 +23,9 @@ dev = [
   "testcontainers[postgres]==4.10.0",
   "ruff==0.12.4",
   "mypy==1.17.0",
-  "django-stubs[compatible-mypy]==5.2.2",
-  "bandit==1.8.6",
+  "django-stubs[compatible-mypy]==6.0.7",
+  "djangorestframework-stubs==3.17.0",
+  "bandit==1.9.4",
   "pip-audit==2.9.0"
 ]
 
@@ -40,6 +42,9 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "S", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]
 
 [tool.mypy]
 plugins = ["mypy_django_plugin.main"]

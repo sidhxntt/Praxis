@@ -8,4 +8,5 @@ require (
 	github.com/jackc/pgx/v5 v5.9.2
 	github.com/oapi-codegen/oapi-codegen/v2 v2.5.0
 	github.com/stretchr/testify v1.11.1
+	// @praxis:dependencies
 )
