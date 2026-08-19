@@ -1,0 +1,33 @@
+{
+  "id": "pro.capability.feature-flags",
+  "overlays": [
+    { "scope": "root", "source": "files/django", "proStack": "python-django", "capability": "feature-flags" },
+    { "scope": "root", "source": "files/go", "proStack": "go-gin", "capability": "feature-flags" }
+  ],
+  "patches": [
+    {
+      "scope": "root", "file": "pyproject.toml",
+      "find": "  # @praxis:dependencies",
+      "replace": "  \"django-waffle==5.0.0\",\n  # @praxis:dependencies",
+      "proStack": "python-django", "capability": "feature-flags"
+    },
+    {
+      "scope": "root", "file": "config/settings/base.py",
+      "find": "    # @praxis:installed-apps",
+      "replace": "    \"waffle\",\n    # @praxis:installed-apps",
+      "proStack": "python-django", "capability": "feature-flags"
+    },
+    {
+      "scope": "root", "file": "config/settings/base.py",
+      "find": "    # @praxis:middleware-after",
+      "replace": "    \"waffle.middleware.WaffleMiddleware\",\n    # @praxis:middleware-after",
+      "proStack": "python-django", "capability": "feature-flags"
+    },
+    {
+      "scope": "root", "file": "go.mod",
+      "find": "\t// @praxis:dependencies",
+      "replace": "\tgithub.com/open-feature/go-sdk v1.18.0\n\t// @praxis:dependencies",
+      "proStack": "go-gin", "capability": "feature-flags"
+    }
+  ]
+}

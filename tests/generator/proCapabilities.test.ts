@@ -206,6 +206,29 @@ describe("Pro capability parity", () => {
   );
 
   it.each(["python-django", "go-gin"] as const)(
+    "wires feature flags into the %s runtime",
+    async (stack) => {
+      const destination = await generate(stack, ["feature-flags"]);
+      if (stack === "python-django") {
+        expect(await readFile(path.join(destination, "pyproject.toml"), "utf8"))
+          .toContain("django-waffle==5.0.0");
+        expect(await readFile(path.join(destination, "config/settings/base.py"), "utf8"))
+          .toContain('"waffle"');
+        expect(await readFile(path.join(destination, "core/flags.py"), "utf8"))
+          .toContain("flag_is_active");
+      } else {
+        expect(await readFile(path.join(destination, "go.mod"), "utf8"))
+          .toContain("github.com/open-feature/go-sdk v1.18.0");
+        const flags = await readFile(path.join(destination, "internal/flags/flags.go"), "utf8");
+        expect(flags).toContain("openfeature.NewClient");
+        expect(flags).toContain("BooleanValue");
+      }
+      expect(await readFile(path.join(destination, "docker-compose.yml"), "utf8"))
+        .not.toContain("feature-flags:");
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
     "wires Redis into the %s runtime and local Compose stack",
     async (stack) => {
       const destination = await generate(stack, ["redis-cache"]);
