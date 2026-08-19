@@ -1,0 +1,7 @@
+{
+  "id": "pro.capability.load-testing",
+  "overlays": [
+    { "scope": "root", "source": "files/django", "proStack": "python-django", "capability": "load-testing" },
+    { "scope": "root", "source": "files/go", "proStack": "go-gin", "capability": "load-testing" }
+  ]
+}

@@ -281,6 +281,27 @@ describe("Pro capability parity", () => {
   );
 
   it.each(["python-django", "go-gin"] as const)(
+    "adds opt-in load testing for %s",
+    async (stack) => {
+      const destination = await generate(stack, ["load-testing"]);
+      const compose = await readFile(path.join(destination, "docker-compose.yml"), "utf8");
+      expect(compose).toContain("load-test:");
+      expect(compose).toContain('profiles: ["tools"]');
+      if (stack === "python-django") {
+        expect(compose).toContain("locustio/locust:2.43.3");
+        const scenario = await readFile(path.join(destination, "ops/load/locustfile.py"), "utf8");
+        expect(scenario).toContain("constant_throughput");
+        expect(scenario).toContain("/api/v1/health/live");
+      } else {
+        expect(compose).toContain("grafana/k6:1.3.0");
+        const scenario = await readFile(path.join(destination, "ops/load/k6.js"), "utf8");
+        expect(scenario).toContain("thresholds");
+        expect(scenario).toContain("http_req_failed");
+      }
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
     "wires Redis into the %s runtime and local Compose stack",
     async (stack) => {
       const destination = await generate(stack, ["redis-cache"]);

@@ -67,6 +67,16 @@ describe("Praxis Pro Kubernetes output", () => {
       .toContain("blackbox-exporter.yaml");
   });
   it.each(["python-django", "go-gin"] as const)(
+    "emits a suspended load-test job for %s",
+    async (stack) => {
+      const destination = await generate(stack, ["kubernetes", "load-testing"]);
+      const job = await readFile(path.join(destination, "k8s/tools/load-test-job.yaml"), "utf8");
+      expect(job).toContain("kind: Job");
+      expect(job).toContain("suspend: true");
+      expect(job).toContain(stack === "python-django" ? "locustio/locust:2.43.3" : "grafana/k6:1.3.0");
+    },
+  );
+  it.each(["python-django", "go-gin"] as const)(
     "generates a secure, stack-aware %s application workload",
     async (stack) => {
       const destination = await generate(stack, ["kubernetes"]);

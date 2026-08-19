@@ -8,6 +8,18 @@
     {
       "scope": "root", "file": "docker-compose.yml",
       "find": "  # @praxis:services",
+      "replace": "  load-test:\n    profiles: [\"tools\"]\n    image: locustio/locust:2.43.3\n    volumes:\n      - ./ops/load/locustfile.py:/mnt/locust/locustfile.py:ro\n    command: [\"-f\", \"/mnt/locust/locustfile.py\", \"--headless\", \"--host\", \"http://api:8000\", \"--users\", \"10\", \"--spawn-rate\", \"2\", \"--run-time\", \"1m\", \"--only-summary\"]\n    depends_on:\n      api:\n        condition: service_healthy\n    restart: \"no\"\n  # @praxis:services",
+      "proStack": "python-django", "capability": "load-testing"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  load-test:\n    profiles: [\"tools\"]\n    image: grafana/k6:1.3.0\n    environment:\n      TARGET_URL: http://api:8080\n      REQUEST_RATE: \"10\"\n      DURATION: 1m\n    volumes:\n      - ./ops/load/k6.js:/scripts/k6.js:ro\n    command: [\"run\", \"/scripts/k6.js\"]\n    depends_on:\n      api:\n        condition: service_healthy\n    restart: \"no\"\n  # @praxis:services",
+      "proStack": "go-gin", "capability": "load-testing"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
       "replace": "  blackbox-exporter:\n    image: prom/blackbox-exporter:v0.28.0\n    command: [\"--config.file=/etc/blackbox_exporter/config.yml\"]\n    volumes:\n      - ./ops/blackbox.yml:/etc/blackbox_exporter/config.yml:ro\n    healthcheck:\n      test: [\"CMD-SHELL\", \"wget -q --spider http://localhost:9115/-/healthy\"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n    restart: unless-stopped\n  # @praxis:services",
       "capability": "synthetic-monitoring"
     },
