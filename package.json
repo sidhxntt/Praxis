@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "ts-node ./src/index.ts",
     "prod": "node ./dist/index.js",
-    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc",
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc && node -e \"require('node:fs').chmodSync('dist/index.js',0o755)\"",
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "npm run test && npm run build",
