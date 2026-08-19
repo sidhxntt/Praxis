@@ -18,7 +18,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-  "pytest==8.4.1",
+  "pytest==9.0.3",
   "pytest-django==4.11.1",
   "factory-boy==3.3.3",
   "testcontainers[postgres]==4.10.0",
