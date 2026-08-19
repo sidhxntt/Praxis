@@ -13,7 +13,7 @@
     {
       "scope": "root", "file": "config/settings/base.py",
       "find": "    # @praxis:installed-apps",
-      "replace": "    \"django.contrib.sites\",\n    \"allauth\",\n    \"allauth.account\",\n    \"allauth.socialaccount\",\n    \"allauth.socialaccount.providers.github\",\n    # @praxis:installed-apps",
+      "replace": "    \"django.contrib.sites\",\n    \"allauth\",\n    \"allauth.account\",\n    \"allauth.socialaccount\",\n    \"allauth.socialaccount.providers.github\",\n    \"allauth.socialaccount.providers.google\",\n    # @praxis:installed-apps",
       "proStack": "python-django", "capability": "social-auth"
     },
     {
@@ -25,7 +25,7 @@
     {
       "scope": "root", "file": "config/settings/base.py",
       "find": "# @praxis:settings",
-      "replace": "SITE_ID = 1\nAUTHENTICATION_BACKENDS = [\n    \"django.contrib.auth.backends.ModelBackend\",\n    \"allauth.account.auth_backends.AuthenticationBackend\",\n]\nSOCIALACCOUNT_PROVIDERS = {\n    \"github\": {\n        \"APP\": {\n            \"client_id\": os.environ[\"OAUTH_GITHUB_CLIENT_ID\"],\n            \"secret\": os.environ[\"OAUTH_GITHUB_CLIENT_SECRET\"],\n            \"key\": \"\",\n        },\n        \"SCOPE\": [\"user:email\"],\n    }\n}\n# @praxis:settings",
+      "replace": "SITE_ID = 1\nAUTHENTICATION_BACKENDS = [\n    \"django.contrib.auth.backends.ModelBackend\",\n    \"allauth.account.auth_backends.AuthenticationBackend\",\n]\nSOCIALACCOUNT_PROVIDERS = {\n    \"github\": {\n        \"APP\": {\n            \"client_id\": os.environ[\"OAUTH_GITHUB_CLIENT_ID\"],\n            \"secret\": os.environ[\"OAUTH_GITHUB_CLIENT_SECRET\"],\n            \"key\": \"\",\n        },\n        \"SCOPE\": [\"user:email\"],\n    },\n    \"google\": {\n        \"APP\": {\n            \"client_id\": os.environ[\"OAUTH_GOOGLE_CLIENT_ID\"],\n            \"secret\": os.environ[\"OAUTH_GOOGLE_CLIENT_SECRET\"],\n            \"key\": \"\",\n        },\n        \"SCOPE\": [\"profile\", \"email\"],\n    },\n}\n# @praxis:settings",
       "proStack": "python-django", "capability": "social-auth"
     },
     {
@@ -50,7 +50,7 @@
   "env": [
     {
       "scope": "root",
-      "keys": ["OAUTH_GITHUB_CLIENT_ID=", "OAUTH_GITHUB_CLIENT_SECRET=", "OAUTH_CALLBACK_URL=http://localhost:8080/api/v1/auth/social/github/callback", "SESSION_SECRET="],
+      "keys": ["OAUTH_GITHUB_CLIENT_ID=", "OAUTH_GITHUB_CLIENT_SECRET=", "OAUTH_GOOGLE_CLIENT_ID=", "OAUTH_GOOGLE_CLIENT_SECRET=", "OAUTH_GITHUB_CALLBACK_URL=http://localhost:8080/api/v1/auth/social/github/callback", "OAUTH_GOOGLE_CALLBACK_URL=http://localhost:8080/api/v1/auth/social/google/callback", "SESSION_SECRET="],
       "capability": "social-auth"
     }
   ]

@@ -22,6 +22,11 @@ Images default to `ghcr.io/your-org/{{projectName}}:latest`. Replace this throug
 overlay or `kustomize edit set image`; immutable digests are recommended for production.
 
 Use a dedicated namespace, inspect resource requests and limits against measured load, and run
-policy, image, and manifest scanning in CI before applying changes. Roll back with
+policy, image, and manifest scanning in CI before applying changes. For rollback, run
 `kubectl rollout undo deployment/api -n {{projectName}}` and verify readiness before restoring
 traffic.
+
+Review the generated default-deny network policy (`NetworkPolicy`) and add only the ingress and egress rules required
+by selected dependencies. For disaster recovery, keep manifests and immutable image digests in the
+release record, restore managed data first, apply the reviewed overlay in the recovery region, then
+shift traffic only after startup/readiness probes and application smoke tests pass.

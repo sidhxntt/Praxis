@@ -12,8 +12,8 @@
     {
       "scope": "root",
       "file": "config/settings/base.py",
-      "find": "import os\n",
-      "replace": "import os\n\nimport sentry_sdk\n",
+      "find": "from pathlib import Path\n",
+      "replace": "from pathlib import Path\n\nimport sentry_sdk\n",
       "proStack": "python-django",
       "capability": "sentry"
     },
@@ -37,7 +37,7 @@
       "scope": "root",
       "file": "cmd/api/main.go",
       "find": "\t// @praxis:imports",
-      "replace": "\t\"github.com/getsentry/sentry-go\"\n\t// @praxis:imports",
+      "replace": "\n\t\"github.com/getsentry/sentry-go\"\n\t// @praxis:imports",
       "proStack": "go-gin",
       "capability": "sentry"
     },

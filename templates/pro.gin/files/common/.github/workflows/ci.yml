@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: gitleaks/gitleaks-action@v2
       - uses: actions/setup-go@v5
         with:
           go-version: "1.26.5"
@@ -22,3 +23,17 @@ jobs:
       - run: go run golang.org/x/vuln/cmd/govulncheck@latest ./...
       - run: go run github.com/securego/gosec/v2/cmd/gosec@latest ./...
       - run: docker build -t {{projectName}}:ci .
+      - uses: aquasecurity/trivy-action@0.32.0
+        with:
+          image-ref: {{projectName}}:ci
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+      - uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: .
+      - name: Generate Syft SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: {{projectName}}:ci
+          artifact-name: {{projectName}}-sbom.spdx.json
+          format: spdx-json

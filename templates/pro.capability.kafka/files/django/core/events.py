@@ -13,7 +13,9 @@ def _configuration() -> dict[str, object]:
     }
     if username := os.getenv("KAFKA_USERNAME"):
         configuration.update({
-            "security.protocol": "SASL_SSL" if os.getenv("KAFKA_TLS") == "true" else "SASL_PLAINTEXT",
+            "security.protocol": (
+                "SASL_SSL" if os.getenv("KAFKA_TLS") == "true" else "SASL_PLAINTEXT"
+            ),
             "sasl.mechanism": "PLAIN",
             "sasl.username": username,
             "sasl.password": os.environ["KAFKA_PASSWORD"],

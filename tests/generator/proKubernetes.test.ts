@@ -25,6 +25,13 @@ async function generate(stack: ProStack, requested: ProCapability[]) {
 }
 
 describe("Praxis Pro Kubernetes output", () => {
+  it("packages JWT revocation migration into the Go migration job", async () => {
+    const destination = await generate("go-gin", ["kubernetes", "jwt-auth"]);
+    const kustomization = await readFile(path.join(destination, "k8s/base/kustomization.yaml"), "utf8");
+    expect(kustomization).toContain("migrations/000002_jwt.up.sql");
+    expect(await readFile(path.join(destination, "k8s/base/migrations/000002_jwt.up.sql"), "utf8"))
+      .toContain("CREATE TABLE revoked_jwt");
+  });
   it.each(["python-django", "go-gin"] as const)(
     "injects external SMTP configuration into the %s email worker",
     async (stack) => {

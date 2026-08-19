@@ -9,6 +9,7 @@ dependencies = [
   "psycopg[binary,pool]==3.3.4",
   "drf-spectacular==0.30.0",
   "django-cors-headers==4.9.0",
+  "django-filter==25.2",
   "gunicorn==26.0.0",
   "uvicorn==0.52.0",
   "uvicorn-worker==0.4.0",
@@ -26,7 +27,8 @@ dev = [
   "django-stubs[compatible-mypy]==6.0.7",
   "djangorestframework-stubs==3.17.0",
   "bandit==1.9.4",
-  "pip-audit==2.9.0"
+  "pip-audit==2.9.0",
+  # @praxis:dev-dependencies
 ]
 
 [tool.pdm]
@@ -56,3 +58,17 @@ django_settings_module = "config.settings.test"
 [[tool.mypy.overrides]]
 module = ["celery", "celery.*"]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["channels.*", "confluent_kafka", "locust"]
+ignore_missing_imports = true
+disallow_subclassing_any = false
+disallow_untyped_decorators = false
+
+[[tool.mypy.overrides]]
+module = ["core.consumers"]
+disallow_subclassing_any = false
+
+[[tool.mypy.overrides]]
+module = ["ops.load.locustfile"]
+disallow_untyped_calls = false

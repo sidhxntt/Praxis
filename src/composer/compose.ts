@@ -157,6 +157,12 @@ async function copyOverlay(
 }
 
 function replaceTokens(contents: string, config: PraxisConfig): string {
+  const requestedCapabilities = config.projectType === "pro-backend"
+    ? config.pro.requestedCapabilities
+    : [];
+  const resolvedCapabilities = config.projectType === "pro-backend"
+    ? config.pro.resolvedCapabilities
+    : [];
   const tokens: Record<string, string> = {
     projectName: config.name,
     packageManager:
@@ -169,6 +175,10 @@ function replaceTokens(contents: string, config: PraxisConfig): string {
       config.projectType === "pro-backend"
         ? config.pro.stack === "python-django" ? "8000" : "8080"
         : "",
+    requestedCapabilities: requestedCapabilities.join(", ") || "none",
+    impliedCapabilities:
+      resolvedCapabilities.filter((capability) => !requestedCapabilities.includes(capability)).join(", ") || "none",
+    resolvedCapabilities: resolvedCapabilities.join(", ") || "none",
   };
   return Object.entries(tokens).reduce(
     (result, [name, value]) => result.split(`{{${name}}}`).join(value),

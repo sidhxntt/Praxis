@@ -2,7 +2,7 @@ from locust import HttpUser, constant_throughput, task
 
 
 class ApiUser(HttpUser):
-    wait_time = constant_throughput(1)
+    wait_time = constant_throughput(1)  # type: ignore[no-untyped-call]
 
     @task
     def health(self) -> None:

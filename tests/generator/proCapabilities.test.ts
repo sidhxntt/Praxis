@@ -41,9 +41,12 @@ describe("Pro capability parity", () => {
         const settings = await readFile(path.join(destination, "config/settings/base.py"), "utf8");
         expect(settings).toContain("JWTAuthentication");
         expect(settings).toContain('os.environ["JWT_SIGNING_KEY"]');
+        expect(settings).toContain('"BLACKLIST_AFTER_ROTATION": True');
+        expect(settings).toContain('"rest_framework_simplejwt.token_blacklist"');
         const urls = await readFile(path.join(destination, "config/urls.py"), "utf8");
         expect(urls).toContain('path("api/v1/auth/token/"');
         expect(urls).toContain('path("api/v1/auth/token/refresh/"');
+        expect(urls).toContain('path("api/v1/auth/token/revoke/"');
       } else {
         expect(await readFile(path.join(destination, "go.mod"), "utf8"))
           .toContain("github.com/golang-jwt/jwt/v5 v5.3.1");
@@ -51,6 +54,11 @@ describe("Pro capability parity", () => {
         expect(jwt).toContain("jwt.NewWithClaims");
         expect(jwt).toContain("jwt.WithValidMethods");
         expect(jwt).toContain("sub");
+        expect(jwt).toContain("IssuePair");
+        expect(jwt).toContain("RotateRefresh");
+        expect(jwt).toContain("RevocationStore");
+        expect(await readFile(path.join(destination, "db/migrations/000002_jwt.up.sql"), "utf8"))
+          .toContain("revoked_jwt");
         const router = await readFile(path.join(destination, "internal/httpserver/router.go"), "utf8");
         expect(router).toContain('router.GET("/api/v1/auth/me"');
         expect(router).toContain("auth.RequireBearer");
@@ -78,12 +86,14 @@ describe("Pro capability parity", () => {
       const environment = await readFile(path.join(destination, ".env.example"), "utf8");
       expect(environment).toContain("OAUTH_GITHUB_CLIENT_ID=");
       expect(environment).toContain("OAUTH_GITHUB_CLIENT_SECRET=");
+      expect(environment).toContain("OAUTH_GOOGLE_CLIENT_ID=");
 
       if (stack === "python-django") {
         expect(await readFile(path.join(destination, "pyproject.toml"), "utf8"))
           .toContain("django-allauth[socialaccount]==65.14.1");
         const settings = await readFile(path.join(destination, "config/settings/base.py"), "utf8");
         expect(settings).toContain('"allauth.socialaccount.providers.github"');
+        expect(settings).toContain('"allauth.socialaccount.providers.google"');
         expect(settings).toContain("SOCIALACCOUNT_PROVIDERS");
         expect(await readFile(path.join(destination, "config/urls.py"), "utf8"))
           .toContain('path("api/v1/auth/social/", include("allauth.urls"))');
@@ -92,6 +102,7 @@ describe("Pro capability parity", () => {
         expect(module).toContain("github.com/markbates/goth v1.82.0");
         const social = await readFile(path.join(destination, "internal/httpserver/social.go"), "utf8");
         expect(social).toContain("github.New");
+        expect(social).toContain("google.New");
         expect(social).toContain("CompleteUserAuth");
         expect(social).toContain("SESSION_SECRET");
         expect(await readFile(path.join(destination, "internal/httpserver/router.go"), "utf8"))
@@ -289,6 +300,8 @@ describe("Pro capability parity", () => {
       expect(compose).toContain('profiles: ["tools"]');
       if (stack === "python-django") {
         expect(compose).toContain("locustio/locust:2.43.3");
+        expect(await readFile(path.join(destination, "pyproject.toml"), "utf8"))
+          .toContain("locust==2.43.3");
         const scenario = await readFile(path.join(destination, "ops/load/locustfile.py"), "utf8");
         expect(scenario).toContain("constant_throughput");
         expect(scenario).toContain("/api/v1/health/live");

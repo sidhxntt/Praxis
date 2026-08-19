@@ -16,7 +16,9 @@ def configure_telemetry() -> None:
     if _configured or not endpoint:
         return
     provider = TracerProvider(
-        resource=Resource.create({SERVICE_NAME: os.getenv("OTEL_SERVICE_NAME", "{{projectName}}")})
+        resource=Resource.create(
+            {SERVICE_NAME: os.getenv("OTEL_SERVICE_NAME", "{{projectName}}")}
+        )
     )
     provider.add_span_processor(
         BatchSpanProcessor(OTLPSpanExporter(endpoint=f"{endpoint.rstrip('/')}/v1/traces"))

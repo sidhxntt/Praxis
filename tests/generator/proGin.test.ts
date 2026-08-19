@@ -57,6 +57,9 @@ describe("Go Gin Pro core", () => {
 
     const dockerfile = await readFile(path.join(destination, "Dockerfile"), "utf8");
     expect(dockerfile).toContain("golang:1.26-alpine");
+    expect(dockerfile).toContain("go mod tidy");
     expect(dockerfile).toContain("USER 65532:65532");
+    expect(await readFile(path.join(destination, ".dockerignore"), "utf8"))
+      .toContain("**/.terraform");
   });
 });

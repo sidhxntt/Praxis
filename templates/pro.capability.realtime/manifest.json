@@ -25,8 +25,14 @@
     },
     {
       "scope": "root", "file": "config/asgi.py",
-      "find": "from django.core.asgi import get_asgi_application\n\nos.environ.setdefault(\"DJANGO_SETTINGS_MODULE\", \"config.settings.production\")\napplication = get_asgi_application()",
-      "replace": "from channels.auth import AuthMiddlewareStack\nfrom channels.routing import ProtocolTypeRouter, URLRouter\nfrom django.core.asgi import get_asgi_application\n\nos.environ.setdefault(\"DJANGO_SETTINGS_MODULE\", \"config.settings.production\")\ndjango_application = get_asgi_application()\n\nfrom core.routing import websocket_urlpatterns  # noqa: E402\n\napplication = ProtocolTypeRouter({\n    \"http\": django_application,\n    \"websocket\": AuthMiddlewareStack(URLRouter(websocket_urlpatterns)),\n})",
+      "find": "from django.core.asgi import get_asgi_application\n",
+      "replace": "from channels.auth import AuthMiddlewareStack\nfrom channels.routing import ProtocolTypeRouter, URLRouter\nfrom django.core.asgi import get_asgi_application\n",
+      "proStack": "python-django", "capability": "realtime"
+    },
+    {
+      "scope": "root", "file": "config/asgi.py",
+      "find": "application = get_asgi_application()",
+      "replace": "django_application = get_asgi_application()\n\nfrom core.routing import websocket_urlpatterns  # noqa: E402\n\napplication = ProtocolTypeRouter({\n    \"http\": django_application,\n    \"websocket\": AuthMiddlewareStack(URLRouter(websocket_urlpatterns)),\n})",
       "proStack": "python-django", "capability": "realtime"
     },
     {

@@ -10,6 +10,7 @@
     "prod": "node ./dist/index.js",
     "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc && node -e \"require('node:fs').chmodSync('dist/index.js',0o755)\"",
     "test": "vitest run",
+    "test:pro": "vitest run --exclude '.worktrees/**' tests/generator/pro*.test.ts",
     "test:watch": "vitest",
     "check": "npm run test && npm run build",
     "prepublishOnly": "npm run check"

@@ -2,6 +2,8 @@
 
 Praxis Flow is an interactive, composable CLI for scaffolding modern frontend, backend, and fullstack JavaScript or TypeScript projects.
 
+It also includes Praxis Pro, a capability-driven production backend generator for Django/DRF and Go/Gin.
+
 ## Features
 
 - Next.js or Vite frontends
@@ -14,6 +16,51 @@ Praxis Flow is an interactive, composable CLI for scaffolding modern frontend, b
 - npm, pnpm, Yarn, and Bun support
 - Reproducible JSON configuration files
 - Atomic generation: failed projects are cleaned up
+- Praxis Pro production backends with Docker Compose and optional Kubernetes/Terraform
+
+## Praxis Pro
+
+Select **Production Backend (Praxis Pro)** in the normal `praxiflow` questionnaire. Pro asks for Django/DRF or Go/Gin, then lets you select capabilities such as authentication, authorization, caching, jobs, email, storage, search, realtime, Kafka, observability, security, Kubernetes, and Terraform. Tools are opinionated defaults; the user selects capabilities rather than vendors.
+
+Terraform is opt-in. When selected, Praxis asks for AWS, Azure, or GCP and generates cloud-specific infrastructure. Kubernetes is implied by Terraform, while Docker Compose is always generated as the local production-shaped environment. Requested and implied capabilities are recorded separately in `praxis.config.json` and the generated README.
+
+Example schema-version-2 configuration:
+
+```json
+{
+  "schemaVersion": 2,
+  "name": "payments-api",
+  "projectType": "pro-backend",
+  "pro": {
+    "stack": "go-gin",
+    "requestedCapabilities": [
+      "jwt-auth",
+      "redis-cache",
+      "background-jobs",
+      "prometheus",
+      "terraform"
+    ],
+    "resolvedCapabilities": [
+      "jwt-auth",
+      "redis-cache",
+      "background-jobs",
+      "prometheus",
+      "kubernetes",
+      "autoscaling",
+      "high-availability",
+      "edge-protection",
+      "cloud-secrets",
+      "database-resilience",
+      "terraform"
+    ],
+    "cloud": "aws"
+  },
+  "installDependencies": true,
+  "initializeGit": true
+}
+```
+
+The generated project contains pinned dependencies, health/readiness/startup probes, hardened containers, CI security gates, operational runbooks, selected service wiring, and deployment artifacts matching the effective capability set.
 
 ## Installation
 

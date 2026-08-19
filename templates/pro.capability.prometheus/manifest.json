@@ -67,7 +67,7 @@
       "scope": "root",
       "file": "internal/httpserver/router.go",
       "find": "\t// @praxis:imports",
-      "replace": "\t\"github.com/prometheus/client_golang/prometheus/promhttp\"\n\t// @praxis:imports",
+      "replace": "\n\t\"github.com/prometheus/client_golang/prometheus/promhttp\"\n\t// @praxis:imports",
       "proStack": "go-gin",
       "capability": "prometheus"
     },

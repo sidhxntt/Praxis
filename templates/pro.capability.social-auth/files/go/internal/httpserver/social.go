@@ -9,14 +9,20 @@ import (
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/github"
+	"github.com/markbates/goth/providers/google"
 )
 
 func registerSocialRoutes(router *gin.Engine) {
 	goth.UseProviders(github.New(
 		os.Getenv("OAUTH_GITHUB_CLIENT_ID"),
 		os.Getenv("OAUTH_GITHUB_CLIENT_SECRET"),
-		os.Getenv("OAUTH_CALLBACK_URL"),
+		os.Getenv("OAUTH_GITHUB_CALLBACK_URL"),
 		"user:email",
+	), google.New(
+		os.Getenv("OAUTH_GOOGLE_CLIENT_ID"),
+		os.Getenv("OAUTH_GOOGLE_CLIENT_SECRET"),
+		os.Getenv("OAUTH_GOOGLE_CALLBACK_URL"),
+		"profile", "email",
 	))
 	store := sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
 	store.Options = &sessions.Options{Path: "/", HttpOnly: true, Secure: true, SameSite: http.SameSiteLaxMode, MaxAge: 600}

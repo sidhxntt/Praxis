@@ -8,8 +8,15 @@ permissions:
 jobs:
   application:
     runs-on: ubuntu-latest
+    env:
+      JWT_SIGNING_KEY: ci-only-jwt-signing-key-at-least-32-bytes
+      OAUTH_GITHUB_CLIENT_ID: ci
+      OAUTH_GITHUB_CLIENT_SECRET: ci
+      OAUTH_GOOGLE_CLIENT_ID: ci
+      OAUTH_GOOGLE_CLIENT_SECRET: ci
     steps:
       - uses: actions/checkout@v4
+      - uses: gitleaks/gitleaks-action@v2
       - uses: pdm-project/setup-pdm@v4
         with:
           python-version: "3.13"
@@ -22,3 +29,17 @@ jobs:
       - run: pdm run python manage.py makemigrations --check --dry-run
       - run: DJANGO_SETTINGS_MODULE=config.settings.production DJANGO_SECRET_KEY=ci-only-secret-key-ci-only-secret-key-ci-only-secret-key ALLOWED_HOSTS=example.com pdm run python manage.py check --deploy
       - run: docker build -t {{projectName}}:ci .
+      - uses: aquasecurity/trivy-action@0.32.0
+        with:
+          image-ref: {{projectName}}:ci
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+      - uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: .
+      - name: Generate Syft SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: {{projectName}}:ci
+          artifact-name: {{projectName}}-sbom.spdx.json
+          format: spdx-json

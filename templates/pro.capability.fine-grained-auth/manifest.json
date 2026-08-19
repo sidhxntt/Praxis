@@ -20,7 +20,7 @@
     {
       "scope": "root", "file": "internal/httpserver/router.go",
       "find": "\t// @praxis:imports",
-      "replace": "\t\"example.com/{{projectName}}/internal/authorization\"\n\t// @praxis:imports",
+      "replace": "\n\t\"example.com/{{projectName}}/internal/authorization\"\n\t// @praxis:imports",
       "proStack": "go-gin", "capability": "fine-grained-auth"
     },
     {

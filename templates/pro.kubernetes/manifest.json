@@ -16,6 +16,12 @@
     },
     {
       "scope": "root",
+      "source": "files/go-jwt",
+      "proStack": "go-gin",
+      "capability": "jwt-auth"
+    },
+    {
+      "scope": "root",
       "source": "files/django-worker",
       "proStack": "python-django",
       "capability": "background-jobs"
@@ -169,6 +175,12 @@
       "find": "  # @praxis:images",
       "replace": "configMapGenerator:\n  - name: database-migrations\n    files:\n      - migrations/000001_core.up.sql\n  # @praxis:images",
       "proStack": "go-gin"
+    },
+    {
+      "scope": "root", "file": "k8s/base/kustomization.yaml",
+      "find": "      - migrations/000001_core.up.sql",
+      "replace": "      - migrations/000001_core.up.sql\n      - migrations/000002_jwt.up.sql",
+      "proStack": "go-gin", "capability": "jwt-auth"
     },
     {
       "scope": "root",

@@ -27,32 +27,32 @@
     {
       "scope": "root",
       "file": "config/asgi.py",
-      "find": "from django.core.asgi import get_asgi_application\n",
-      "replace": "from django.core.asgi import get_asgi_application\n\nfrom core.telemetry import configure_telemetry\n",
+      "find": "# @praxis:imports",
+      "replace": "\nfrom core.telemetry import configure_telemetry\n\n# @praxis:imports",
       "proStack": "python-django",
       "capability": "opentelemetry"
     },
     {
       "scope": "root",
       "file": "config/asgi.py",
-      "find": "application = get_asgi_application()",
-      "replace": "configure_telemetry()\napplication = get_asgi_application()",
+      "find": "# @praxis:startup",
+      "replace": "configure_telemetry()",
       "proStack": "python-django",
       "capability": "opentelemetry"
     },
     {
       "scope": "root",
       "file": "config/wsgi.py",
-      "find": "from django.core.wsgi import get_wsgi_application\n",
-      "replace": "from django.core.wsgi import get_wsgi_application\n\nfrom core.telemetry import configure_telemetry\n",
+      "find": "# @praxis:imports",
+      "replace": "\nfrom core.telemetry import configure_telemetry\n\n# @praxis:imports",
       "proStack": "python-django",
       "capability": "opentelemetry"
     },
     {
       "scope": "root",
       "file": "config/wsgi.py",
-      "find": "application = get_wsgi_application()",
-      "replace": "configure_telemetry()\napplication = get_wsgi_application()",
+      "find": "# @praxis:startup",
+      "replace": "configure_telemetry()",
       "proStack": "python-django",
       "capability": "opentelemetry"
     },
@@ -76,7 +76,7 @@
       "scope": "root",
       "file": "cmd/api/main.go",
       "find": "\t// @praxis:imports",
-      "replace": "\t\"example.com/{{projectName}}/internal/telemetry\"\n\t// @praxis:imports",
+      "replace": "\n\t\"example.com/{{projectName}}/internal/telemetry\"\n\t// @praxis:imports",
       "proStack": "go-gin",
       "capability": "opentelemetry"
     },
@@ -92,7 +92,7 @@
       "scope": "root",
       "file": "internal/httpserver/router.go",
       "find": "\t// @praxis:imports",
-      "replace": "\t\"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin\"\n\t// @praxis:imports",
+      "replace": "\n\t\"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin\"\n\t// @praxis:imports",
       "proStack": "go-gin",
       "capability": "opentelemetry"
     },
