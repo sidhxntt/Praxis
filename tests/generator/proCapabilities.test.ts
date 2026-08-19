@@ -101,6 +101,29 @@ describe("Pro capability parity", () => {
   );
 
   it.each(["python-django", "go-gin"] as const)(
+    "wires fine-grained authorization into the authenticated %s runtime",
+    async (stack) => {
+      const destination = await generate(stack, ["fine-grained-auth"]);
+      expect(await readFile(path.join(destination, ".env.example"), "utf8"))
+        .toContain("JWT_SIGNING_KEY=");
+      if (stack === "python-django") {
+        const permissions = await readFile(path.join(destination, "core/permissions.py"), "utf8");
+        expect(permissions).toContain("class HasScopedPermission");
+        expect(permissions).toContain("required_permissions");
+        expect(await readFile(path.join(destination, "config/settings/base.py"), "utf8"))
+          .toContain("core.permissions.HasScopedPermission");
+      } else {
+        expect(await readFile(path.join(destination, "go.mod"), "utf8"))
+          .toContain("github.com/casbin/casbin/v2");
+        const authorization = await readFile(path.join(destination, "internal/authorization/casbin.go"), "utf8");
+        expect(authorization).toContain("casbin.NewEnforcer");
+        expect(authorization).toContain("Enforce");
+        expect(authorization).toContain("auth.SubjectKey");
+      }
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
     "wires Redis into the %s runtime and local Compose stack",
     async (stack) => {
       const destination = await generate(stack, ["redis-cache"]);

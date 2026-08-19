@@ -125,6 +125,12 @@ describe("Praxis Pro configuration", () => {
 });
 
 describe("resolveProCapabilities", () => {
+  it("adds JWT authentication for fine-grained authorization", () => {
+    expect(resolveProCapabilities(["fine-grained-auth"])).toEqual([
+      "jwt-auth",
+      "fine-grained-auth",
+    ]);
+  });
   it("uses Redis for background jobs", () => {
     expect(resolveProCapabilities(["background-jobs"])).toEqual([
       "redis-cache",
