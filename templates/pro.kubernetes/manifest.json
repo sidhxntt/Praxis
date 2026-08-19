@@ -50,6 +50,12 @@
   ],
   "patches": [
     {
+      "scope": "root", "file": "k8s/base/deployment.yaml",
+      "find": "            # @praxis:container-env",
+      "replace": "            - name: KAFKA_BROKERS\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: kafka-brokers } }\n            - name: KAFKA_USERNAME\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: kafka-username, optional: true } }\n            - name: KAFKA_PASSWORD\n              valueFrom: { secretKeyRef: { name: praxis-secrets, key: kafka-password, optional: true } }\n            - name: KAFKA_TLS\n              value: \"true\"\n            # @praxis:container-env",
+      "capability": "kafka"
+    },
+    {
       "scope": "root",
       "file": "k8s/base/worker.yaml",
       "find": "            - name: REDIS_URL\n              value: redis://redis:6379/0",

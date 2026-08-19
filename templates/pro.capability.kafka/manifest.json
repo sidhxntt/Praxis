@@ -1,0 +1,28 @@
+{
+  "id": "pro.capability.kafka",
+  "overlays": [
+    { "scope": "root", "source": "files/django", "proStack": "python-django", "capability": "kafka" },
+    { "scope": "root", "source": "files/go", "proStack": "go-gin", "capability": "kafka" }
+  ],
+  "patches": [
+    {
+      "scope": "root", "file": "pyproject.toml",
+      "find": "  # @praxis:dependencies",
+      "replace": "  \"confluent-kafka==2.12.2\",\n  # @praxis:dependencies",
+      "proStack": "python-django", "capability": "kafka"
+    },
+    {
+      "scope": "root", "file": "go.mod",
+      "find": "\t// @praxis:dependencies",
+      "replace": "\tgithub.com/twmb/franz-go v1.21.6\n\t// @praxis:dependencies",
+      "proStack": "go-gin", "capability": "kafka"
+    }
+  ],
+  "env": [
+    {
+      "scope": "root",
+      "keys": ["KAFKA_BROKERS=localhost:19092", "KAFKA_TOPIC=application-events", "KAFKA_GROUP_ID={{projectName}}", "KAFKA_USERNAME=", "KAFKA_PASSWORD=", "KAFKA_TLS=false"],
+      "capability": "kafka"
+    }
+  ]
+}

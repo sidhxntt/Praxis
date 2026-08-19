@@ -179,6 +179,33 @@ describe("Pro capability parity", () => {
   );
 
   it.each(["python-django", "go-gin"] as const)(
+    "wires Kafka event streaming into the %s runtime and local broker",
+    async (stack) => {
+      const destination = await generate(stack, ["kafka"]);
+      const compose = await readFile(path.join(destination, "docker-compose.yml"), "utf8");
+      expect(compose).toContain("docker.redpanda.com/redpandadata/redpanda:v25.3.6");
+      expect(compose).toContain("KAFKA_BROKERS: redpanda:9092");
+      expect(compose).toContain("rpk cluster health");
+      expect(await readFile(path.join(destination, ".env.example"), "utf8"))
+        .toContain("KAFKA_BROKERS=localhost:19092");
+      if (stack === "python-django") {
+        expect(await readFile(path.join(destination, "pyproject.toml"), "utf8"))
+          .toContain("confluent-kafka==2.12.2");
+        const events = await readFile(path.join(destination, "core/events.py"), "utf8");
+        expect(events).toContain("Producer");
+        expect(events).toContain("Consumer");
+      } else {
+        expect(await readFile(path.join(destination, "go.mod"), "utf8"))
+          .toContain("github.com/twmb/franz-go v1.21.6");
+        const events = await readFile(path.join(destination, "internal/events/kafka.go"), "utf8");
+        expect(events).toContain("kgo.NewClient");
+        expect(events).toContain("ProduceSync");
+        expect(events).toContain("PollFetches");
+      }
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
     "wires Redis into the %s runtime and local Compose stack",
     async (stack) => {
       const destination = await generate(stack, ["redis-cache"]);

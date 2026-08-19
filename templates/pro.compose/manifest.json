@@ -6,6 +6,30 @@
   ],
   "patches": [
     {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "      # @praxis:api-environment",
+      "replace": "      KAFKA_BROKERS: redpanda:9092\n      KAFKA_TOPIC: application-events\n      KAFKA_GROUP_ID: {{projectName}}\n      # @praxis:api-environment",
+      "capability": "kafka"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "      # @praxis:api-dependencies",
+      "replace": "      redpanda:\n        condition: service_healthy\n      # @praxis:api-dependencies",
+      "capability": "kafka"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  redpanda:\n    image: docker.redpanda.com/redpandadata/redpanda:v25.3.6\n    command: [\"redpanda\", \"start\", \"--mode\", \"dev-container\", \"--smp\", \"1\", \"--memory\", \"1G\", \"--reserve-memory\", \"0M\", \"--node-id\", \"0\", \"--kafka-addr\", \"internal://0.0.0.0:9092,external://0.0.0.0:19092\", \"--advertise-kafka-addr\", \"internal://redpanda:9092,external://localhost:19092\"]\n    ports:\n      - \"19092:19092\"\n      - \"19644:9644\"\n    volumes:\n      - redpanda-data:/var/lib/redpanda/data\n    healthcheck:\n      test: [\"CMD-SHELL\", \"rpk cluster health | grep -q Healthy\"]\n      interval: 10s\n      timeout: 5s\n      retries: 12\n    restart: unless-stopped\n  # @praxis:services",
+      "capability": "kafka"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "volumes:\n  postgres-data:",
+      "replace": "volumes:\n  postgres-data:\n  redpanda-data:",
+      "capability": "kafka"
+    },
+    {
       "scope": "root",
       "file": "docker-compose.yml",
       "find": "      # @praxis:api-environment",
