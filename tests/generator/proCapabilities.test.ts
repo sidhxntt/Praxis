@@ -302,6 +302,31 @@ describe("Pro capability parity", () => {
   );
 
   it.each(["python-django", "go-gin"] as const)(
+    "adds privacy-safe compliance audit events for %s",
+    async (stack) => {
+      const destination = await generate(stack, ["compliance-audit"]);
+      const controls = await readFile(path.join(destination, "ops/compliance/controls.md"), "utf8");
+      expect(controls).toContain("SOC 2");
+      expect(controls).toContain("retention");
+      expect(await readFile(path.join(destination, "ops/compliance/audit-event.schema.json"), "utf8"))
+        .toContain('"request_id"');
+      if (stack === "python-django") {
+        const audit = await readFile(path.join(destination, "core/audit.py"), "utf8");
+        expect(audit).toContain('"event_type": "audit.http_mutation"');
+        expect(audit).not.toContain("request.body");
+        expect(await readFile(path.join(destination, "config/settings/base.py"), "utf8"))
+          .toContain("core.audit.AuditMiddleware");
+      } else {
+        const audit = await readFile(path.join(destination, "internal/httpserver/audit.go"), "utf8");
+        expect(audit).toContain('"audit.http_mutation"');
+        expect(audit).not.toContain("Request.Body");
+        expect(await readFile(path.join(destination, "internal/httpserver/router.go"), "utf8"))
+          .toContain("auditTrail(log)");
+      }
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
     "wires Redis into the %s runtime and local Compose stack",
     async (stack) => {
       const destination = await generate(stack, ["redis-cache"]);

@@ -1,0 +1,31 @@
+{
+  "id": "pro.capability.compliance-audit",
+  "overlays": [
+    { "scope": "root", "source": "files/common", "capability": "compliance-audit" },
+    { "scope": "root", "source": "files/django", "proStack": "python-django", "capability": "compliance-audit" },
+    { "scope": "root", "source": "files/go", "proStack": "go-gin", "capability": "compliance-audit" }
+  ],
+  "patches": [
+    {
+      "scope": "root", "file": "config/settings/base.py",
+      "find": "    # @praxis:middleware-after",
+      "replace": "    \"core.audit.AuditMiddleware\",\n    # @praxis:middleware-after",
+      "proStack": "python-django", "capability": "compliance-audit"
+    },
+    {
+      "scope": "root", "file": "core/logging.py",
+      "find": "        if record.exc_info:",
+      "replace": "        if audit_event := getattr(record, \"audit_event\", None):\n            payload.update(audit_event)\n        if record.exc_info:",
+      "proStack": "python-django", "capability": "compliance-audit"
+    },
+    {
+      "scope": "root", "file": "internal/httpserver/router.go",
+      "find": "\trouter.Use(gin.Recovery(), requestContext(log))",
+      "replace": "\trouter.Use(gin.Recovery(), requestContext(log), auditTrail(log))",
+      "proStack": "go-gin", "capability": "compliance-audit"
+    }
+  ],
+  "env": [
+    { "scope": "root", "keys": ["AUDIT_RETENTION_DAYS=365"], "capability": "compliance-audit" }
+  ]
+}
