@@ -38,6 +38,8 @@
       "proStack": "go-gin",
       "capability": "scheduled-jobs"
     },
+    { "scope": "root", "source": "files/django-seed", "proStack": "python-django", "capability": "seed-data" },
+    { "scope": "root", "source": "files/go-seed", "proStack": "go-gin", "capability": "seed-data" },
     { "scope": "root", "source": "files/redis", "capability": "redis-cache" },
     { "scope": "root", "source": "files/prometheus", "capability": "prometheus" },
     { "scope": "root", "source": "files/opentelemetry", "capability": "opentelemetry" },

@@ -37,6 +37,18 @@ describe("Praxis Pro Kubernetes output", () => {
     },
   );
   it.each(["python-django", "go-gin"] as const)(
+    "emits an opt-in suspended seed job for %s",
+    async (stack) => {
+      const destination = await generate(stack, ["kubernetes", "seed-data"]);
+      const seed = await readFile(path.join(destination, "k8s/tools/seed-job.yaml"), "utf8");
+      expect(seed).toContain("kind: Job");
+      expect(seed).toContain("suspend: true");
+      expect(seed).toContain(stack === "python-django" ? "manage.py" : "/seed");
+      const base = await readFile(path.join(destination, "k8s/base/kustomization.yaml"), "utf8");
+      expect(base).not.toContain("tools/seed-job.yaml");
+    },
+  );
+  it.each(["python-django", "go-gin"] as const)(
     "generates a secure, stack-aware %s application workload",
     async (stack) => {
       const destination = await generate(stack, ["kubernetes"]);

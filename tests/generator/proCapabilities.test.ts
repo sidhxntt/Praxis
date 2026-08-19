@@ -229,6 +229,27 @@ describe("Pro capability parity", () => {
   );
 
   it.each(["python-django", "go-gin"] as const)(
+    "adds an explicit idempotent seed command for %s",
+    async (stack) => {
+      const destination = await generate(stack, ["seed-data"]);
+      const compose = await readFile(path.join(destination, "docker-compose.yml"), "utf8");
+      expect(compose).toContain("seed:");
+      expect(compose).toContain('profiles: ["tools"]');
+      if (stack === "python-django") {
+        const seed = await readFile(path.join(destination, "core/management/commands/seed.py"), "utf8");
+        expect(seed).toContain("update_or_create");
+        expect(seed).toContain("SEED_ADMIN_PASSWORD");
+        expect(compose).toContain('command: ["python", "manage.py", "seed"]');
+      } else {
+        const seed = await readFile(path.join(destination, "cmd/seed/main.go"), "utf8");
+        expect(seed).toContain("ON CONFLICT");
+        expect(seed).toContain("SEED_METADATA_VALUE");
+        expect(compose).toContain('entrypoint: ["/seed"]');
+      }
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
     "wires Redis into the %s runtime and local Compose stack",
     async (stack) => {
       const destination = await generate(stack, ["redis-cache"]);

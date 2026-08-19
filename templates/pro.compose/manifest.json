@@ -7,6 +7,18 @@
   "patches": [
     {
       "scope": "root", "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  seed:\n    profiles: [\"tools\"]\n    build:\n      context: .\n    environment:\n      DJANGO_SETTINGS_MODULE: config.settings.development\n      DJANGO_SECRET_KEY: local-development-only-secret-key\n      DATABASE_HOST: postgres\n      DATABASE_NAME: app\n      DATABASE_USER: app\n      DATABASE_PASSWORD: app\n      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:-}\n      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-}\n    command: [\"python\", \"manage.py\", \"seed\"]\n    depends_on:\n      postgres:\n        condition: service_healthy\n    restart: \"no\"\n  # @praxis:services",
+      "proStack": "python-django", "capability": "seed-data"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
+      "find": "  # @praxis:services",
+      "replace": "  seed:\n    profiles: [\"tools\"]\n    build:\n      context: .\n    entrypoint: [\"/seed\"]\n    environment:\n      DATABASE_URL: postgres://app:app@postgres:5432/app?sslmode=disable\n      SEED_METADATA_VALUE: ${SEED_METADATA_VALUE:-}\n    depends_on:\n      migrate:\n        condition: service_completed_successfully\n    restart: \"no\"\n  # @praxis:services",
+      "proStack": "go-gin", "capability": "seed-data"
+    },
+    {
+      "scope": "root", "file": "docker-compose.yml",
       "find": "      # @praxis:api-environment",
       "replace": "      KAFKA_BROKERS: redpanda:9092\n      KAFKA_TOPIC: application-events\n      KAFKA_GROUP_ID: {{projectName}}\n      # @praxis:api-environment",
       "capability": "kafka"
