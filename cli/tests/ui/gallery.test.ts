@@ -14,10 +14,10 @@ async function galleryRoot(): Promise<string> {
   const root = await mkdtemp(path.join(os.tmpdir(), "praxis-gallery-"));
   roots.push(root);
   await mkdir(root, { recursive: true });
+  await mkdir(path.join(root, "_next", "static", "chunks"), { recursive: true });
   await Promise.all([
-    writeFile(path.join(root, "index.html"), "<!doctype html><title>Gallery</title>"),
-    writeFile(path.join(root, "gallery.css"), "body{}"),
-    writeFile(path.join(root, "gallery.js"), "void 0;"),
+    writeFile(path.join(root, "index.html"), "<!doctype html><title>Gallery</title><script src=\"/_next/static/chunks/app.js\"></script>"),
+    writeFile(path.join(root, "_next", "static", "chunks", "app.js"), "void 0;"),
   ]);
   return root;
 }
@@ -32,11 +32,15 @@ describe("loopback UI gallery", () => {
     expect(url.hostname).toBe("127.0.0.1");
     expect(Number(url.port)).toBeGreaterThan(0);
     expect(await (await fetch(session.url)).text()).toContain("Gallery");
+    expect(await (await fetch(`${session.url}_next/static/chunks/app.js`)).text())
+      .toBe("void 0;");
+    expect(await fetch(`${session.url}_next/static/../index.html`))
+      .toMatchObject({ status: 404 });
     const catalog = await (await fetch(`${session.url}catalog.json`)).json();
     expect(catalog).toHaveLength(40);
     expect(await fetch(`${session.url}../package.json`)).toMatchObject({ status: 404 });
     expect(await fetch(`${session.url}%2e%2e%2fpackage.json`)).toMatchObject({ status: 404 });
-    expect(await fetch(`${session.url}gallery.css`, { method: "PUT" }))
+    expect(await fetch(`${session.url}_next/static/chunks/app.js`, { method: "PUT" }))
       .toMatchObject({ status: 405 });
     await session.close();
     await expect(session.selection).rejects.toThrow("closed");

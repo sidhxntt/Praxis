@@ -29,6 +29,10 @@ describe("published package contents", () => {
     }
     expect(files).toContain("templates/ui.catalog/catalog.json");
     expect(files).toContain("templates/ui.catalog/gallery/index.html");
+    expect(files.some((file) => file.startsWith("templates/ui.catalog/gallery/_next/static/") && file.endsWith(".js")))
+      .toBe(true);
+    expect(files.some((file) => file.startsWith("templates/ui.catalog/gallery/_next/static/") && file.endsWith(".css")))
+      .toBe(true);
     expect(files.filter((file) => file.startsWith("templates/ui.catalog/gallery/previews/")))
       .toHaveLength(120);
     expect(files.some((file) => file.startsWith("templates/designs/"))).toBe(false);

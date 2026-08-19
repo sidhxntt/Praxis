@@ -1,0 +1,7 @@
+{
+  "name": "praxis-gallery-app",
+  "private": true,
+  "scripts": {
+    "build": "next build"
+  }
+}
