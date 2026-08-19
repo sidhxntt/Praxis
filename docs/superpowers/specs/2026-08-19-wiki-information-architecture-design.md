@@ -86,6 +86,60 @@ The generated GitHub Wiki sidebar groups every managed page under **Praxis Core 
 
 Every detailed page links upward to its domain overview and laterally only to directly related material. Core pages link to template pages when explaining output semantics; template pages link back to Core only when explaining selection or composition.
 
+## Agent context contract
+
+GitHub Wiki publication does not imply that an agent has loaded every page. Praxis therefore provides an explicit, bounded context-loading contract for template work.
+
+### Canonical entry point
+
+`Template Agent Guide` is the first Wiki page for any agent creating, changing, reviewing, or debugging generated templates. It explains how to identify the selected stack and capabilities, load the corresponding context bundle, verify claims against source, and run the correct contract tests.
+
+Repository-level `AGENTS.md` instructions direct template-focused agents to the local source for this page and require them to load the appropriate bundle before changing template behavior. Repository-local Markdown remains authoritative when it is available; the rendered GitHub Wiki provides the same context for agents operating from GitHub.
+
+### Machine-readable context map
+
+A versioned `docs/template-context.json` maps each Standard module family, Pro stack, Pro capability, and infrastructure target to:
+
+- required architecture pages;
+- prerequisite context bundles;
+- configuration and resolver sources;
+- manifests and overlay roots;
+- generated runtime entry points;
+- dependency and capability relationships;
+- contract, generation, and runtime tests.
+
+The map is a routing index, not a replacement for prose or source inspection. An agent loads the small canonical guide first, resolves the bounded bundle for the selected stack/capabilities, reads every required page, and then inspects the listed authoritative code.
+
+### Context bundles
+
+At minimum, bounded bundles exist for:
+
+- Standard frontend;
+- Standard Express backend and fullstack integration;
+- Django/DRF Praxis Pro;
+- Go/Gin Praxis Pro;
+- shared operational capabilities;
+- Docker Compose;
+- Kubernetes;
+- Terraform shared foundations;
+- Terraform for AWS, Azure, and GCP.
+
+A capability bundle may declare prerequisites. For example, a scheduled-jobs bundle also loads background-jobs and Redis-cache context because those dependencies are resolved by Praxis Pro.
+
+### Coverage enforcement
+
+Documentation CI validates that:
+
+- every template module family is represented in `template-context.json`;
+- every selectable Pro capability has a context entry;
+- every supported Terraform cloud has a context entry;
+- all referenced pages, source paths, manifest roots, and test paths exist;
+- context dependency references are valid and acyclic;
+- every managed context page is rendered into the GitHub Wiki;
+- the canonical agent guide and context map remain discoverable from Home and the Wiki sidebar.
+
+This guarantees documentation coverage and deterministic context discovery. It does not claim that an arbitrary external agent automatically reads the Wiki; the agent or its repository instructions must initiate the documented loading sequence.
+
 ## Accuracy and maintenance
 
 - Markdown under `docs/` remains the source of truth.
@@ -105,4 +159,7 @@ The redesign is complete when:
 - infrastructure pages explain how Compose, Kubernetes, and Terraform relate to application code;
 - no managed documentation links are broken;
 - the Wiki renderer includes every intended page exactly once;
+- the Template Agent Guide defines the complete context-loading sequence;
+- `template-context.json` covers all template families, Pro capabilities, and supported infrastructure targets;
+- CI rejects missing, stale, or broken context-map entries;
 - documentation tests and the repository check suite pass.
