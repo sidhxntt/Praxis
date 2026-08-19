@@ -55,4 +55,4 @@ jobs:
       - run: npm ci
       - run: npm --workspace cli exec -- playwright install --with-deps chromium
       - run: npm --workspace cli run ui:verify
-      - run: npm --workspace cli exec -- vitest run tests/ui/accessibility.test.ts tests/ui/responsive.test.ts tests/ui/visual.test.ts
+      - run: npm --workspace cli exec -- vitest run tests/ui/accessibility.test.ts tests/ui/responsive.test.ts tests/ui/visual.test.ts tests/ui/previews.test.ts

@@ -18,11 +18,6 @@ async function main() {
       "--templates-root", templates,
       "--output", temporary,
     ]);
-    await run(process.execPath, [
-      path.join(repository, "scripts/ui/render-previews.mjs"),
-      "--output", path.join(temporary, "ui.catalog"),
-    ], { cwd: repository, maxBuffer: 10 * 1024 * 1024 });
-
     const expected = await generatedSnapshot(templates);
     const actual = await generatedSnapshot(temporary);
     const stale = new Set([...Object.keys(expected), ...Object.keys(actual)]);
@@ -32,7 +27,7 @@ async function main() {
       process.exitCode = 1;
       return;
     }
-    process.stdout.write(`UI adapters and previews are current (${Object.keys(expected).length} files).\n`);
+    process.stdout.write(`UI adapter sources are current (${Object.keys(expected).length} files).\n`);
   } finally {
     await rm(temporary, { recursive: true, force: true });
   }
@@ -46,8 +41,6 @@ async function generatedSnapshot(root) {
       await addFile(snapshot, root, path.join(entry.name, "manifest.json"));
     }
   }
-  await addTree(snapshot, root, "ui.catalog/gallery/previews");
-  await addFile(snapshot, root, "ui.catalog/catalog.json");
   return snapshot;
 }
 
