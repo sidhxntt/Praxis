@@ -8,7 +8,11 @@ describe("PraxisConfig", () => {
       name: "acme",
       projectType: "fullstack",
       language: "typescript",
-      frontend: { framework: "next", styling: "tailwind-shadcn" },
+      frontend: {
+        framework: "next",
+        styling: "tailwind-shadcn",
+        ui: { mode: "starter" },
+      },
       backend: {
         framework: "express",
         database: "postgres",
@@ -76,6 +80,66 @@ describe("PraxisConfig", () => {
     config.deployment = ["docker", "docker"];
     expect(() => validateConfig(config)).toThrow(
       "deployment targets must be unique",
+    );
+  });
+
+  it.each(["next", "vite", "vue", "astro"] as const)(
+    "accepts JavaScript and TypeScript UI templates for %s",
+    (framework) => {
+      for (const language of ["javascript", "typescript"] as const) {
+        const config = quickConfig("acme");
+        config.language = language;
+        config.frontend = {
+          framework,
+          styling: "tailwind-shadcn",
+          ui: { mode: "template", style: "apple" },
+        };
+        expect(validateConfig(config).frontend?.ui).toEqual({
+          mode: "template",
+          style: "apple",
+        });
+      }
+    },
+  );
+
+  it("accepts Angular templates in TypeScript projects", () => {
+    const config = quickConfig("acme");
+    config.frontend = {
+      framework: "angular",
+      styling: "tailwind-shadcn",
+      ui: { mode: "template", style: "apple" },
+    };
+    expect(validateConfig(config).frontend?.framework).toBe("angular");
+  });
+
+  it("rejects Angular templates in JavaScript projects with guidance", () => {
+    const config = quickConfig("acme");
+    config.language = "javascript";
+    config.frontend = {
+      framework: "angular",
+      styling: "tailwind-shadcn",
+      ui: { mode: "starter" },
+    };
+    expect(() => validateConfig(config)).toThrow(
+      "Angular templates require TypeScript",
+    );
+  });
+
+  it("rejects unknown template style IDs", () => {
+    const config = quickConfig("acme");
+    config.frontend!.ui = { mode: "template", style: "unknown" as never };
+    expect(() => validateConfig(config)).toThrow("frontend UI style is unsupported");
+  });
+
+  it("rejects a style on starter UI configuration", () => {
+    const config = quickConfig("acme") as unknown as Record<string, unknown>;
+    config.frontend = {
+      framework: "next",
+      styling: "tailwind-shadcn",
+      ui: { mode: "starter", style: "apple" },
+    };
+    expect(() => validateConfig(config)).toThrow(
+      'unknown starter UI configuration key "style"',
     );
   });
 });

@@ -16,15 +16,33 @@ export async function loadConfigFile(filePath: string): Promise<PraxisConfig> {
 function normalizeSchemaV1(input: unknown): unknown {
   if (!input || typeof input !== "object" || Array.isArray(input)) return input;
   const value = input as Record<string, unknown>;
+  if (value.schemaVersion !== 1) return input;
+
+  let normalized = value;
   if (
-    value.schemaVersion !== 1 ||
-    !value.backend ||
-    typeof value.backend !== "object" ||
-    Array.isArray(value.backend)
+    value.backend
+    && typeof value.backend === "object"
+    && !Array.isArray(value.backend)
+    && !("cache" in value.backend)
   ) {
-    return input;
+    normalized = {
+      ...normalized,
+      backend: { ...(value.backend as Record<string, unknown>), cache: "none" },
+    };
   }
-  const backend = value.backend as Record<string, unknown>;
-  if ("cache" in backend) return input;
-  return { ...value, backend: { ...backend, cache: "none" } };
+  if (
+    value.frontend
+    && typeof value.frontend === "object"
+    && !Array.isArray(value.frontend)
+    && !("ui" in value.frontend)
+  ) {
+    normalized = {
+      ...normalized,
+      frontend: {
+        ...(value.frontend as Record<string, unknown>),
+        ui: { mode: "starter" },
+      },
+    };
+  }
+  return normalized;
 }

@@ -43,4 +43,18 @@ describe("loadConfigFile", () => {
 
     expect((await loadConfigFile(file)).backend?.cache).toBe("none");
   });
+
+  it("normalizes schema v1 configurations created before UI selection", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "praxis-config-"));
+    roots.push(root);
+    const file = path.join(root, "praxis.config.json");
+    const legacy = quickConfig("acme") as unknown as Record<string, unknown>;
+    const { ui: _ui, ...frontend } = legacy.frontend as Record<string, unknown>;
+    legacy.frontend = frontend;
+    await writeFile(file, JSON.stringify(legacy));
+
+    expect((await loadConfigFile(file)).frontend?.ui).toEqual({
+      mode: "starter",
+    });
+  });
 });
