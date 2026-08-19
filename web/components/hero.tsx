@@ -222,7 +222,7 @@ export function Hero({ product = "flow" }: { product?: ProductKey }) {
         {content.description}
       </motion.p>
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
-        <Button as={Link} href="https://github.com/sidhxntt/Praxis" variant="primary" className="flex h-12 items-center justify-center rounded-full px-7">View on GitHub</Button>
+        <Button as={Link} href="https://github.com/sidhxntt/Praxis/wiki/Agent-Guide" variant="primary" className="flex h-12 items-center justify-center rounded-full px-7">Agent Wiki</Button>
         <button type="button" onClick={copyCommand} aria-label={`Copy ${content.command}`} className="flex h-12 items-center gap-3 rounded-full border border-white/10 bg-white/[0.04] px-5 font-mono text-sm text-neutral-300 transition hover:border-white/25 hover:bg-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"><IconTerminal2 size={17} /><span>{content.command}</span>{copied ? <><IconCheck size={15} className="text-emerald-400" /><span className="sr-only" role="status">Copied</span></> : <IconCopy size={15} className="text-neutral-500" />}</button>
       </motion.div>
 
