@@ -112,4 +112,29 @@ describe("Pro capability parity", () => {
       }
     },
   );
+
+  it.each(["python-django", "go-gin"] as const)(
+    "wires Sentry into the %s runtime without adding a local service",
+    async (stack) => {
+      const destination = await generate(stack, ["sentry"]);
+      const compose = await readFile(path.join(destination, "docker-compose.yml"), "utf8");
+      expect(compose).not.toContain("sentry:");
+      expect(await readFile(path.join(destination, ".env.example"), "utf8"))
+        .toContain("SENTRY_DSN=");
+
+      if (stack === "python-django") {
+        expect(await readFile(path.join(destination, "pyproject.toml"), "utf8"))
+          .toContain("sentry-sdk[django]");
+        const settings = await readFile(path.join(destination, "config/settings/base.py"), "utf8");
+        expect(settings).toContain("send_default_pii=False");
+        expect(settings).toContain("traces_sample_rate");
+      } else {
+        expect(await readFile(path.join(destination, "go.mod"), "utf8"))
+          .toContain("github.com/getsentry/sentry-go");
+        const main = await readFile(path.join(destination, "cmd/api/main.go"), "utf8");
+        expect(main).toContain("sentry.Init");
+        expect(main).toContain("sentry.Flush");
+      }
+    },
+  );
 });

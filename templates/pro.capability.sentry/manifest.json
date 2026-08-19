@@ -1,0 +1,56 @@
+{
+  "id": "pro.capability.sentry",
+  "patches": [
+    {
+      "scope": "root",
+      "file": "pyproject.toml",
+      "find": "  # @praxis:dependencies",
+      "replace": "  \"sentry-sdk[django]==2.66.1\",\n  # @praxis:dependencies",
+      "proStack": "python-django",
+      "capability": "sentry"
+    },
+    {
+      "scope": "root",
+      "file": "config/settings/base.py",
+      "find": "import os\n",
+      "replace": "import os\n\nimport sentry_sdk\n",
+      "proStack": "python-django",
+      "capability": "sentry"
+    },
+    {
+      "scope": "root",
+      "file": "config/settings/base.py",
+      "find": "# @praxis:settings",
+      "replace": "if sentry_dsn := os.getenv(\"SENTRY_DSN\"):\n    sentry_sdk.init(\n        dsn=sentry_dsn,\n        environment=os.getenv(\"APP_ENV\", \"development\"),\n        send_default_pii=False,\n        traces_sample_rate=float(os.getenv(\"SENTRY_TRACES_SAMPLE_RATE\", \"0.0\")),\n    )\n# @praxis:settings",
+      "proStack": "python-django",
+      "capability": "sentry"
+    },
+    {
+      "scope": "root",
+      "file": "go.mod",
+      "find": "\t// @praxis:dependencies",
+      "replace": "\tgithub.com/getsentry/sentry-go v0.46.2\n\t// @praxis:dependencies",
+      "proStack": "go-gin",
+      "capability": "sentry"
+    },
+    {
+      "scope": "root",
+      "file": "cmd/api/main.go",
+      "find": "\t// @praxis:imports",
+      "replace": "\t\"github.com/getsentry/sentry-go\"\n\t// @praxis:imports",
+      "proStack": "go-gin",
+      "capability": "sentry"
+    },
+    {
+      "scope": "root",
+      "file": "cmd/api/main.go",
+      "find": "\t// @praxis:startup",
+      "replace": "\tif dsn := os.Getenv(\"SENTRY_DSN\"); dsn != \"\" {\n\t\tif err := sentry.Init(sentry.ClientOptions{Dsn: dsn, Environment: cfg.Environment, SendDefaultPII: false}); err != nil {\n\t\t\tlog.Error(\"Sentry startup failed\", \"error\", err)\n\t\t\tos.Exit(1)\n\t\t}\n\t\tdefer sentry.Flush(2 * time.Second)\n\t}\n\t// @praxis:startup",
+      "proStack": "go-gin",
+      "capability": "sentry"
+    }
+  ],
+  "env": [
+    { "scope": "root", "keys": ["SENTRY_DSN=", "SENTRY_TRACES_SAMPLE_RATE=0.0"], "capability": "sentry" }
+  ]
+}
