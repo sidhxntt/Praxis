@@ -2,6 +2,8 @@
 
 This is an original Praxis Flow landing page inspired by Apple's restrained, photography-first visual language. It is not affiliated with or endorsed by Apple. It uses neutral demonstration copy and an original local illustration; no Apple logos, product text, or proprietary imagery are included.
 
+Source specification: `templates/designs/DESIGN-apple.md`.
+
 ## Visual direction
 
 - Let the product composition lead while interface chrome recedes.

@@ -1,0 +1,228 @@
+{
+  "id": "binance",
+  "name": "Binance inspired",
+  "sourceDesign": "DESIGN-binance.md",
+  "description": "Move value with confidence. A precise financial platform for seeing markets clearly and acting without friction.",
+  "traits": [
+    "finance",
+    "technical",
+    "bold"
+  ],
+  "theme": "dark",
+  "tokens": {
+    "colors": {
+      "background": "#0b0b0d",
+      "surface": "#18181c",
+      "foreground": "#181a20",
+      "muted": "#707a8a",
+      "accent": "#fcd535",
+      "accentContrast": "#111113",
+      "darkSurface": "#0b0b0d",
+      "darkForeground": "#ffffff",
+      "border": "#303036"
+    },
+    "typography": {
+      "display": "'IBM Plex Sans', 'SFMono-Regular', ui-sans-serif, system-ui, sans-serif",
+      "body": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "displayWeight": 600,
+      "bodySize": "16px",
+      "displayTracking": "-0.035em"
+    },
+    "spacing": {
+      "container": "1280px",
+      "section": "clamp(4rem, 9vw, 8rem)"
+    },
+    "radii": {
+      "action": "10px",
+      "card": "12px"
+    },
+    "motion": {
+      "duration": "240ms",
+      "easing": "cubic-bezier(0.2, 0.8, 0.2, 1)"
+    }
+  },
+  "sections": [
+    {
+      "id": "top",
+      "type": "navigation",
+      "theme": "dark",
+      "variant": "global",
+      "brand": "Meridian Ledger",
+      "links": [
+        {
+          "label": "Overview",
+          "href": "#overview"
+        },
+        {
+          "label": "Experience",
+          "href": "#experience"
+        },
+        {
+          "label": "Principles",
+          "href": "#principles"
+        }
+      ],
+      "action": {
+        "label": "Start building",
+        "href": "#begin"
+      }
+    },
+    {
+      "id": "overview",
+      "type": "hero",
+      "theme": "dark",
+      "variant": "centered-product",
+      "eyebrow": "Meridian Ledger",
+      "heading": "Move value with confidence.",
+      "body": "A precise financial platform for seeing markets clearly and acting without friction.",
+      "primaryAction": {
+        "label": "Start building",
+        "href": "#experience"
+      },
+      "secondaryAction": {
+        "label": "See the story",
+        "href": "#principles"
+      },
+      "asset": "assets/binance-composition.svg"
+    },
+    {
+      "id": "proof",
+      "type": "metrics",
+      "theme": "dark",
+      "variant": "grid",
+      "eyebrow": "Measured in practice",
+      "heading": "Meridian Ledger, by the numbers.",
+      "items": [
+        {
+          "value": "18 ms",
+          "label": "typical response"
+        },
+        {
+          "value": "99.99%",
+          "label": "service availability"
+        },
+        {
+          "value": "3×",
+          "label": "faster iteration"
+        }
+      ]
+    },
+    {
+      "id": "principles",
+      "type": "features",
+      "theme": "light",
+      "variant": "grid",
+      "eyebrow": "Guiding principles",
+      "heading": "What makes Meridian Ledger feel different.",
+      "body": "A small set of strong decisions creates a recognizable experience across every screen and every moment.",
+      "items": [
+        {
+          "title": "Observable by default",
+          "description": "Meridian Ledger presents the next useful action clearly, with nothing unnecessary competing for attention.",
+          "marker": "01"
+        },
+        {
+          "title": "Fast under pressure",
+          "description": "Flexible foundations adapt to real work while keeping the experience coherent and recognizable.",
+          "marker": "02"
+        },
+        {
+          "title": "Open at the edges",
+          "description": "Small interactions, responsive pacing, and accessible defaults make quality visible in everyday use.",
+          "marker": "03"
+        }
+      ]
+    },
+    {
+      "id": "experience",
+      "type": "showcase",
+      "theme": "dark",
+      "variant": "split",
+      "eyebrow": "The experience",
+      "heading": "Clarity at every layer.",
+      "body": "Meridian Ledger brings its most important ideas forward and lets every supporting detail recede.",
+      "action": {
+        "label": "Explore the details",
+        "href": "#principles"
+      },
+      "asset": "assets/binance-composition.svg"
+    },
+    {
+      "id": "community",
+      "type": "logo-cloud",
+      "theme": "light",
+      "variant": "row",
+      "heading": "Trusted by teams building with Meridian Ledger.",
+      "items": [
+        "Northstar",
+        "Common Ground",
+        "Bright Labs",
+        "Open Field",
+        "New Arc",
+        "Good Work"
+      ]
+    },
+    {
+      "id": "begin",
+      "type": "cta",
+      "theme": "light",
+      "variant": "band",
+      "eyebrow": "The next step",
+      "heading": "Put clarity into production.",
+      "body": "Discover how Meridian Ledger can turn a clear idea into an experience people remember.",
+      "action": {
+        "label": "Start building",
+        "href": "#top"
+      }
+    },
+    {
+      "id": "footer",
+      "type": "footer",
+      "theme": "light",
+      "variant": "columns",
+      "brand": "Meridian Ledger",
+      "summary": "A precise financial platform for seeing markets clearly and acting without friction.",
+      "columns": [
+        {
+          "heading": "Explore",
+          "links": [
+            {
+              "label": "Overview",
+              "href": "#overview"
+            },
+            {
+              "label": "Experience",
+              "href": "#experience"
+            }
+          ]
+        },
+        {
+          "heading": "Company",
+          "links": [
+            {
+              "label": "Principles",
+              "href": "#principles"
+            },
+            {
+              "label": "Contact",
+              "href": "#begin"
+            }
+          ]
+        }
+      ],
+      "legal": "© 2026 Meridian Ledger. An original Praxis Flow demonstration brand."
+    }
+  ],
+  "assets": [
+    {
+      "source": "assets/binance-composition.svg",
+      "alt": "Original abstract composition representing the Meridian Ledger experience",
+      "width": 1600,
+      "height": 900
+    }
+  ],
+  "accessibility": {
+    "reducedMotion": true,
+    "skipLink": true
+  }
+}

@@ -1,9 +1,10 @@
 import { execFile } from "node:child_process";
-import { mkdtemp, readFile, readdir, rm } from "node:fs/promises";
+import { access, mkdtemp, readFile, readdir, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
 import { afterEach, describe, expect, it } from "vitest";
+import { UI_STYLE_IDS } from "../../src/ui/catalog";
 
 const run = promisify(execFile);
 const roots: string[] = [];
@@ -13,6 +14,33 @@ afterEach(async () => {
 });
 
 describe("UI framework adapters", () => {
+  it("renders all 40 styles across the complete nine-target matrix", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "praxis-adapters-all-"));
+    roots.push(root);
+    await run(process.execPath, [
+      path.resolve("scripts/ui/generate.mjs"),
+      "--templates-root",
+      path.resolve("templates"),
+      "--output",
+      root,
+    ]);
+
+    for (const id of UI_STYLE_IDS) {
+      const filesRoot = path.join(root, `ui.${id}`, "files");
+      await expect(access(path.join(filesRoot, "next-js/app/page.jsx"))).resolves.toBeUndefined();
+      await expect(access(path.join(filesRoot, "next-ts/app/page.tsx"))).resolves.toBeUndefined();
+      await expect(access(path.join(filesRoot, "vite-js/src/App.jsx"))).resolves.toBeUndefined();
+      await expect(access(path.join(filesRoot, "vite-ts/src/App.tsx"))).resolves.toBeUndefined();
+      await expect(access(path.join(filesRoot, "vue-js/src/App.vue"))).resolves.toBeUndefined();
+      await expect(access(path.join(filesRoot, "vue-ts/src/App.vue"))).resolves.toBeUndefined();
+      await expect(access(path.join(filesRoot, "astro-js/src/pages/index.astro"))).resolves.toBeUndefined();
+      await expect(access(path.join(filesRoot, "astro-ts/src/pages/index.astro"))).resolves.toBeUndefined();
+      await expect(access(path.join(filesRoot, "angular-ts/src/app/app.ts"))).resolves.toBeUndefined();
+      expect(await readFile(path.join(filesRoot, "shared/DESIGN.md"), "utf8"))
+        .toContain(`DESIGN-${id}.md`);
+    }
+  });
+
   it("renders the Apple pilot into nine native deterministic targets", async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "praxis-adapters-"));
     roots.push(root);
