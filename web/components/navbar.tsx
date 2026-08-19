@@ -9,6 +9,7 @@ import {
 } from "motion/react";
 import Link from "next/link";
 import React, { useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Button } from "./button";
 import { Logo } from "./logo";
 
@@ -21,23 +22,20 @@ interface NavbarProps {
 }
 
 export const Navbar = () => {
+  const pathname = usePathname();
+  const isPro = pathname.startsWith("/pro");
+  const base = isPro ? "/pro" : "";
   const navItems = [
     {
       name: "Home",
-      link: "/#home",
+      link: `${base}/#home`,
     },
     {
-      name: "Features",
-      link: "/#features",
+      name: "Product",
+      link: `${base}/#product`,
     },
-    {
-      name: "Benefits",
-      link: "/#benefits",
-    },
-    {
-      name: "FAQ",
-      link: "/#faqs",
-    },
+    { name: "FAQ", link: `${base}/#faqs` },
+    { name: isPro ? "Praxis Flow" : "Praxis Pro", link: isPro ? "/" : "/pro" },
   ];
 
   const ref = useRef<HTMLDivElement>(null);
@@ -56,7 +54,7 @@ export const Navbar = () => {
   });
 
   return (
-    <motion.div ref={ref} className="w-full fixed top-2 inset-x-0 z-40 ">
+    <motion.div ref={ref} className="w-full fixed top-2 inset-x-0 z-50">
       <DesktopNav visible={visible} navItems={navItems} />
       <MobileNav visible={visible} navItems={navItems} />
     </motion.div>
@@ -165,10 +163,8 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
                 href="https://github.com/sidhxntt/Praxis"
                 variant="primary"
                 className="hidden md:block rounded-full bg-white/20 hover:bg-white/30 text-white border-0"
-                target="_blank"
-                rel="noopener noreferrer"
               >
-                Star on GitHub
+                View on GitHub
               </Button>
             </motion.div>
           )}
@@ -188,7 +184,7 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
           background: visible ? "rgba(0, 0, 0, 0.7)" : "rgba(0, 0, 0, 0.4)",
           width: visible ? "80%" : "90%",
           y: visible ? 0 : 8,
-          borderRadius: open ? "24px" : "full",
+          borderRadius: open ? "24px" : "9999px",
           padding: "8px 16px",
         }}
         initial={{

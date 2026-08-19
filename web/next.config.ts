@@ -1,12 +1,25 @@
 import type { NextConfig } from "next";
 
+import componentTagger from "@acebuilder/component-tagger";
+
+const withTagger = componentTagger();
+
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: import.meta.dirname,
+  },
   images: {
     remotePatterns: [
-      { hostname: "assets.aceternity.com" },
-      { hostname: "images.unsplash.com" },
+      {
+        protocol: "https",
+        hostname: "assets.aceternity.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
     ],
   },
 };
 
-export default nextConfig;
+export default withTagger(nextConfig);

@@ -1,131 +1,46 @@
 "use client";
-import React from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { IconArrowRight } from "@/icons/arrow-right";
-import Link from "next/link";
 
-const FAQs = [
-  {
-    question: "Is Praxis just another boilerplate generator?",
-    answer:
-      "No, Praxis goes beyond traditional boilerplate generators. While standard boilerplates provide pre-configured starter code, Praxis offers a guided, interactive development experience with advanced customization options. For more details, refer to our documentation.",
-  },
-  {
-    question: "Why shouldn't I rely solely on Next.js for fullstack development?",
-    answer:
-      "While Next.js can handle basic backend needs, it lacks the scalability and flexibility required for complex applications. As your project grows, you'll need proper microservices, stateful processes, background jobs, and real-time capabilities—features best supported by a dedicated, independent backend. Praxis provides this separation while maintaining seamless integration. Learn more in the documentation." ,
-  },
-  {
-    question: "Can I use Praxis without a frontend template?",
-    answer:
-      "Yes, Praxis allows you to opt out of frontend templates if needed. While fullstack templates include integrated frontends templates by default (Vite/Next.js), you can choose backend-only configurations for greater flexibility.",
-  },
-  {
-    question: "Which Praxis setup is right for my project?",
-    answer:
-      "Praxis adapts to your workflow. Whether you need a production-ready backend, a frontend landing page, or a complete end-to-end solution, Praxis provides tailored setups to match your requirements. The choice depends on your project's scope and development preferences.",
-  },
-  {
-    question: "Is Praxis only for SaaS development?",
-    answer:
-      "While Praxis excels at SaaS development, it is versatile enough for any project—whether a personal website, custom web application, or enterprise SaaS platform. Its modular design ensures adaptability across various use cases. Try it to experience its flexibility firsthand.",
-  }
+import React from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { IconArrowRight } from "@/icons/arrow-right";
+import { products, type ProductKey } from "@/lib/products";
+
+const flowFAQs = [
+  ["Is Praxis Flow just another boilerplate generator?", "No. A boilerplate is a fixed repository; Praxis Flow validates an explicit configuration and composes only the framework, language, database, authentication, cache, deployment, and UI modules you select. The same CLI also supports repeatable config-driven generation."],
+  ["Why not rely solely on Next.js for every full-stack project?", "Next.js is an excellent frontend and server-rendering framework, and Praxis supports it directly. Some applications still benefit from an independently deployable backend for background jobs, stateful workloads, service boundaries, or scaling. Praxis lets you choose that separation instead of imposing it."],
+  ["Can I use Praxis without a frontend template?", "Yes. For supported frontend and full-stack projects, Praxis asks whether you want one of the 40 landing-page styles. Decline and it generates the framework foundation with Tailwind and shadcn-ready conventions instead."],
+  ["Which Praxis setup is right for my project?", "Choose frontend for a standalone web experience, backend for an Express service, full-stack when you want both composed together, or Production Backend (Praxis Pro) when you need Django/DRF or Go/Gin with operational capabilities."],
+  ["Is Praxis only for SaaS development?", "No. Praxis generates ordinary source repositories and can support marketing sites, internal tools, APIs, web applications, and SaaS products. The right output depends on the capabilities you select."],
+  ["Which frontend frameworks and languages are supported?", "Praxis Flow supports Next.js, Vite React, Vue, and Astro in JavaScript or TypeScript. Angular is supported in TypeScript because Angular's current tooling is TypeScript-first; the CLI explains and resolves that constraint if JavaScript was selected earlier."],
+  ["How do the 40 UI styles work?", "Choose template mode after selecting a frontend framework. Praxis opens a private offline gallery where you can filter styles, inspect desktop and mobile previews, and return the selected direction directly to the waiting CLI. A terminal selector is available when a browser cannot be opened."],
+  ["Does a selected UI style generate real frontend code?", "Yes. The selected style is scaffolded into native code for the chosen framework and language. It is not merely a screenshot or design prompt. The generated project also includes the matching DESIGN.md so humans and coding agents can understand the visual system."],
+  ["Can Praxis reproduce a project in CI?", "Yes. Commit a versioned praxis.config.json and run Praxis with --config. A fixed Praxis version and configuration resolve the same bundled module set, making generation suitable for repeatable automation and team workflows."],
+  ["What happens if generated modules conflict?", "Praxis resolves module dependencies and checks destination paths before writing output. File collisions or incompatible selections fail during composition rather than leaving a partially generated project behind."],
 ];
 
-export function FrequentlyAskedQuestions() {
-  const [open, setOpen] = React.useState<string | null>(null);
+const proFAQs = [
+  ["What is the difference between Praxis Flow and Praxis Pro?", "Praxis Flow is the complete interactive project builder for frontend, backend, and full-stack projects. Praxis Pro is the Production Backend project type inside that same CLI, focused on Django/DRF or Go/Gin plus selectable operational capabilities."],
+  ["Is Praxis Pro only for SaaS development?", "No. Praxis Pro generates production-oriented backend foundations for any service that benefits from authentication, caching, jobs, storage, search, realtime, observability, security, or infrastructure modules."],
+  ["Can a normal Praxis frontend use a Praxis Pro backend?", "Yes. The generated frontend and backend are API-independent source projects. You can pair a Praxis frontend with a Praxis Pro service and deploy or scale each side independently."],
+  ["Is Praxis Pro a fixed boilerplate?", "No. It is a capability-driven generator. You choose a backend stack and concerns such as authentication, caching, jobs, observability, Kubernetes, or Terraform; Praxis resolves compatible stack-specific modules and composes the result."],
+  ["Does Praxis Pro make an application production-ready automatically?", "It provides executable operational wiring and a strong starting architecture, but production readiness remains contextual. Your team still owns secrets, cloud policy, capacity planning, backups, restore drills, security testing, and dependency maintenance."],
+  ["Which backend stacks does Praxis Pro generate?", "Praxis Pro supports Python with Django and Django REST Framework, or Go with Gin. The two stacks share capability intent while keeping native architecture, dependencies, commands, and testing conventions."],
+  ["Which capabilities can I select?", "Capabilities include JWT and social authentication, fine-grained authorization, Redis, background and scheduled jobs, asynchronous email, object storage, search, realtime WebSockets, Kafka, feature flags, seed data, observability, security, and reliability modules."],
+  ["Are Docker, Kubernetes, and Terraform mandatory?", "No. Docker Compose provides the standard local operational foundation. Kubernetes and Terraform are optional capabilities, so a project can remain simple or include orchestration and managed cloud infrastructure when required."],
+  ["Which clouds are supported by Terraform output?", "When Terraform is selected, Praxis asks for AWS, Azure, or Google Cloud because the provider changes the generated resources and operational configuration. Cloud selection is skipped when Terraform is not requested."],
+  ["How are secrets handled?", "Praxis writes configuration structure and .env.example files, never live credentials. Generated applications expect secrets to be supplied through your deployment environment or selected cloud-secret capability."],
+];
 
+export function FrequentlyAskedQuestions({ product = "flow" }: { product?: ProductKey }) {
+  const [open, setOpen] = React.useState<string | null>(null);
+  const content = products[product];
+  const faqs = product === "flow" ? flowFAQs : proFAQs;
   return (
-    <div 
-    id="faqs"
-    className="w-full max-w-7xl mx-auto my-10 md:my-20 py-10 md:py-20 px-4 md:px-8">
-      <div className="text-balance relative z-20 mx-auto mb-4 max-w-4xl text-center">
-        <h2
-          className={cn(
-            "inline-block text-3xl md:text-6xl bg-[radial-gradient(61.17%_178.53%_at_38.83%_-13.54%,#3B3B3B_0%,#888787_12.61%,#FFFFFF_50%,#888787_80%,#3B3B3B_100%)]",
-            "bg-clip-text text-transparent"
-          )}
-        >
-          Let&apos;s Answer Your Questions
-        </h2>
+    <section id="faqs" className="mx-auto my-10 w-full max-w-7xl px-4 py-20 md:px-8">
+      <div className="mx-auto max-w-4xl text-center"><h2 className="text-3xl text-neutral-100 md:text-6xl">Questions, answered in detail.</h2><p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-neutral-400">The practical distinctions behind {content.name}, its generated output, and where your team remains in control.</p></div>
+      <div className="mx-auto mt-16 max-w-3xl divide-y divide-neutral-800">
+        {faqs.map(([question, answer]) => { const isOpen = open === question; return <motion.div key={question} className="cursor-pointer py-6" onClick={() => setOpen(isOpen ? null : question)}><div className="flex items-start justify-between"><div className="pr-10"><h3 className="text-base font-medium text-neutral-200 md:text-lg">{question}</h3><AnimatePresence>{isOpen && <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden"><p className="mt-3 text-sm leading-7 text-neutral-400 md:text-base">{answer}</p></motion.div>}</AnimatePresence></div><motion.div animate={{ rotate: isOpen ? 90 : 0 }}><IconArrowRight className="h-5 w-5 text-neutral-400" /></motion.div></div></motion.div>; })}
       </div>
-      <p className="max-w-lg text-sm  text-center mx-auto mt-4 text-neutral-400 px-4 md:px-0">
-       With these importatnt faqs we aim to provide maximum clarification.
-      </p>
-      <div className="mt-10 md:mt-20 max-w-3xl mx-auto divide-y divide-neutral-800">
-        {FAQs.map((faq, index) => (
-          <FAQItem
-            key={index}
-            question={faq.question}
-            answer={faq.answer}
-            open={open}
-            setOpen={setOpen}
-          />
-        ))}
-      </div>
-    </div>
+    </section>
   );
 }
-
-const FAQItem = ({
-  question,
-  answer,
-  setOpen,
-  open,
-}: {
-  question: string;
-  answer: string;
-  open: string | null;
-  setOpen: (open: string | null) => void;
-}) => {
-  const isOpen = open === question;
-
-  return (
-    <motion.div
-      className="cursor-pointer py-4 md:py-6"
-      onClick={() => {
-        if (isOpen) {
-          setOpen(null);
-        } else {
-          setOpen(question);
-        }
-      }}
-    >
-      <div className="flex items-start justify-between">
-        <div className="pr-8 md:pr-12">
-          <h3 className="text-base md:text-lg font-medium text-neutral-200">
-            {question}
-          </h3>
-          <AnimatePresence mode="wait">
-            {isOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                className="overflow-hidden text-sm md:text-base text-neutral-400 mt-2"
-              >
-                <p>{answer}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-        <div className="relative mr-2 md:mr-4 mt-1 h-5 w-5 md:h-6 md:w-6 flex-shrink-0">
-          <motion.div
-            animate={{
-              scale: isOpen ? [0, 1] : [1, 0, 1],
-              rotate: isOpen ? 90 : 0,
-              marginLeft: isOpen ? "1.5rem" : "0rem",
-            }}
-            initial={{ scale: 0 }}
-            exit={{ scale: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <IconArrowRight className="absolute inset-0 h-5 w-5 md:h-6 md:w-6 transform text-white-500" />
-          </motion.div>
-        </div>
-      </div>
-    </motion.div>
-  );
-};

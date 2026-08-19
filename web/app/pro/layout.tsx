@@ -1,20 +1,10 @@
-// app/pro/layout.tsx
 import type { Metadata } from "next";
-import { NavbarPro } from "@/components/navbar2";
-import { FooterPro } from "@/components/footer2";
 
 export const metadata: Metadata = {
-  title: "Praxis Pro",
-  description: "Advance Django Backend Boilerplate generator",
+  title: "Praxis Pro — Composable Production Backends",
+  description: "Generate a Django/DRF or Go/Gin backend with selectable operational capabilities, Docker, Kubernetes, and cloud Terraform.",
 };
 
-export default function ProLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <NavbarPro />
-      <main>{children}</main>
-      <FooterPro />
-    </>
-  );
+export default function PraxisProLayout({ children }: { children: React.ReactNode }) {
+  return children;
 }
-
