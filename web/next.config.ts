@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "node:path";
 
 import componentTagger from "@acebuilder/component-tagger";
 
@@ -6,7 +7,7 @@ const withTagger = componentTagger();
 
 const nextConfig: NextConfig = {
   turbopack: {
-    root: import.meta.dirname,
+    root: path.resolve(import.meta.dirname, ".."),
   },
   images: {
     remotePatterns: [
