@@ -65,6 +65,7 @@ const implications: Partial<Record<ProCapability, ProCapability[]>> = {
   "scheduled-jobs": ["background-jobs"],
   "email-tasks": ["background-jobs"],
   realtime: ["redis-cache"],
+  "synthetic-monitoring": ["prometheus"],
   terraform: [
     "kubernetes",
     "autoscaling",

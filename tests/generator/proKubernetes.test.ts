@@ -58,6 +58,14 @@ describe("Praxis Pro Kubernetes output", () => {
     expect(await readFile(path.join(destination, "k8s/base/kustomization.yaml"), "utf8"))
       .toContain("log-forwarder.yaml");
   });
+  it("adds a Blackbox Exporter workload for synthetic monitoring", async () => {
+    const destination = await generate("go-gin", ["kubernetes", "synthetic-monitoring"]);
+    const blackbox = await readFile(path.join(destination, "k8s/base/blackbox-exporter.yaml"), "utf8");
+    expect(blackbox).toContain("prom/blackbox-exporter:v0.28.0");
+    expect(blackbox).toContain("readOnlyRootFilesystem: true");
+    expect(await readFile(path.join(destination, "k8s/base/kustomization.yaml"), "utf8"))
+      .toContain("blackbox-exporter.yaml");
+  });
   it.each(["python-django", "go-gin"] as const)(
     "generates a secure, stack-aware %s application workload",
     async (stack) => {

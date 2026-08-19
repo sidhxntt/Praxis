@@ -131,6 +131,12 @@ describe("resolveProCapabilities", () => {
       "fine-grained-auth",
     ]);
   });
+  it("adds Prometheus for synthetic monitoring", () => {
+    expect(resolveProCapabilities(["synthetic-monitoring"])).toEqual([
+      "prometheus",
+      "synthetic-monitoring",
+    ]);
+  });
   it("uses Redis for background jobs", () => {
     expect(resolveProCapabilities(["background-jobs"])).toEqual([
       "redis-cache",

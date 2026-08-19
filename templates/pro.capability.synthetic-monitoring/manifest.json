@@ -1,0 +1,20 @@
+{
+  "id": "pro.capability.synthetic-monitoring",
+  "overlays": [
+    { "scope": "root", "source": "files/common", "capability": "synthetic-monitoring" }
+  ],
+  "patches": [
+    {
+      "scope": "root", "file": "ops/prometheus/prometheus.yml",
+      "find": "scrape_configs:",
+      "replace": "scrape_configs:\n  - job_name: blackbox-http\n    metrics_path: /probe\n    params: { module: [http_2xx] }\n    static_configs:\n      - targets: [\"http://api:8000/api/v1/health/live\"]\n    relabel_configs:\n      - { source_labels: [__address__], target_label: __param_target }\n      - { source_labels: [__param_target], target_label: instance }\n      - { target_label: __address__, replacement: \"blackbox-exporter:9115\" }",
+      "proStack": "python-django", "capability": "synthetic-monitoring"
+    },
+    {
+      "scope": "root", "file": "ops/prometheus/prometheus.yml",
+      "find": "scrape_configs:",
+      "replace": "scrape_configs:\n  - job_name: blackbox-http\n    metrics_path: /probe\n    params: { module: [http_2xx] }\n    static_configs:\n      - targets: [\"http://api:8080/api/v1/health/live\"]\n    relabel_configs:\n      - { source_labels: [__address__], target_label: __param_target }\n      - { source_labels: [__param_target], target_label: instance }\n      - { target_label: __address__, replacement: \"blackbox-exporter:9115\" }",
+      "proStack": "go-gin", "capability": "synthetic-monitoring"
+    }
+  ]
+}

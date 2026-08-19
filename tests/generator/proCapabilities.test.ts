@@ -266,6 +266,21 @@ describe("Pro capability parity", () => {
   );
 
   it.each(["python-django", "go-gin"] as const)(
+    "adds Prometheus-backed synthetic monitoring for %s",
+    async (stack) => {
+      const destination = await generate(stack, ["synthetic-monitoring"]);
+      const compose = await readFile(path.join(destination, "docker-compose.yml"), "utf8");
+      expect(compose).toContain("prom/blackbox-exporter:v0.28.0");
+      expect(compose).toContain("prom/prometheus:v3.13.2");
+      expect(await readFile(path.join(destination, "ops/blackbox.yml"), "utf8"))
+        .toContain("valid_status_codes: [200]");
+      const prometheus = await readFile(path.join(destination, "ops/prometheus/prometheus.yml"), "utf8");
+      expect(prometheus).toContain("blackbox-http");
+      expect(prometheus).toContain(stack === "python-django" ? "api:8000" : "api:8080");
+    },
+  );
+
+  it.each(["python-django", "go-gin"] as const)(
     "wires Redis into the %s runtime and local Compose stack",
     async (stack) => {
       const destination = await generate(stack, ["redis-cache"]);

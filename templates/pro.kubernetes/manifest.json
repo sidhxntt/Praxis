@@ -50,8 +50,21 @@
     ,{ "scope": "root", "source": "files/object-storage", "capability": "object-storage" }
     ,{ "scope": "root", "source": "files/search", "capability": "search" }
     ,{ "scope": "root", "source": "files/elk", "capability": "elk" }
+    ,{ "scope": "root", "source": "files/synthetic-monitoring", "capability": "synthetic-monitoring" }
   ],
   "patches": [
+    {
+      "scope": "root", "file": "k8s/base/kustomization.yaml",
+      "find": "  # @praxis:resources",
+      "replace": "  - blackbox-exporter.yaml\n  # @praxis:resources",
+      "capability": "synthetic-monitoring"
+    },
+    {
+      "scope": "root", "file": "k8s/base/prometheus.yaml",
+      "find": "    scrape_configs:",
+      "replace": "    scrape_configs:\n      - job_name: blackbox-http\n        metrics_path: /probe\n        params: { module: [http_2xx] }\n        static_configs: [{ targets: [\"http://api/api/v1/health/live\"] }]\n        relabel_configs:\n          - { source_labels: [__address__], target_label: __param_target }\n          - { source_labels: [__param_target], target_label: instance }\n          - { target_label: __address__, replacement: \"blackbox-exporter:9115\" }",
+      "capability": "synthetic-monitoring"
+    },
     {
       "scope": "root", "file": "k8s/base/kustomization.yaml",
       "find": "  # @praxis:resources",
