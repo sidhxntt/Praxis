@@ -13,5 +13,14 @@ describe("formatHelp", () => {
     expect(help).toContain("praxiflow help");
     expect(help).toContain("praxiflow --help");
     expect(help).toContain("praxiflow -h");
+    expect(help).toContain("Next.js");
+    expect(help).toContain("Vite (React)");
+    expect(help).toContain("Vue");
+    expect(help).toContain("Astro");
+    expect(help).toContain("Angular (TypeScript only)");
+    expect(help).toContain("40");
+    expect(help).toContain("local visual gallery");
+    expect(help).toContain("terminal fallback");
+    expect(help).toContain("DESIGN.md");
   });
 });

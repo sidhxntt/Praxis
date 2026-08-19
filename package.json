@@ -20,7 +20,9 @@
   },
   "files": [
     "dist/",
-    "templates/"
+    "templates/",
+    "!templates/designs/",
+    "!templates/ui.shared/"
   ],
   "dependencies": {
     "@clack/prompts": "^0.7.0",

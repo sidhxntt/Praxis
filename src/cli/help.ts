@@ -18,6 +18,13 @@ Options:
   --no-install                          Skip dependency installation
   -h, --help                            Show this help
 
+Frontend UI:
+  Frameworks: Next.js, Vite (React), Vue, Astro, Angular (TypeScript only)
+  Next.js, Vite, Vue, and Astro support JavaScript and TypeScript.
+  Choose a plain Tailwind + shadcn starter or one of 40 landing-page styles.
+  Template selection uses a private local visual gallery with a terminal fallback.
+  Selected projects include their design guidance in DESIGN.md.
+
 Help forms:
   praxiflow help
   praxiflow --help
