@@ -27,6 +27,18 @@ describe("UI framework adapters", () => {
 
     for (const id of UI_STYLE_IDS) {
       const filesRoot = path.join(root, `ui.${id}`, "files");
+      const manifest = JSON.parse(
+        await readFile(path.join(root, `ui.${id}`, "manifest.json"), "utf8"),
+      );
+      expect(manifest.id).toBe(`ui.${id}`);
+      expect(manifest.overlays).toHaveLength(10);
+      expect(manifest.overlays[0]).toEqual({
+        scope: "frontend",
+        source: "files/shared",
+      });
+      expect(manifest.overlays.slice(1).every(
+        (overlay: { replace?: boolean }) => overlay.replace === true,
+      )).toBe(true);
       await expect(access(path.join(filesRoot, "next-js/app/page.jsx"))).resolves.toBeUndefined();
       await expect(access(path.join(filesRoot, "next-ts/app/page.tsx"))).resolves.toBeUndefined();
       await expect(access(path.join(filesRoot, "vite-js/src/App.jsx"))).resolves.toBeUndefined();

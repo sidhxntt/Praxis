@@ -13,6 +13,7 @@ export interface ManifestSelector {
 export interface OverlayDefinition extends ManifestSelector {
   scope: OutputScope;
   source: string;
+  replace?: boolean;
 }
 
 export interface PackageContribution extends ManifestSelector {

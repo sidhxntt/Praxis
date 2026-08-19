@@ -42,6 +42,9 @@ export function resolveModules(config: PraxisConfig): string[] {
   if (config.frontend) {
     modules.push(`frontend.${config.frontend.framework}`);
     modules.push("styling.tailwind-shadcn");
+    if (config.frontend.ui?.mode === "template") {
+      modules.push(`ui.${config.frontend.ui.style}`);
+    }
   }
   if (config.backend) {
     modules.push("backend.express");

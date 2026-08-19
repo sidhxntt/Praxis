@@ -35,6 +35,11 @@ export async function generateStyleAdapters({ templatesRoot, outputRoot, id }) {
     await writeTarget(filesRoot, target, markup, css);
   }
 
+  await write(
+    path.join(path.resolve(outputRoot), `ui.${id}`, "manifest.json"),
+    `${JSON.stringify(renderManifest(id), null, 2)}\n`,
+  );
+
   const shared = path.join(filesRoot, "shared");
   await write(path.join(shared, "DESIGN.md"), await renderDesignDoc(moduleRoot));
   for (const asset of style.assets) {
@@ -44,6 +49,23 @@ export async function generateStyleAdapters({ templatesRoot, outputRoot, id }) {
     await mkdir(path.dirname(destination), { recursive: true });
     await cp(source, destination);
   }
+}
+
+function renderManifest(id) {
+  const overlays = [{ scope: "frontend", source: "files/shared" }];
+  for (const target of TARGETS) {
+    const separator = target.lastIndexOf("-");
+    const framework = target.slice(0, separator);
+    const language = target.slice(separator + 1) === "ts" ? "typescript" : "javascript";
+    overlays.push({
+      scope: "frontend",
+      source: `files/${target}`,
+      framework,
+      language,
+      replace: true,
+    });
+  }
+  return { id: `ui.${id}`, overlays };
 }
 
 async function writeTarget(root, target, markup, css) {
