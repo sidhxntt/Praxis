@@ -94,7 +94,9 @@ GitHub Wiki publication does not imply that an agent has loaded every page. Prax
 
 `Template Agent Guide` is the first Wiki page for any agent creating, changing, reviewing, or debugging generated templates. It explains how to identify the selected stack and capabilities, load the corresponding context bundle, verify claims against source, and run the correct contract tests.
 
-Repository-level `AGENTS.md` instructions direct template-focused agents to the local source for this page and require them to load the appropriate bundle before changing template behavior. Repository-local Markdown remains authoritative when it is available; the rendered GitHub Wiki provides the same context for agents operating from GitHub.
+Repository-level `AGENTS.md` instructions direct Codex and compatible agents to the local source for this page and require them to load the appropriate bundle before changing template behavior. Repository-level `CLAUDE.md` provides the equivalent Claude Code entry point and imports the shared agent instructions rather than maintaining a competing architectural summary. Both files remain deliberately short so their startup context contains routing rules and invariants instead of a stale copy of the Wiki.
+
+Repository-local Markdown remains authoritative when it is available; the rendered GitHub Wiki provides the same context for agents operating from GitHub. Each instruction file includes the public Wiki entry URL for GitHub-only sessions and the local path for repository sessions.
 
 ### Machine-readable context map
 
@@ -109,6 +111,18 @@ A versioned `docs/template-context.json` maps each Standard module family, Pro s
 - contract, generation, and runtime tests.
 
 The map is a routing index, not a replacement for prose or source inspection. An agent loads the small canonical guide first, resolves the bounded bundle for the selected stack/capabilities, reads every required page, and then inspects the listed authoritative code.
+
+A deterministic repository command accepts either a generated `praxis.config.json` or explicit stack/capability arguments and prints the ordered context bundle as local paths, Wiki URLs, authoritative source roots, and verification commands. It supports human-readable output and JSON output so Claude Code, Codex, CI, and future agents all consume the same routing logic. It fails on unknown selections or incomplete bundles rather than silently returning partial context.
+
+The canonical bootstrap sequence is:
+
+1. read `AGENTS.md` or `CLAUDE.md` automatically discovered by the coding agent;
+2. read `Template Agent Guide`;
+3. resolve the configuration through the context command;
+4. read every required architecture page in the returned order;
+5. inspect the returned manifests, overlays, configuration types, and tests;
+6. state the loaded bundle before modifying template behavior;
+7. run the returned verification commands before claiming completion.
 
 ### Context bundles
 
@@ -137,6 +151,8 @@ Documentation CI validates that:
 - context dependency references are valid and acyclic;
 - every managed context page is rendered into the GitHub Wiki;
 - the canonical agent guide and context map remain discoverable from Home and the Wiki sidebar.
+- `AGENTS.md` and `CLAUDE.md` both route to the same canonical guide and context command;
+- the context command returns identical ordered bundle membership in human-readable and JSON modes;
 
 This guarantees documentation coverage and deterministic context discovery. It does not claim that an arbitrary external agent automatically reads the Wiki; the agent or its repository instructions must initiate the documented loading sequence.
 
@@ -160,6 +176,8 @@ The redesign is complete when:
 - no managed documentation links are broken;
 - the Wiki renderer includes every intended page exactly once;
 - the Template Agent Guide defines the complete context-loading sequence;
+- Codex and Claude Code have concise, non-duplicated repository bootstrap instructions;
+- a deterministic context command resolves `praxis.config.json` and explicit template selections;
 - `template-context.json` covers all template families, Pro capabilities, and supported infrastructure targets;
 - CI rejects missing, stale, or broken context-map entries;
 - documentation tests and the repository check suite pass.
