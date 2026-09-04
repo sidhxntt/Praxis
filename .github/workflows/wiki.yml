@@ -46,7 +46,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Home.md Overview.md Core-Internals.md Template-Architecture.md Architecture.md Terminology.md Repository-Map.md Code-Architecture.md Generation-Pipeline.md Manifest-System.md Standard-Projects.md Standard-Frontend-Architecture.md Express-Architecture.md Fullstack-Architecture.md Praxis-Pro.md Django-Architecture.md Gin-Architecture.md Capability-Architecture.md Compose-Architecture.md Kubernetes-Architecture.md Terraform-Architecture.md Extending-Generated-Projects.md Generated-Backends.md UI-Templates.md Testing.md Agent-Guide.md Template-Agent-Guide.md Wiki-Publishing.md _Sidebar.md _Footer.md
+          git add Home.md Overview.md Praxis-Engineering-Evidence.md Core-Internals.md Template-Architecture.md Architecture.md Terminology.md Repository-Map.md Code-Architecture.md Generation-Pipeline.md Manifest-System.md Standard-Projects.md Standard-Frontend-Architecture.md Express-Architecture.md Fullstack-Architecture.md Praxis-Pro.md Praxis-Pro-Engineering-Evidence.md Django-Architecture.md Gin-Architecture.md Capability-Architecture.md Compose-Architecture.md Kubernetes-Architecture.md Terraform-Architecture.md Extending-Generated-Projects.md Generated-Backends.md UI-Templates.md Testing.md Agent-Guide.md Template-Agent-Guide.md Wiki-Publishing.md _Sidebar.md _Footer.md
           if git diff --cached --quiet; then
             echo "Wiki is already current."
             exit 0

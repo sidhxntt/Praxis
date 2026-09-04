@@ -32,6 +32,7 @@ Inspect at least `Home.md`, `_Sidebar.md`, `Code-Architecture.md`, and `Generate
 | --- | --- |
 | `docs/index.md` | `Home` |
 | `docs/overview.md` | `Overview` |
+| `docs/praxis-engineering-evidence.md` | `Praxis-Engineering-Evidence` |
 | `docs/architecture.md` | `Architecture` |
 | `docs/terminology.md` | `Terminology` |
 | `docs/repository-map.md` | `Repository-Map` |
@@ -40,6 +41,7 @@ Inspect at least `Home.md`, `_Sidebar.md`, `Code-Architecture.md`, and `Generate
 | `docs/manifest-system.md` | `Manifest-System` |
 | `docs/standard-projects.md` | `Standard-Projects` |
 | `docs/praxis-pro.md` | `Praxis-Pro` |
+| `docs/praxis-pro-engineering-evidence.md` | `Praxis-Pro-Engineering-Evidence` |
 | `docs/generated-backends.md` | `Generated-Backends` |
 | `docs/ui-templates.md` | `UI-Templates` |
 | `docs/testing.md` | `Testing` |
@@ -55,4 +57,3 @@ The renderer also manages `_Sidebar.md` and `_Footer.md`. It does not delete oth
 - Mark future direction explicitly and never mix it into current architecture diagrams.
 - Do not include credentials, private deployment data, or raw incident logs.
 - Update the page map, sidebar, renderer, and link tests together when adding a page.
-

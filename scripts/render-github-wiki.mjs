@@ -17,6 +17,7 @@ if (!outputRoot) {
 const pages = [
   ["index.md", "Home.md"],
   ["overview.md", "Overview.md"],
+  ["praxis-engineering-evidence.md", "Praxis-Engineering-Evidence.md"],
   ["core-internals.md", "Core-Internals.md"],
   ["template-architecture.md", "Template-Architecture.md"],
   ["architecture.md", "Architecture.md"],
@@ -30,6 +31,7 @@ const pages = [
   ["express-architecture.md", "Express-Architecture.md"],
   ["fullstack-architecture.md", "Fullstack-Architecture.md"],
   ["praxis-pro.md", "Praxis-Pro.md"],
+  ["praxis-pro-engineering-evidence.md", "Praxis-Pro-Engineering-Evidence.md"],
   ["django-architecture.md", "Django-Architecture.md"],
   ["gin-architecture.md", "Gin-Architecture.md"],
   ["capability-architecture.md", "Capability-Architecture.md"],

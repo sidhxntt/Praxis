@@ -19,14 +19,19 @@
 - [[Agent-Guide|Contributor and agent guide]]
 - [[Wiki-Publishing|Wiki publishing]]
 
-## Praxis Template Architecture
+## Praxis Flow
 
+- [[Praxis-Engineering-Evidence|Engineering evidence]]
 - [[Template-Architecture|Template overview]]
 - [[Standard-Projects|Standard projects]]
 - [[Standard-Frontend-Architecture|Standard frontend]]
 - [[Express-Architecture|Express backend]]
 - [[Fullstack-Architecture|Standard fullstack]]
+
+## Praxis Pro Wiki
+
 - [[Praxis-Pro|Praxis Pro]]
+- [[Praxis-Pro-Engineering-Evidence|Engineering evidence]]
 - [[Django-Architecture|Django and DRF]]
 - [[Gin-Architecture|Go and Gin]]
 - [[Capability-Architecture|Capabilities]]

@@ -197,6 +197,18 @@ test("renderer registers every context page and both domain overviews", async ()
   }
 });
 
+test("product evidence pages are rendered and published", async () => {
+  const renderer = await readFile(path.join(root, "scripts/render-github-wiki.mjs"), "utf8");
+  const workflow = await readFile(path.join(root, ".github/workflows/wiki.yml"), "utf8");
+  const sidebar = await readFile(path.join(root, "docs/_Sidebar.md"), "utf8");
+  for (const page of ["Praxis-Engineering-Evidence.md", "Praxis-Pro-Engineering-Evidence.md"]) {
+    assert.match(renderer, new RegExp(escapeRegExp(page)), `renderer omits ${page}`);
+    assert.match(workflow, new RegExp(escapeRegExp(page)), `workflow does not publish ${page}`);
+  }
+  assert.match(sidebar, /Praxis-Engineering-Evidence/);
+  assert.match(sidebar, /Praxis-Pro-Engineering-Evidence/);
+});
+
 test("Wiki workflow watches context tooling and publishes every rendered page", async () => {
   const workflow = await readFile(path.join(root, ".github/workflows/wiki.yml"), "utf8");
   const renderer = await readFile(path.join(root, "scripts/render-github-wiki.mjs"), "utf8");
