@@ -45,7 +45,8 @@ The boundary matters: Core explains **how Praxis decides and writes**; Templates
 
 ## Choose your path
 
-- **Evaluating Praxis:** [Overview](overview.md) → [System architecture](architecture.md) → [Standard projects](standard-projects.md) or [Praxis Pro](praxis-pro.md).
+- **Evaluating Praxis Flow:** [Overview](overview.md) → [Engineering evidence](praxis-engineering-evidence.md) → [System architecture](architecture.md) → [Standard projects](standard-projects.md).
+- **Evaluating Praxis Pro:** [Praxis Pro Wiki](praxis-pro.md) → [Pro engineering evidence](praxis-pro-engineering-evidence.md) → choose the Pro architecture path.
 - **Using a generated repository:** [Template architecture](template-architecture.md) → choose the generated stack → [extension guide](extending-generated-projects.md).
 - **Changing the generator:** [Core internals](core-internals.md) → [code architecture](code-architecture.md) → [generation pipeline](generation-pipeline.md) → [testing](testing.md).
 - **Codex or Claude Code working on templates:** start with the [Template Agent Guide](template-agent-guide.md), then resolve the exact context bundle.

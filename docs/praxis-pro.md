@@ -2,7 +2,20 @@
 
 Praxis Pro is the `pro-backend` project type in the normal `praxiflow` CLI. It is not a separate branch or executable. Schema version 2 records a backend stack, requested capabilities, resolved capabilities, and an optional Terraform cloud.
 
-Detailed runtime guides: [Django/DRF](django-architecture.md), [Go/Gin](gin-architecture.md), [capabilities](capability-architecture.md), [Compose](compose-architecture.md), [Kubernetes](kubernetes-architecture.md), and [Terraform](terraform-architecture.md).
+## Praxis Pro Wiki
+
+This is the dedicated starting point for Praxis Pro. It keeps the production
+backend path distinct from Praxis Flow while remaining in the same rendered
+GitHub Wiki.
+
+- [Engineering evidence](praxis-pro-engineering-evidence.md)
+- [Capability architecture](capability-architecture.md)
+- [Django and DRF architecture](django-architecture.md)
+- [Go and Gin architecture](gin-architecture.md)
+- [Docker Compose architecture](compose-architecture.md)
+- [Kubernetes architecture](kubernetes-architecture.md)
+- [Terraform clouds](terraform-architecture.md)
+- [Generated backend comparison](generated-backends.md)
 
 ## Resolution model
 
