@@ -154,11 +154,13 @@ test("CLI resolves a config in both output modes", async () => {
 test("Home and sidebar establish the two-domain Wiki", async () => {
   const home = await readFile(path.join(root, "docs/index.md"), "utf8");
   const sidebar = await readFile(path.join(root, "docs/_Sidebar.md"), "utf8");
-  for (const content of [home, sidebar]) {
-    assert.match(content, /Praxis Core Internals/);
-    assert.match(content, /Praxis Template Architecture/);
-    assert.match(content, /Template Agent Guide/);
-  }
+  assert.match(home, /Praxis Core Internals/);
+  assert.match(home, /Praxis Template Architecture/);
+  assert.match(home, /Template Agent Guide/);
+  assert.match(sidebar, /Praxis Core Internals/);
+  assert.match(sidebar, /Praxis Flow/);
+  assert.match(sidebar, /Praxis Pro Wiki/);
+  assert.match(sidebar, /Template Agent Guide/);
   assert.match(home, /flowchart/);
   assert.match(home, /not (?:a )?runtime dependency/i);
   assert.match(home, /Standard Praxis/);
