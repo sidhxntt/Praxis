@@ -61,7 +61,7 @@ function rewriteLinks(markdown, source) {
     if (pageName) {
       return anchor
         ? `[${text}](${pageName}#${anchor})`
-        : `[[${pageName}|${text}]]`;
+        : `[[${text}|${pageName}]]`;
     }
 
     const repositoryPath = posix.normalize(
