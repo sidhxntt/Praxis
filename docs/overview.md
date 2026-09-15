@@ -24,6 +24,32 @@ flowchart LR
 
 The configuration says what the user wants. The resolver converts that intent into module identifiers. Each module manifest declares conditional file overlays, package contributions, environment keys, and text patches. The composer applies those declarations in order inside a temporary directory and publishes the destination only after composition succeeds.
 
+## How a configuration becomes a project
+
+Earlier Praxis starters were obtained by cloning a Git branch for a selected combination. A branch name represented a whole preassembled template, such as a language plus framework or database. That approach made every supported combination a separate Git artifact.
+
+Current Praxis does **not** download a template branch while generating a project. The `praxiflow` npm package includes the CLI and its maintained `templates/` catalog. The questionnaire produces a configuration in memory, or `praxiflow --config praxis.config.json` loads one from disk. The CLI then follows this chain:
+
+```mermaid
+flowchart LR
+    I[Install praxiflow npm package] --> T[Bundled CLI and templates catalog]
+    A[Questionnaire answers or praxis.config.json] --> V[Validate supported configuration]
+    V --> R[Resolve ordered module IDs]
+    T --> C[Read selected local manifests and overlays]
+    R --> C
+    C --> S[Compose into staging directory]
+    S --> O[Publish standalone project]
+    O --> P[Write effective praxis.config.json]
+    P --> D[Optional dependency installation]
+    D --> G[Optional git init]
+```
+
+For example, a TypeScript, Next.js, Express, PostgreSQL, self-hosted-authentication, Redis, Docker project resolves to independent modules for the workspace, frontend, backend, database, authentication, cache, and Docker deployment. It is not fetched from a branch named for that full combination.
+
+Each selected module has a `manifest.json`. Its selectors determine which overlays apply for the configuration; its declarations can add source files, package dependencies and scripts, `.env.example` keys, and narrowly targeted integration patches. The composer processes those modules in resolver order, fails on an undeclared file conflict or missing patch anchor, and only renames the complete staging directory to the destination after successful composition. The generated repository receives the effective `praxis.config.json`, so its provenance and the selected options are inspectable and reproducible.
+
+Only after the source tree exists does Praxis optionally contact external systems: it runs the selected package manager to install dependencies and can run `git init` in the new project. Those steps are separate from template selection; neither Git nor a remote template branch supplies the generated files.
+
 ## What Praxis generates
 
 | Project type | Frontend | Backend | Typical root layout |
@@ -67,4 +93,5 @@ Praxis is not:
 - Configuration model: [`cli/src/config/schema.ts`](../cli/src/config/schema.ts)
 - Module resolution: [`cli/src/config/resolver.ts`](../cli/src/config/resolver.ts)
 - Composition: [`cli/src/composer/compose.ts`](../cli/src/composer/compose.ts)
+- Legacy branch clone implementation: [`cli/src/controllers/cloneRepo.ts`](../cli/src/controllers/cloneRepo.ts)
 - Public website: [`web/`](../web/)

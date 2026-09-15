@@ -3,40 +3,40 @@
 ## Praxis
 
 - [[Home|Home]]
-- [[Overview|What Praxis is]]
+- [[What Praxis is|Overview]]
 - [[Terminology|Terminology]]
 
 ## Praxis Core Internals
 
-- [[Core-Internals|Core overview]]
-- [[Architecture|System architecture]]
-- [[Repository-Map|Repository map]]
-- [[Code-Architecture|Code architecture]]
-- [[Generation-Pipeline|Generation pipeline]]
-- [[Manifest-System|Manifest composition]]
-- [[UI-Templates|UI authoring pipeline]]
-- [[Testing|Testing and evidence]]
-- [[Agent-Guide|Contributor and agent guide]]
-- [[Wiki-Publishing|Wiki publishing]]
+- [[Core overview|Core-Internals]]
+- [[System architecture|Architecture]]
+- [[Repository map|Repository-Map]]
+- [[Code architecture|Code-Architecture]]
+- [[Generation pipeline|Generation-Pipeline]]
+- [[Manifest composition|Manifest-System]]
+- [[UI authoring pipeline|UI-Templates]]
+- [[Testing and evidence|Testing]]
+- [[Contributor and agent guide|Agent-Guide]]
+- [[Wiki publishing|Wiki-Publishing]]
 
 ## Praxis Template Architecture
 
-- [[Template-Architecture|Template overview]]
-- [[Standard-Projects|Standard projects]]
-- [[Standard-Frontend-Architecture|Standard frontend]]
-- [[Express-Architecture|Express backend]]
-- [[Fullstack-Architecture|Standard fullstack]]
-- [[Praxis-Pro|Praxis Pro]]
-- [[Django-Architecture|Django and DRF]]
-- [[Gin-Architecture|Go and Gin]]
-- [[Capability-Architecture|Capabilities]]
-- [[Compose-Architecture|Docker Compose]]
-- [[Kubernetes-Architecture|Kubernetes]]
-- [[Terraform-Architecture|Terraform clouds]]
-- [[Extending-Generated-Projects|Extension guide]]
-- [[Generated-Backends|Backend comparison]]
+- [[Template overview|Template-Architecture]]
+- [[Standard projects|Standard-Projects]]
+- [[Standard frontend|Standard-Frontend-Architecture]]
+- [[Express backend|Express-Architecture]]
+- [[Standard fullstack|Fullstack-Architecture]]
+- [[Praxis Pro|Praxis-Pro]]
+- [[Django and DRF|Django-Architecture]]
+- [[Go and Gin|Gin-Architecture]]
+- [[Capabilities|Capability-Architecture]]
+- [[Docker Compose|Compose-Architecture]]
+- [[Kubernetes|Kubernetes-Architecture]]
+- [[Terraform clouds|Terraform-Architecture]]
+- [[Extension guide|Extending-Generated-Projects]]
+- [[Backend comparison|Generated-Backends]]
 
 ## Agent context
 
-- [[Template-Agent-Guide|Template Agent Guide]]
+- [[Template Agent Guide|Template-Agent-Guide]]
 - [Machine-readable context map](https://github.com/sidhxntt/Praxis/blob/main/docs/template-context.json)

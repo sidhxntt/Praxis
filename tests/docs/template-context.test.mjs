@@ -165,6 +165,19 @@ test("Home and sidebar establish the two-domain Wiki", async () => {
   assert.match(home, /Praxis Pro/);
 });
 
+test("rendered Wiki links use display text before the page target", async () => {
+  const directory = await mkdtemp(path.join(os.tmpdir(), "praxis-wiki-links-"));
+  const { spawnSync } = await import("node:child_process");
+  const result = spawnSync(process.execPath, ["scripts/render-github-wiki.mjs", directory], {
+    cwd: root,
+    encoding: "utf8",
+  });
+  assert.equal(result.status, 0, result.stderr);
+  const sidebar = await readFile(path.join(directory, "_Sidebar.md"), "utf8");
+  assert.match(sidebar, /\[\[What Praxis is\|Overview\]\]/);
+  assert.match(sidebar, /\[\[Core overview\|Core-Internals\]\]/);
+});
+
 test("major backend pages satisfy the shared architecture contract", async () => {
   const headings = [
     "Generated directory map",
