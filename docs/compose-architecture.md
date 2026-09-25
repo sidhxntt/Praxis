@@ -36,6 +36,6 @@ Add a service only when a resolved selection requires it. Give stateful dependen
 
 ## Authoritative sources and tests
 
-- Standard: [`cli/templates/deployment.docker/`](../cli/templates/deployment.docker/)
-- Pro: [`cli/templates/pro.compose/`](../cli/templates/pro.compose/)
+- Standard: [`cli/templates/standard/deployment/docker/`](../cli/templates/standard/deployment/docker/)
+- Pro: [`cli/templates/pro/infrastructure/compose/`](../cli/templates/pro/infrastructure/compose/)
 - Matrix: [`cli/tests/generator/matrix.test.ts`](../cli/tests/generator/matrix.test.ts), [`proMatrix.test.ts`](../cli/tests/generator/proMatrix.test.ts)

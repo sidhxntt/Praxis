@@ -35,10 +35,12 @@ async function main() {
 
 async function generatedSnapshot(root) {
   const snapshot = {};
-  for (const entry of await readdir(root, { withFileTypes: true })) {
-    if (entry.isDirectory() && entry.name.startsWith("ui.") && !["ui.shared", "ui.catalog"].includes(entry.name)) {
-      await addTree(snapshot, root, path.join(entry.name, "files"));
-      await addFile(snapshot, root, path.join(entry.name, "manifest.json"));
+  const stylesRoot = path.join(root, "ui", "styles");
+  for (const entry of await readdir(stylesRoot, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      const relative = path.join("ui", "styles", entry.name);
+      await addTree(snapshot, root, path.join(relative, "files"));
+      await addFile(snapshot, root, path.join(relative, "manifest.json"));
     }
   }
   return snapshot;

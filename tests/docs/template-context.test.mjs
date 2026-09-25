@@ -51,13 +51,13 @@ test("standard configuration resolves ordered frontend, backend, and integration
   for (const id of ["standard-fullstack", "standard-database", "standard-auth", "standard-cache", "standard-docker"])
     assert.ok(result.bundleIds.includes(id), `missing resolved ${id}`);
   for (const source of [
-    "cli/templates/frontend.next",
-    "cli/templates/ui.apple",
-    "cli/templates/backend.express",
-    "cli/templates/database.postgres",
-    "cli/templates/auth.self-hosted",
-    "cli/templates/cache.redis",
-    "cli/templates/deployment.docker",
+    "cli/templates/standard/frontend/next",
+    "cli/templates/ui/styles/apple",
+    "cli/templates/standard/backend/express",
+    "cli/templates/standard/database/postgres",
+    "cli/templates/standard/auth/self-hosted",
+    "cli/templates/standard/cache/redis",
+    "cli/templates/standard/deployment/docker",
   ]) assert.ok(result.sources.includes(source), `missing selected source ${source}`);
 });
 

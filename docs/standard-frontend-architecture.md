@@ -30,7 +30,7 @@ In a fullstack workspace the root scripts coordinate independent frontend/backen
 
 ## Authoritative sources and tests
 
-- Framework modules: [`cli/templates/frontend.next/`](../cli/templates/frontend.next/), [`frontend.vite/`](../cli/templates/frontend.vite/), [`frontend.vue/`](../cli/templates/frontend.vue/), [`frontend.astro/`](../cli/templates/frontend.astro/), [`frontend.angular/`](../cli/templates/frontend.angular/)
-- Styling: [`cli/templates/styling.tailwind-shadcn/`](../cli/templates/styling.tailwind-shadcn/)
+- Framework modules: [`cli/templates/standard/frontend/next/`](../cli/templates/standard/frontend/next/), [`frontend.vite/`](../cli/templates/standard/frontend/vite/), [`frontend.vue/`](../cli/templates/standard/frontend/vue/), [`frontend.astro/`](../cli/templates/standard/frontend/astro/), [`frontend.angular/`](../cli/templates/standard/frontend/angular/)
+- Styling: [`cli/templates/standard/styling/tailwind-shadcn/`](../cli/templates/standard/styling/tailwind-shadcn/)
 - UI architecture: [UI templates](ui-templates.md)
 - Matrix contracts: [`cli/tests/generator/matrix.test.ts`](../cli/tests/generator/matrix.test.ts)

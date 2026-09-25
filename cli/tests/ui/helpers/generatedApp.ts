@@ -8,7 +8,7 @@ export async function launchQualityBrowser(): Promise<Browser> {
 }
 
 export async function renderStyle(page: Page, id: UiStyleId): Promise<void> {
-  const moduleRoot = path.resolve("templates", `ui.${id}`);
+  const moduleRoot = path.resolve("templates", "ui", "styles", id);
   const style = JSON.parse(await readFile(path.join(moduleRoot, "style.json"), "utf8"));
   // Repository generator modules are plain ESM scripts rather than shipped TypeScript APIs.
   const { renderPageMarkup } = await import("../../../scripts/ui/lib/render-html.mjs");
