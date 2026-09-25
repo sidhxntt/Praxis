@@ -29,7 +29,7 @@ const NEXT_ASSET_TYPES = new Map([
 
 export async function startGallery(options: GalleryOptions = {}): Promise<GallerySession> {
   const root = path.resolve(
-    options.galleryRoot ?? path.resolve(__dirname, "../../templates/ui/catalog/gallery"),
+    options.galleryRoot ?? path.resolve(__dirname, "../../templates/ui.catalog/gallery"),
   );
   const timeoutMs = options.timeoutMs ?? 5 * 60_000;
   let selected = false;

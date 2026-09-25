@@ -19,7 +19,7 @@ interface CatalogRecord {
   previews: Record<"thumbnail" | "desktop" | "mobile", PreviewRecord>;
 }
 
-const root = path.resolve("templates/ui/catalog");
+const root = path.resolve("templates/ui.catalog");
 
 describe("rendered UI previews", () => {
   it("manifests exactly three hashed previews for every catalog style", async () => {

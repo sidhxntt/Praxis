@@ -40,7 +40,7 @@ describe("complete generated UI matrix", () => {
             { mode: "template", style: styleId },
           ), { cwd: root });
           const style = JSON.parse(
-            await readFile(path.resolve("templates", "ui", "styles", styleId, "style.json"), "utf8"),
+            await readFile(path.resolve("templates", `ui.${styleId}`, "style.json"), "utf8"),
           ) as { sourceDesign: string; sections: Array<{ brand?: string }>; assets: Array<{ source: string }> };
           const entry = await readFile(path.join(output, adapter.entry), "utf8");
           expect(entry, `${styleId}:${adapter.id} original brand`)

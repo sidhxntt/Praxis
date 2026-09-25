@@ -6,7 +6,7 @@ import { UI_STYLE_IDS } from "../../src/ui/catalog";
 describe("generated landing-page visual baselines", () => {
   it("has distinct committed desktop and mobile baselines for every style", async () => {
     const catalog = JSON.parse(
-      await readFile(path.resolve("templates/ui/catalog/catalog.json"), "utf8"),
+      await readFile(path.resolve("templates/ui.catalog/catalog.json"), "utf8"),
     ) as Array<{
       id: string;
       previews: { desktop: { sha256: string }; mobile: { sha256: string } };

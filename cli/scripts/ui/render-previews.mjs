@@ -15,7 +15,7 @@ if (outputOption >= 0 && !process.argv[outputOption + 1]) {
   throw new Error("--output requires a directory");
 }
 const catalogRoot = path.resolve(
-  outputOption >= 0 ? process.argv[outputOption + 1] : path.join(templatesRoot, "ui", "catalog"),
+  outputOption >= 0 ? process.argv[outputOption + 1] : path.join(templatesRoot, "ui.catalog"),
 );
 const previewsRoot = path.join(catalogRoot, "gallery", "previews");
 const dimensions = {
