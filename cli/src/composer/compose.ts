@@ -23,6 +23,11 @@ export interface ComposeOptions {
   destination: string;
 }
 
+interface LoadedManifest {
+  manifest: TemplateManifest;
+  moduleRoot: string;
+}
+
 export async function composeProject(
   config: PraxisConfig,
   moduleIds: string[],
@@ -35,13 +40,10 @@ export async function composeProject(
   );
 
   try {
-    const manifests = await Promise.all(
-      moduleIds.map((id) => loadManifest(options.templatesRoot, id)),
-    );
-    for (const manifest of manifests) {
+    const loadedManifests = await loadManifests(options.templatesRoot, moduleIds);
+    for (const { manifest, moduleRoot } of loadedManifests) {
       for (const overlay of manifest.overlays ?? []) {
         if (!selectorMatches(overlay, config)) continue;
-        const moduleRoot = path.resolve(options.templatesRoot, manifest.id);
         const source = confinedPath(moduleRoot, overlay.source, "overlay source");
         const output = outputDirectory(staging, overlay.scope, config);
         await copyOverlay(source, output, config, staging, overlay.replace === true);
@@ -63,6 +65,7 @@ export async function composeProject(
       }
     }
 
+    const manifests = loadedManifests.map(({ manifest }) => manifest);
     await applyPackages(staging, config, manifests.flatMap((item) => item.packages ?? []));
     await applyEnvironment(staging, config, manifests.flatMap((item) => item.env ?? []));
     await ensureProjectReadmes(staging, config);
@@ -161,17 +164,48 @@ async function assertDestinationAvailable(destination: string): Promise<void> {
   }
 }
 
-async function loadManifest(root: string, id: string): Promise<TemplateManifest> {
-  if (!/^[a-z0-9][a-z0-9.-]*$/.test(id)) {
-    throw new Error(`invalid module id "${id}"`);
+async function loadManifests(root: string, ids: string[]): Promise<LoadedManifest[]> {
+  for (const id of ids) {
+    if (!/^[a-z0-9][a-z0-9.-]*$/.test(id)) {
+      throw new Error(`invalid module id "${id}"`);
+    }
   }
-  const moduleRoot = confinedPath(path.resolve(root), id, "module path");
-  const contents = await readFile(path.join(moduleRoot, "manifest.json"), "utf8");
-  const manifest = JSON.parse(contents) as TemplateManifest;
-  if (manifest.id !== id) {
-    throw new Error(`manifest id mismatch for ${id}`);
+
+  const catalog = new Map<string, LoadedManifest>();
+  const templatesRoot = path.resolve(root);
+  await discoverManifestDirectories(templatesRoot, templatesRoot, catalog);
+  return ids.map((id) => {
+    const loaded = catalog.get(id);
+    if (!loaded) throw new Error(`template module not found: "${id}"`);
+    return loaded;
+  });
+}
+
+async function discoverManifestDirectories(
+  templatesRoot: string,
+  directory: string,
+  catalog: Map<string, LoadedManifest>,
+): Promise<void> {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const manifestEntry = entries.find((entry) => entry.isFile() && entry.name === "manifest.json");
+  if (manifestEntry) {
+    const moduleRoot = confinedPath(templatesRoot, path.relative(templatesRoot, directory), "module path");
+    const manifest = JSON.parse(await readFile(path.join(moduleRoot, manifestEntry.name), "utf8")) as TemplateManifest;
+    if (!/^[a-z0-9][a-z0-9.-]*$/.test(manifest.id)) {
+      throw new Error(`invalid manifest id "${manifest.id}"`);
+    }
+    if (catalog.has(manifest.id)) {
+      throw new Error(`duplicate template manifest id "${manifest.id}"`);
+    }
+    catalog.set(manifest.id, { manifest, moduleRoot });
+    return;
   }
-  return manifest;
+
+  await Promise.all(
+    entries
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => discoverManifestDirectories(templatesRoot, path.join(directory, entry.name), catalog)),
+  );
 }
 
 function confinedPath(root: string, candidate: string, label: string): string {
