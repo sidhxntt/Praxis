@@ -12,9 +12,9 @@ for (const profile of STYLE_PROFILES) {
 
 async function seed(profile) {
   const sourceName = `DESIGN-${profile.id}.md`;
-  const source = await readFile(path.join(templatesRoot, "ui", "designs", sourceName), "utf8");
+  const source = await readFile(path.join(templatesRoot, "designs", sourceName), "utf8");
   const palette = paletteFrom(source, profile.theme);
-  const moduleRoot = path.join(templatesRoot, "ui", "styles", profile.id);
+  const moduleRoot = path.join(templatesRoot, `ui.${profile.id}`);
   const assetName = `${profile.id}-composition.svg`;
   const style = createStyle(profile, palette, assetName);
   await write(path.join(moduleRoot, "style.json"), `${JSON.stringify(style, null, 2)}\n`);
@@ -22,7 +22,7 @@ async function seed(profile) {
   await write(
     path.join(moduleRoot, "DESIGN.md"),
     `# ${profile.brand} — ${title(profile.id)}-Inspired Landing Page Design\n\n`
-      + `Source specification: \`templates/ui/designs/${sourceName}\`.\n\n`
+      + `Source specification: \`templates/designs/${sourceName}\`.\n\n`
       + `This is an original Praxis Flow implementation inspired by the visual principles documented below. It is not affiliated with or endorsed by the referenced company. The fictional ${profile.brand} brand, all page copy, and the local composition artwork are original. No logos, proprietary product copy, or third-party imagery are included.\n\n`
       + `## Generated-page intent\n\n${profile.hero} ${profile.body}\n\n`
       + "## Source design guidance\n\n"

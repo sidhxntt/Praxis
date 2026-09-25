@@ -59,7 +59,7 @@ For non-template work, still require the agent to read `AGENTS.md`, inspect repo
 | Add Pro capability | `cli/src/config/pro.ts` | resolver, capability module, Compose/K8s/Terraform manifests, Pro tests |
 | Fix generated file | output `praxis.config.json` | resolved modules, overlay source, all patches targeting file |
 | Change UI style | `cli/scripts/ui/` | generated `ui.<style>`, previews, UI quality/matrix tests |
-| Change local gallery | `cli/src/ui/` | `templates/ui/catalog`, gallery browser tests |
+| Change local gallery | `cli/src/ui/` | `templates/ui.catalog`, gallery browser tests |
 | Change website | `web/` | `web/package.json`, Vercel config, web build |
 | Change Wiki | `docs/` | renderer, link checker, Wiki workflow |
 
@@ -132,7 +132,7 @@ Agents should prefer these stable data sources over prose lists:
 
 - supported standard values: exported constants/types in `cli/src/config/schema.ts`;
 - Pro capability order/implications: `cli/src/config/pro.ts`;
-- UI style IDs/metadata: `cli/src/ui/catalog.ts` and `cli/templates/ui/catalog/catalog.json`;
+- UI style IDs/metadata: `cli/src/ui/catalog.ts` and `cli/templates/ui.catalog/catalog.json`;
 - module declarations: `cli/templates/*/manifest.json`;
 - published package allowlist: `cli/package.json#files`;
 - CI truth: `.github/workflows/ci.yml` and `ui-matrix.yml`.

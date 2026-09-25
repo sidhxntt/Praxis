@@ -11,7 +11,7 @@ const scriptRoot = path.dirname(fileURLToPath(import.meta.url));
 const cliRoot = path.resolve(scriptRoot, "../..");
 const sourceRoot = path.join(cliRoot, "gallery-app");
 const outputRoot = path.join(sourceRoot, "out");
-const targetRoot = path.join(cliRoot, "templates/ui/catalog/gallery");
+const targetRoot = path.join(cliRoot, "templates/ui.catalog/gallery");
 const nextBin = require.resolve("next/dist/bin/next", {
   paths: [cliRoot, path.resolve(cliRoot, ".."), path.resolve(cliRoot, "../web")],
 });

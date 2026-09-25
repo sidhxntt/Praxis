@@ -80,5 +80,5 @@ Praxis Pro produces a strong starting repository and executable operational wiri
 - Pro model: [`cli/src/config/pro.ts`](../cli/src/config/pro.ts)
 - Pro validation: [`cli/src/config/schema.ts`](../cli/src/config/schema.ts)
 - Resolver: [`cli/src/config/resolver.ts`](../cli/src/config/resolver.ts)
-- Core/stack manifests: [`cli/templates/pro/core/`](../cli/templates/pro/core/), [`cli/templates/pro/runtime/django/`](../cli/templates/pro/runtime/django/), [`cli/templates/pro/runtime/gin/`](../cli/templates/pro/runtime/gin/)
+- Core/stack manifests: [`cli/templates/pro.core/`](../cli/templates/pro.core/), [`cli/templates/pro.django/`](../cli/templates/pro.django/), [`cli/templates/pro.gin/`](../cli/templates/pro.gin/)
 - Release matrix: [`cli/tests/generator/proMatrix.test.ts`](../cli/tests/generator/proMatrix.test.ts)

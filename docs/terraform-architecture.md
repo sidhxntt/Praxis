@@ -47,6 +47,6 @@ Conditional cache/storage/search files are selected from the resolved capability
 
 ## Authoritative sources and tests
 
-- Shared: [`cli/templates/pro/infrastructure/terraform/shared/`](../cli/templates/pro/infrastructure/terraform/shared/)
-- Clouds: [`pro.terraform.aws/`](../cli/templates/pro/infrastructure/terraform/aws/), [`pro.terraform.azure/`](../cli/templates/pro/infrastructure/terraform/azure/), [`pro.terraform.gcp/`](../cli/templates/pro/infrastructure/terraform/gcp/)
+- Shared: [`cli/templates/pro.terraform.shared/`](../cli/templates/pro.terraform.shared/)
+- Clouds: [`pro.terraform.aws/`](../cli/templates/pro.terraform.aws/), [`pro.terraform.azure/`](../cli/templates/pro.terraform.azure/), [`pro.terraform.gcp/`](../cli/templates/pro.terraform.gcp/)
 - Matrix: [`cli/tests/generator/proMatrix.test.ts`](../cli/tests/generator/proMatrix.test.ts)

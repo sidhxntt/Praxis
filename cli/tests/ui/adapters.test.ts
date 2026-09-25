@@ -26,9 +26,9 @@ describe("UI framework adapters", () => {
     ]);
 
     for (const id of UI_STYLE_IDS) {
-      const filesRoot = path.join(root, "ui", "styles", id, "files");
+      const filesRoot = path.join(root, `ui.${id}`, "files");
       const manifest = JSON.parse(
-        await readFile(path.join(root, "ui", "styles", id, "manifest.json"), "utf8"),
+        await readFile(path.join(root, `ui.${id}`, "manifest.json"), "utf8"),
       );
       expect(manifest.id).toBe(`ui.${id}`);
       expect(manifest.overlays).toHaveLength(10);
@@ -66,7 +66,7 @@ describe("UI framework adapters", () => {
       root,
     ]);
 
-    const filesRoot = path.join(root, "ui", "styles", "apple", "files");
+    const filesRoot = path.join(root, "ui.apple", "files");
     expect((await readdir(filesRoot)).sort()).toEqual([
       "angular-ts",
       "astro-js",
@@ -106,7 +106,7 @@ describe("UI framework adapters", () => {
       root,
     ]);
 
-    const filesRoot = path.join(root, "ui", "styles", "apple", "files");
+    const filesRoot = path.join(root, "ui.apple", "files");
     const page = await readFile(path.join(filesRoot, "next-ts/app/page.tsx"), "utf8");
     const css = await readFile(path.join(filesRoot, "next-ts/app/globals.css"), "utf8");
     expect(page).toContain('<a className="skip-link" href="#main">Skip to content</a>');
@@ -132,8 +132,8 @@ describe("UI framework adapters", () => {
     await run(process.execPath, [path.resolve("scripts/ui/generate.mjs"), ...args, "--output", first]);
     await run(process.execPath, [path.resolve("scripts/ui/generate.mjs"), ...args, "--output", second]);
 
-    expect(await snapshot(path.join(first, "ui", "styles", "apple"))).toEqual(
-      await snapshot(path.join(second, "ui", "styles", "apple")),
+    expect(await snapshot(path.join(first, "ui.apple"))).toEqual(
+      await snapshot(path.join(second, "ui.apple")),
     );
   });
 });

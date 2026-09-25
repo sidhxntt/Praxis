@@ -27,9 +27,8 @@ async function addModule(
   id: string,
   manifest: Record<string, unknown>,
   files: Record<string, string> = {},
-  modulePath = id,
 ): Promise<void> {
-  const directory = path.join(root, "templates", modulePath);
+  const directory = path.join(root, "templates", id);
   await mkdir(path.join(directory, "files", "common"), { recursive: true });
   await writeFile(
     path.join(directory, "manifest.json"),
@@ -43,42 +42,6 @@ async function addModule(
 }
 
 describe("composeProject", () => {
-  it("loads a requested manifest from a nested template directory", async () => {
-    const root = await fixtureRoot();
-    await addModule(
-      root,
-      "frontend.next",
-      { overlays: [{ scope: "frontend", source: "files/common" }] },
-      { "marker.txt": "next" },
-      "standard/frontend/next",
-    );
-    const config = quickConfig("acme");
-    config.projectType = "frontend";
-    config.backend = undefined;
-    config.deployment = [];
-
-    await composeProject(config, ["frontend.next"], {
-      templatesRoot: path.join(root, "templates"),
-      destination: path.join(root, "output", "acme"),
-    });
-
-    expect(await readFile(path.join(root, "output", "acme", "marker.txt"), "utf8"))
-      .toBe("next");
-  });
-
-  it("rejects duplicate manifest ids in separate template directories", async () => {
-    const root = await fixtureRoot();
-    await addModule(root, "frontend.next", {}, {}, "standard/frontend/next");
-    await addModule(root, "frontend.next", {}, {}, "legacy/frontend/next");
-
-    await expect(
-      composeProject(quickConfig("acme"), ["frontend.next"], {
-        templatesRoot: path.join(root, "templates"),
-        destination: path.join(root, "output", "acme"),
-      }),
-    ).rejects.toThrow('duplicate template manifest id "frontend.next"');
-  });
-
   it("copies overlays, replaces tokens, and merges package metadata", async () => {
     const root = await fixtureRoot();
     await addModule(

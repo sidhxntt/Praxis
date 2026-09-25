@@ -40,6 +40,6 @@ Terraform may provision a cluster, registry, networking, managed database/cache/
 
 ## Authoritative sources and tests
 
-- Module: [`cli/templates/pro/infrastructure/kubernetes/`](../cli/templates/pro/infrastructure/kubernetes/)
+- Module: [`cli/templates/pro.kubernetes/`](../cli/templates/pro.kubernetes/)
 - Capability closure: [`cli/src/config/pro.ts`](../cli/src/config/pro.ts)
 - Matrix: [`cli/tests/generator/proMatrix.test.ts`](../cli/tests/generator/proMatrix.test.ts)

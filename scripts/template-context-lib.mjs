@@ -3,7 +3,7 @@ import path from "node:path";
 
 export async function loadContextMap(repositoryRoot) {
   const map = JSON.parse(await readFile(path.join(repositoryRoot, "docs/template-context.json"), "utf8"));
-  const uiCatalog = JSON.parse(await readFile(path.join(repositoryRoot, "cli/templates/ui/catalog/catalog.json"), "utf8"));
+  const uiCatalog = JSON.parse(await readFile(path.join(repositoryRoot, "cli/templates/ui.catalog/catalog.json"), "utf8"));
   return { ...map, uiStyles: uiCatalog.map(({ id }) => id) };
 }
 
@@ -72,32 +72,32 @@ function selectedTemplateSources(input) {
   if (input.bundles) return [];
   if (input.projectType === "pro-backend") {
     const sources = [
-      "cli/templates/pro/core",
-      input.pro?.stack === "python-django" ? "cli/templates/pro/runtime/django" : "cli/templates/pro/runtime/gin",
+      "cli/templates/pro.core",
+      input.pro?.stack === "python-django" ? "cli/templates/pro.django" : "cli/templates/pro.gin",
       ...((input.pro?.resolvedCapabilities ?? [])
         .filter((capability) => capability !== "kubernetes" && capability !== "terraform")
-        .map((capability) => `cli/templates/pro/capabilities/${capability}`)),
-      "cli/templates/pro/infrastructure/compose",
+        .map((capability) => `cli/templates/pro.capability.${capability}`)),
+      "cli/templates/pro.compose",
     ];
-    if (input.pro?.resolvedCapabilities?.includes("kubernetes")) sources.push("cli/templates/pro/infrastructure/kubernetes");
+    if (input.pro?.resolvedCapabilities?.includes("kubernetes")) sources.push("cli/templates/pro.kubernetes");
     if (input.pro?.resolvedCapabilities?.includes("terraform")) {
-      sources.push("cli/templates/pro/infrastructure/terraform/shared", `cli/templates/pro/infrastructure/terraform/${input.pro.cloud}`);
+      sources.push("cli/templates/pro.terraform.shared", `cli/templates/pro.terraform.${input.pro.cloud}`);
     }
     return sources;
   }
   const sources = [];
-  if (input.projectType === "fullstack") sources.push("cli/templates/standard/base/workspace");
+  if (input.projectType === "fullstack") sources.push("cli/templates/base.workspace");
   if (input.frontend) {
-    sources.push(`cli/templates/standard/frontend/${input.frontend.framework}`, "cli/templates/standard/styling/tailwind-shadcn");
-    if (input.frontend.ui?.mode === "template") sources.push(`cli/templates/ui/styles/${input.frontend.ui.style}`);
+    sources.push(`cli/templates/frontend.${input.frontend.framework}`, "cli/templates/styling.tailwind-shadcn");
+    if (input.frontend.ui?.mode === "template") sources.push(`cli/templates/ui.${input.frontend.ui.style}`);
   }
   if (input.backend) {
-    sources.push("cli/templates/standard/backend/express");
-    if (input.backend.database !== "none") sources.push(`cli/templates/standard/database/${input.backend.database}`);
-    if (input.backend.auth !== "none") sources.push(`cli/templates/standard/auth/${input.backend.auth}`);
-    if (input.backend.cache !== "none") sources.push(`cli/templates/standard/cache/${input.backend.cache}`);
+    sources.push("cli/templates/backend.express");
+    if (input.backend.database !== "none") sources.push(`cli/templates/database.${input.backend.database}`);
+    if (input.backend.auth !== "none") sources.push(`cli/templates/auth.${input.backend.auth}`);
+    if (input.backend.cache !== "none") sources.push(`cli/templates/cache.${input.backend.cache}`);
   }
-  for (const deployment of input.deployment ?? []) sources.push(`cli/templates/standard/deployment/${deployment}`);
+  for (const deployment of input.deployment ?? []) sources.push(`cli/templates/deployment.${deployment}`);
   return sources;
 }
 
@@ -176,9 +176,10 @@ export async function validateContextMap(map, repositoryRoot) {
     if (!map.capabilityBundles?.[capability]) failures.push(`missing context coverage for Pro capability ${capability}`);
   }
   const templateRoot = path.join(repositoryRoot, "cli/templates");
-  for (const id of await findTemplateManifestIds(templateRoot)) {
-    if (!map.moduleFamilies?.some(({ prefix }) => id.startsWith(prefix))) {
-      failures.push(`missing context coverage for template module ${id}`);
+  for (const entry of await readdir(templateRoot, { withFileTypes: true })) {
+    if (!entry.isDirectory() || !await exists(path.join(templateRoot, entry.name, "manifest.json"))) continue;
+    if (!map.moduleFamilies?.some(({ prefix }) => entry.name.startsWith(prefix))) {
+      failures.push(`missing context coverage for template module ${entry.name}`);
     }
   }
   try {
@@ -187,15 +188,4 @@ export async function validateContextMap(map, repositoryRoot) {
     failures.push(error.message);
   }
   return [...new Set(failures)].sort();
-}
-
-async function findTemplateManifestIds(directory) {
-  const entries = await readdir(directory, { withFileTypes: true });
-  if (entries.some((entry) => entry.isFile() && entry.name === "manifest.json")) {
-    const manifest = JSON.parse(await readFile(path.join(directory, "manifest.json"), "utf8"));
-    return [manifest.id];
-  }
-  return (await Promise.all(
-    entries.filter((entry) => entry.isDirectory()).map((entry) => findTemplateManifestIds(path.join(directory, entry.name))),
-  )).flat();
 }

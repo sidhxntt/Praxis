@@ -66,7 +66,7 @@ Add application routes and services as ordinary Express modules. When extending 
 
 ## Authoritative sources and tests
 
-- Base: [`cli/templates/standard/backend/express/`](../cli/templates/standard/backend/express/)
-- Integrations: [`database.postgres/`](../cli/templates/standard/database/postgres/), [`database.mongo/`](../cli/templates/standard/database/mongo/), [`auth.self-hosted/`](../cli/templates/standard/auth/self-hosted/), [`cache.redis/`](../cli/templates/standard/cache/redis/), [`cache.memcached/`](../cli/templates/standard/cache/memcached/)
+- Base: [`cli/templates/backend.express/`](../cli/templates/backend.express/)
+- Integrations: [`database.postgres/`](../cli/templates/database.postgres/), [`database.mongo/`](../cli/templates/database.mongo/), [`auth.self-hosted/`](../cli/templates/auth.self-hosted/), [`cache.redis/`](../cli/templates/cache.redis/), [`cache.memcached/`](../cli/templates/cache.memcached/)
 - Lifecycle contracts: [`cli/tests/generator/lifecycle.test.ts`](../cli/tests/generator/lifecycle.test.ts)
 - Composition matrix: [`cli/tests/generator/matrix.test.ts`](../cli/tests/generator/matrix.test.ts)

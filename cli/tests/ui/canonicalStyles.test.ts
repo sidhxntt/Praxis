@@ -8,7 +8,7 @@ import {
 import { UI_STYLE_IDS } from "../../src/ui/catalog";
 
 async function loadStyle(id: string): Promise<CanonicalLandingPage> {
-  const file = path.resolve(`templates/ui/styles/${id}/style.json`);
+  const file = path.resolve(`templates/ui.${id}/style.json`);
   return validateCanonicalLandingPage(JSON.parse(await readFile(file, "utf8")));
 }
 
@@ -22,10 +22,10 @@ describe("canonical landing page styles", () => {
       expect(page.sections.length).toBeGreaterThanOrEqual(7);
       expect(page.assets.length).toBeGreaterThan(0);
       await expect(
-        access(path.resolve(`templates/ui/styles/${page.id}/DESIGN.md`)),
+        access(path.resolve(`templates/ui.${page.id}/DESIGN.md`)),
       ).resolves.toBeUndefined();
       const design = await readFile(
-        path.resolve(`templates/ui/styles/${page.id}/DESIGN.md`),
+        path.resolve(`templates/ui.${page.id}/DESIGN.md`),
         "utf8",
       );
       expect(design.toLowerCase()).toContain("not affiliated");

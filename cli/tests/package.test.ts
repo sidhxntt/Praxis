@@ -29,26 +29,26 @@ describe("published package contents", () => {
     const files = report[0].files.map(({ path: file }) => file);
 
     for (const id of UI_STYLE_IDS) {
-      expect(files, `${id} manifest`).toContain(`templates/ui/styles/${id}/manifest.json`);
-      expect(files, `${id} design guide`).toContain(`templates/ui/styles/${id}/files/shared/DESIGN.md`);
-      expect(files.some((file) => file.startsWith(`templates/ui/styles/${id}/files/next-ts/`)), id)
+      expect(files, `${id} manifest`).toContain(`templates/ui.${id}/manifest.json`);
+      expect(files, `${id} design guide`).toContain(`templates/ui.${id}/files/shared/DESIGN.md`);
+      expect(files.some((file) => file.startsWith(`templates/ui.${id}/files/next-ts/`)), id)
         .toBe(true);
-      expect(files.some((file) => file.startsWith(`templates/ui/styles/${id}/files/angular-ts/`)), id)
+      expect(files.some((file) => file.startsWith(`templates/ui.${id}/files/angular-ts/`)), id)
         .toBe(true);
     }
-    expect(files).toContain("templates/ui/catalog/catalog.json");
+    expect(files).toContain("templates/ui.catalog/catalog.json");
     expect(files).toContain("README.md");
     expect(files).toContain("LICENSE.txt");
-    expect(files).toContain("templates/ui/catalog/gallery/index.html");
-    expect(files.some((file) => file.startsWith("templates/ui/catalog/gallery/_next/static/") && file.endsWith(".js")))
+    expect(files).toContain("templates/ui.catalog/gallery/index.html");
+    expect(files.some((file) => file.startsWith("templates/ui.catalog/gallery/_next/static/") && file.endsWith(".js")))
       .toBe(true);
-    expect(files.some((file) => file.startsWith("templates/ui/catalog/gallery/_next/static/") && file.endsWith(".css")))
+    expect(files.some((file) => file.startsWith("templates/ui.catalog/gallery/_next/static/") && file.endsWith(".css")))
       .toBe(true);
-    expect(files.filter((file) => file.startsWith("templates/ui/catalog/gallery/previews/")))
+    expect(files.filter((file) => file.startsWith("templates/ui.catalog/gallery/previews/")))
       .toHaveLength(120);
-    expect(files.some((file) => file.startsWith("templates/ui/designs/"))).toBe(false);
-    expect(files.some((file) => /templates\/ui\/styles\/[^/]+\/(DESIGN\.md|style\.json)$/.test(file))).toBe(false);
-    expect(files.some((file) => /templates\/ui\/styles\/[^/]+\/assets\//.test(file))).toBe(false);
+    expect(files.some((file) => file.startsWith("templates/designs/"))).toBe(false);
+    expect(files.some((file) => /templates\/ui\.[^/]+\/(DESIGN\.md|style\.json)$/.test(file))).toBe(false);
+    expect(files.some((file) => /templates\/ui\.[^/]+\/assets\//.test(file))).toBe(false);
     expect(files.some((file) => file.startsWith("tests/"))).toBe(false);
     expect(files.some((file) => file.startsWith("scripts/"))).toBe(false);
   }, 30_000);
