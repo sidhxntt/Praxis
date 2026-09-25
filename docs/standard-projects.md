@@ -109,5 +109,5 @@ The frontend and backend remain separate packages. Database and cache clients ar
 
 - Selection rules: [`cli/src/config/resolver.ts`](../cli/src/config/resolver.ts)
 - Configuration compatibility: [`cli/src/config/schema.ts`](../cli/src/config/schema.ts)
-- Standard manifests: [`cli/templates/backend.express/`](../cli/templates/backend.express/), [`cli/templates/database.postgres/`](../cli/templates/database.postgres/), [`cli/templates/deployment.docker/`](../cli/templates/deployment.docker/)
+- Standard manifests: [`cli/templates/standard/backend/express/`](../cli/templates/standard/backend/express/), [`cli/templates/standard/database/postgres/`](../cli/templates/standard/database/postgres/), [`cli/templates/standard/deployment/docker/`](../cli/templates/standard/deployment/docker/)
 - Matrix tests: [`cli/tests/generator/matrix.test.ts`](../cli/tests/generator/matrix.test.ts)

@@ -27,7 +27,7 @@ async function main() {
   const { generateProject } = require(path.join(repository, "src/generator/generate.ts"));
   const { validateConfig } = require(path.join(repository, "src/config/schema.ts"));
   const catalog = JSON.parse(
-    await readFile(path.join(repository, "templates/ui.catalog/catalog.json"), "utf8"),
+    await readFile(path.join(repository, "templates/ui/catalog/catalog.json"), "utf8"),
   );
   const styles = [undefined, ...catalog.map(({ id }) => id)];
   const root = await mkdtemp(path.join(os.tmpdir(), `praxis-ui-${target.id}-`));

@@ -52,11 +52,11 @@
   "files": [
     "dist/",
     "templates/",
-    "!templates/designs/",
-    "!templates/ui.shared/",
-    "!templates/ui.*/DESIGN.md",
-    "!templates/ui.*/style.json",
-    "!templates/ui.*/assets/"
+    "!templates/ui/designs/",
+    "!templates/ui/shared/",
+    "!templates/ui/styles/*/DESIGN.md",
+    "!templates/ui/styles/*/style.json",
+    "!templates/ui/styles/*/assets/"
   ],
   "dependencies": {
     "@clack/prompts": "^0.7.0",

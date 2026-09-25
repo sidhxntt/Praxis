@@ -26,7 +26,8 @@ const TARGETS = [
 
 export async function generateStyleAdapters({ templatesRoot, outputRoot, id }) {
   const { moduleRoot, style } = await loadStyle(templatesRoot, id);
-  const filesRoot = path.join(path.resolve(outputRoot), `ui.${id}`, "files");
+  const outputModuleRoot = path.join(path.resolve(outputRoot), "ui", "styles", id);
+  const filesRoot = path.join(outputModuleRoot, "files");
   await rm(filesRoot, { recursive: true, force: true });
   const markup = renderPageMarkup(style);
   const css = renderCss(style);
@@ -36,7 +37,7 @@ export async function generateStyleAdapters({ templatesRoot, outputRoot, id }) {
   }
 
   await write(
-    path.join(path.resolve(outputRoot), `ui.${id}`, "manifest.json"),
+    path.join(outputModuleRoot, "manifest.json"),
     `${JSON.stringify(renderManifest(id), null, 2)}\n`,
   );
 
@@ -109,9 +110,9 @@ async function write(file, contents) {
 }
 
 async function discoverStyles(templatesRoot) {
-  return (await readdir(templatesRoot, { withFileTypes: true }))
-    .filter((entry) => entry.isDirectory() && entry.name.startsWith("ui.") && entry.name !== "ui.shared" && entry.name !== "ui.catalog")
-    .map((entry) => entry.name.slice(3))
+  return (await readdir(path.join(templatesRoot, "ui", "styles"), { withFileTypes: true }))
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
     .sort();
 }
 

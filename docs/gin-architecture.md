@@ -67,8 +67,8 @@ Add handlers through the router, keep business policy in services, define narrow
 
 ## Authoritative sources and tests
 
-- Stack: [`cli/templates/pro.gin/`](../cli/templates/pro.gin/)
-- Core: [`cli/templates/pro.core/`](../cli/templates/pro.core/)
-- Capability examples: [`cli/templates/pro.capability.jwt-auth/`](../cli/templates/pro.capability.jwt-auth/), [`pro.capability.redis-cache/`](../cli/templates/pro.capability.redis-cache/)
+- Stack: [`cli/templates/pro/runtime/gin/`](../cli/templates/pro/runtime/gin/)
+- Core: [`cli/templates/pro/core/`](../cli/templates/pro/core/)
+- Capability examples: [`cli/templates/pro/capabilities/jwt-auth/`](../cli/templates/pro/capabilities/jwt-auth/), [`pro.capability.redis-cache/`](../cli/templates/pro/capabilities/redis-cache/)
 - Runtime contracts: [`cli/tests/generator/proRuntime.test.ts`](../cli/tests/generator/proRuntime.test.ts)
 - Capability contracts: [`cli/tests/generator/proCapabilities.test.ts`](../cli/tests/generator/proCapabilities.test.ts)

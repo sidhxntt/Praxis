@@ -39,5 +39,5 @@ An enabled capability must be executable, not merely documented: its dependencie
 
 - Capability list/closure: [`cli/src/config/pro.ts`](../cli/src/config/pro.ts)
 - Validation: [`cli/src/config/schema.ts`](../cli/src/config/schema.ts)
-- Modules: [`cli/templates/pro.capability.jwt-auth/`](../cli/templates/pro.capability.jwt-auth/)
+- Modules: [`cli/templates/pro/capabilities/jwt-auth/`](../cli/templates/pro/capabilities/jwt-auth/)
 - Contracts: [`cli/tests/generator/proCapabilities.test.ts`](../cli/tests/generator/proCapabilities.test.ts), [`proMatrix.test.ts`](../cli/tests/generator/proMatrix.test.ts)

@@ -40,7 +40,7 @@ The packages do not import each other's source. Environment configuration define
 
 ## Authoritative sources and tests
 
-- Workspace module: [`cli/templates/base.workspace/`](../cli/templates/base.workspace/)
+- Workspace module: [`cli/templates/standard/base/workspace/`](../cli/templates/standard/base/workspace/)
 - Resolver scope: [`cli/src/config/resolver.ts`](../cli/src/config/resolver.ts)
 - Composer scope mapping: [`cli/src/composer/compose.ts`](../cli/src/composer/compose.ts)
 - Matrix tests: [`cli/tests/generator/matrix.test.ts`](../cli/tests/generator/matrix.test.ts)

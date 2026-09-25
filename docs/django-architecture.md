@@ -67,8 +67,8 @@ Create bounded Django applications or focused `core` modules, keep views transpo
 
 ## Authoritative sources and tests
 
-- Stack: [`cli/templates/pro.django/`](../cli/templates/pro.django/)
-- Core: [`cli/templates/pro.core/`](../cli/templates/pro.core/)
-- Capabilities: [`cli/templates/pro.capability.jwt-auth/`](../cli/templates/pro.capability.jwt-auth/), [`pro.capability.background-jobs/`](../cli/templates/pro.capability.background-jobs/)
+- Stack: [`cli/templates/pro/runtime/django/`](../cli/templates/pro/runtime/django/)
+- Core: [`cli/templates/pro/core/`](../cli/templates/pro/core/)
+- Capabilities: [`cli/templates/pro/capabilities/jwt-auth/`](../cli/templates/pro/capabilities/jwt-auth/), [`pro.capability.background-jobs/`](../cli/templates/pro/capabilities/background-jobs/)
 - Runtime contracts: [`cli/tests/generator/proRuntime.test.ts`](../cli/tests/generator/proRuntime.test.ts)
 - Capability contracts: [`cli/tests/generator/proCapabilities.test.ts`](../cli/tests/generator/proCapabilities.test.ts)

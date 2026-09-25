@@ -14,12 +14,12 @@ Angular JavaScript is intentionally unsupported.
 
 ```mermaid
 flowchart LR
-    Designs[templates/designs DESIGN-*.md] --> Profiles[scripts/ui/profiles.mjs]
+    Designs[templates/ui/designs DESIGN-*.md] --> Profiles[scripts/ui/profiles.mjs]
     Profiles --> Canonical[canonical page model/style.json]
     Canonical --> Renderers[React/Vue/Astro/Angular/CSS renderers]
-    Renderers --> Modules[templates/ui.<style>]
+    Renderers --> Modules[templates/ui/styles/<style>]
     Modules --> Preview[Playwright preview renderer]
-    Preview --> Catalog[templates/ui.catalog]
+    Preview --> Catalog[templates/ui/catalog]
     Catalog --> Gallery[local gallery]
     Modules --> Compose[normal manifest composer]
 ```
@@ -80,5 +80,4 @@ Then run accessibility, responsive, visual, gallery, adapter, catalog, preview, 
 - Gallery server: [`cli/src/ui/gallery.ts`](../cli/src/ui/gallery.ts)
 - Canonical model: [`cli/src/ui/canonical.ts`](../cli/src/ui/canonical.ts)
 - Authoring pipeline: [`cli/scripts/ui/`](../cli/scripts/ui/)
-- Generated catalog: [`cli/templates/ui.catalog/`](../cli/templates/ui.catalog/)
-
+- Generated catalog: [`cli/templates/ui/catalog/`](../cli/templates/ui/catalog/)
