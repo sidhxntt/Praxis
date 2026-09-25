@@ -213,24 +213,18 @@ test("renderer registers every context page and both domain overviews", async ()
 test("Wiki workflow watches context tooling and publishes every rendered page", async () => {
   const workflow = await readFile(path.join(root, ".github/workflows/wiki.yml"), "utf8");
   const renderer = await readFile(path.join(root, "scripts/render-github-wiki.mjs"), "utf8");
-  for (const watched of ["scripts/check-template-context.mjs", "scripts/template-context-lib.mjs", "scripts/resolve-template-context.mjs", "tests/docs/**", "AGENTS.md", "CLAUDE.md"]) {
+  for (const watched of ["scripts/check-template-context.mjs", "scripts/template-context-lib.mjs", "scripts/resolve-template-context.mjs", "tests/docs/**"]) {
     assert.match(workflow, new RegExp(escapeRegExp(watched)), `workflow does not watch ${watched}`);
   }
   const destinations = [...renderer.matchAll(/\["[^"]+\.md", "([^"]+\.md)"\]/g)].map((match) => match[1]);
   for (const destination of destinations) assert.match(workflow, new RegExp(`\\b${escapeRegExp(destination)}\\b`), `workflow does not publish ${destination}`);
 });
 
-test("Codex and Claude Code bootstrap into one canonical template guide", async () => {
-  const agents = await readFile(path.join(root, "AGENTS.md"), "utf8");
-  const claude = await readFile(path.join(root, "CLAUDE.md"), "utf8");
+test("Template Agent Guide defines the canonical bootstrap sequence", async () => {
   const guide = await readFile(path.join(root, "docs/template-agent-guide.md"), "utf8");
-  for (const instructions of [agents, claude]) {
-    assert.match(instructions, /docs\/template-agent-guide\.md/);
-    assert.match(instructions, /resolve-template-context\.mjs/);
-  }
-  assert.match(claude, /@AGENTS\.md/);
+  assert.match(guide, /docs\/template-agent-guide\.md/);
+  assert.match(guide, /resolve-template-context\.mjs/);
   for (const phrase of [
-    "Read the agent instructions",
     "Read the Template Agent Guide",
     "Resolve the context bundle",
     "Read every required architecture page",
@@ -244,7 +238,7 @@ test("Agent Guide provides a reusable prompt for new coding-agent sessions", asy
   const guide = await readFile(path.join(root, "docs/agent-guide.md"), "utf8");
 
   assert.match(guide, /## Prompt for a new agent session/);
-  assert.match(guide, /Read `AGENTS\.md` and `docs\/template-agent-guide\.md` completely/);
+  assert.match(guide, /Read `docs\/template-agent-guide\.md` completely/);
   assert.match(guide, /resolve-template-context\.mjs --config/);
   assert.match(guide, /--bundle <id>/);
   assert.match(guide, /State the loaded bundle/);

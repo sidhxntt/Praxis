@@ -2,10 +2,11 @@
 
 This is the canonical entry point for Codex, Claude Code, and other agents working on Praxis templates or generated repositories. A Wiki cannot force an agent to read every page, so Praxis provides a deterministic context-loading contract.
 
+In a repository checkout, this guide lives at `docs/template-agent-guide.md`.
+
 ## Mandatory bootstrap sequence
 
-1. **Read the agent instructions.** In a repository session, load `AGENTS.md`; Claude Code also loads `CLAUDE.md` and its shared import.
-2. **Read the Template Agent Guide.** Finish this page before inspecting individual template directories.
+1. **Read the Template Agent Guide.** Finish this page before inspecting individual template directories.
 3. **Resolve the context bundle.** Run the resolver against `praxis.config.json` or explicit bundle IDs.
 4. **Read every required architecture page.** Follow the returned order; prerequisites appear before dependants.
 5. **Inspect authoritative sources.** Read the returned configuration, manifests, overlays, runtime entry points, and contract tests.

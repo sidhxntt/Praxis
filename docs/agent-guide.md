@@ -9,12 +9,12 @@ For any generated-template task, the mandatory entry point is the [Template Agen
 Use the following prompt when starting Codex, Claude Code, or another coding agent inside a Praxis checkout. Replace the config path and final task before sending it:
 
 ```text
-Read `AGENTS.md` and `docs/template-agent-guide.md` completely before taking action.
+Read `docs/template-agent-guide.md` completely before taking action.
 
 Resolve the exact bounded template context with:
 node scripts/resolve-template-context.mjs --config <path-to-praxis.config.json>
 
-Read every architecture page returned by the resolver, inspect every returned authoritative source and contract test, and do not infer behavior from directory names alone. State the loaded bundle IDs and the behavior boundary before editing. Preserve the invariants in AGENTS.md, make the smallest source-of-truth change, and run every returned verification command before claiming completion.
+Read every architecture page returned by the resolver, inspect every returned authoritative source and contract test, and do not infer behavior from directory names alone. State the loaded bundle IDs and the behavior boundary before editing. Preserve the guide's invariants, make the smallest source-of-truth change, and run every returned verification command before claiming completion.
 
 Task: <describe the requested change, diagnosis, or review>
 ```
@@ -22,7 +22,7 @@ Task: <describe the requested change, diagnosis, or review>
 If no generated `praxis.config.json` exists, resolve explicit concerns with repeated `--bundle <id>` arguments instead:
 
 ```text
-Read `AGENTS.md` and `docs/template-agent-guide.md` completely. Run:
+Read `docs/template-agent-guide.md` completely. Run:
 node scripts/resolve-template-context.mjs --bundle <id> --bundle <id>
 
 Read every returned page, source, and contract test. State the loaded bundles and scope, perform the task, and run every returned verification command.
@@ -40,7 +40,7 @@ Begin at https://github.com/sidhxntt/Praxis/wiki/Template-Agent-Guide and follow
 Task: <describe the requested change, diagnosis, or review>
 ```
 
-For non-template work, still require the agent to read `AGENTS.md`, inspect repository status, route the task to the owning directory, preserve unrelated changes, and run the owning package's focused tests and build.
+For non-template work, start with the README, inspect repository status, route the task to the owning directory, preserve unrelated changes, and run the owning package's focused tests and build.
 
 ## First five minutes
 

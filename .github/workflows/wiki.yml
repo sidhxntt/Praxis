@@ -11,8 +11,6 @@ on:
       - "scripts/resolve-template-context.mjs"
       - "scripts/template-context-lib.mjs"
       - "tests/docs/**"
-      - "AGENTS.md"
-      - "CLAUDE.md"
       - "package.json"
       - ".github/workflows/wiki.yml"
   workflow_dispatch:
