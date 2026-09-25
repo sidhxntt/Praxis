@@ -50,7 +50,7 @@ This file is the **intent record**. It describes the project the user asked for;
 
 ### 2. Praxis validates the configuration
 
-The schema checks that every choice is supported and that the combination makes sense. For example, an unsupported framework, a misspelled capability, or an incompatible Pro selection stops here with an error.
+The schema checks that every choice is supported and that the combination makes sense. An unsupported framework, a misspelled capability, or an incompatible Pro selection stops here with an error.
 
 Nothing is generated when validation fails. This prevents a partially configured repository.
 
