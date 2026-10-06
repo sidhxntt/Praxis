@@ -1,6 +1,6 @@
 {
   "name": "praxiflow",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "Composable frontend, backend, full-stack, and production-backend project generator.",
   "repository": {
     "type": "git",

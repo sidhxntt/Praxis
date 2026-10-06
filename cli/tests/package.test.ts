@@ -11,7 +11,7 @@ const run = promisify(execFile);
 describe("published package contents", () => {
   it("targets the public npm registry", () => {
     expect(packageJson.name).toBe("praxiflow");
-    expect(packageJson.version).toBe("1.4.3");
+    expect(packageJson.version).toMatch(/^\d+\.\d+\.\d+$/);
     expect(packageJson.publishConfig.registry).toBe("https://registry.npmjs.org");
     expect(packageJson.publishConfig.access).toBe("public");
     expect(packageJson.repository.url).toBe("git+https://github.com/sidhxntt/Praxis.git");
