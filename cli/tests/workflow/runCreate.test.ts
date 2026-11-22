@@ -24,7 +24,7 @@ vi.mock("../../src/generator/generate", () => ({
   generateProject: vi.fn(async () => "/tmp/acme"),
 }));
 vi.mock("../../src/ui/resolveUi", () => ({
-  resolveUiStyle: vi.fn(async () => "apple"),
+  resolveUiStyle: vi.fn(async () => "ora"),
 }));
 
 beforeEach(() => {
@@ -104,7 +104,7 @@ describe("runCreate", () => {
     vi.mocked(p.select)
       .mockResolvedValueOnce("frontend" as never)
       .mockResolvedValueOnce("javascript" as never)
-      .mockResolvedValueOnce("vue" as never)
+      .mockResolvedValueOnce("vite" as never)
       .mockResolvedValueOnce("template" as never)
       .mockResolvedValueOnce("npm" as never);
     vi.mocked(p.multiselect).mockResolvedValue([] as never);
@@ -131,7 +131,35 @@ describe("runCreate", () => {
     expect(resolveUiStyle).toHaveBeenCalledOnce();
     expect(vi.mocked(generateProject).mock.calls.at(-1)?.[0]).toMatchObject({
       language: "javascript",
-      frontend: { framework: "vue", ui: { mode: "template", style: "apple" } },
+      frontend: { framework: "vite", ui: { mode: "template", style: "ora" } },
+    });
+  });
+
+  it("skips the template prompt for frameworks that are not React", async () => {
+    vi.mocked(p.text).mockResolvedValue("acme" as never);
+    vi.mocked(p.select)
+      .mockResolvedValueOnce("frontend" as never)
+      .mockResolvedValueOnce("javascript" as never)
+      .mockResolvedValueOnce("vue" as never)
+      .mockResolvedValueOnce("npm" as never);
+    vi.mocked(p.multiselect).mockResolvedValue([] as never);
+    vi.mocked(p.confirm)
+      .mockResolvedValueOnce(false as never)
+      .mockResolvedValueOnce(false as never);
+
+    await runCreate({
+      kind: "create",
+      projectName: undefined,
+      mode: "custom",
+      configPath: undefined,
+      installDependencies: true,
+    });
+
+    expect(vi.mocked(p.select).mock.calls.map(([options]) => options.message))
+      .not.toContain("Use a landing page template?");
+    expect(resolveUiStyle).not.toHaveBeenCalled();
+    expect(vi.mocked(generateProject).mock.calls.at(-1)?.[0]).toMatchObject({
+      frontend: { framework: "vue", ui: { mode: "starter" } },
     });
   });
 
@@ -142,7 +170,6 @@ describe("runCreate", () => {
       .mockResolvedValueOnce("javascript" as never)
       .mockResolvedValueOnce("angular" as never)
       .mockResolvedValueOnce("typescript" as never)
-      .mockResolvedValueOnce("starter" as never)
       .mockResolvedValueOnce("npm" as never);
     vi.mocked(p.multiselect).mockResolvedValue([] as never);
     vi.mocked(p.confirm)

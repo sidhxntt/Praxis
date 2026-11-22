@@ -11,11 +11,6 @@ const TARGETS = [
   { id: "next-ts", framework: "next", language: "typescript", entry: "app/page.tsx" },
   { id: "vite-js", framework: "vite", language: "javascript", entry: "src/App.jsx" },
   { id: "vite-ts", framework: "vite", language: "typescript", entry: "src/App.tsx" },
-  { id: "vue-js", framework: "vue", language: "javascript", entry: "src/App.vue" },
-  { id: "vue-ts", framework: "vue", language: "typescript", entry: "src/App.vue" },
-  { id: "astro-js", framework: "astro", language: "javascript", entry: "src/pages/index.astro" },
-  { id: "astro-ts", framework: "astro", language: "typescript", entry: "src/pages/index.astro" },
-  { id: "angular-ts", framework: "angular", language: "typescript", entry: "src/app/app.html" },
 ];
 
 async function main() {
@@ -103,15 +98,15 @@ function resolveTarget(options) {
   }
   const match = options.shard?.match(/^(\d+)\/(\d+)$/);
   if (!match || Number(match[2]) !== TARGETS.length) {
-    usage("--shard must use N/9 syntax");
+    usage(`--shard must use N/${TARGETS.length} syntax`);
   }
   const index = Number(match[1]);
-  if (index < 1 || index > TARGETS.length) usage("shard index must be between 1 and 9");
+  if (index < 1 || index > TARGETS.length) usage(`shard index must be between 1 and ${TARGETS.length}`);
   return TARGETS[index - 1];
 }
 
 function usage(message) {
-  process.stderr.write(`${message}\nUsage: node scripts/ui/matrix.mjs (--shard N/9 | --target ID) [--install --build] [--keep]\n`);
+  process.stderr.write(`${message}\nUsage: node scripts/ui/matrix.mjs (--shard N/4 | --target ID) [--install --build] [--keep]\n`);
   process.exit(2);
 }
 

@@ -33,7 +33,7 @@ describe("published package contents", () => {
       expect(files, `${id} design guide`).toContain(`templates/ui.${id}/files/shared/DESIGN.md`);
       expect(files.some((file) => file.startsWith(`templates/ui.${id}/files/next-ts/`)), id)
         .toBe(true);
-      expect(files.some((file) => file.startsWith(`templates/ui.${id}/files/angular-ts/`)), id)
+      expect(files.some((file) => file.startsWith(`templates/ui.${id}/files/vite-js/`)), id)
         .toBe(true);
     }
     expect(files).toContain("templates/ui.catalog/catalog.json");
@@ -44,11 +44,15 @@ describe("published package contents", () => {
       .toBe(true);
     expect(files.some((file) => file.startsWith("templates/ui.catalog/gallery/_next/static/") && file.endsWith(".css")))
       .toBe(true);
+    for (const id of UI_STYLE_IDS) {
+      expect(files, `${id} live preview`).toContain(`templates/ui.catalog/gallery/live/${id}/index.html`);
+    }
+    expect(files.some((file) => file.startsWith("templates/ui.catalog/gallery/live/assets/") && file.endsWith(".js")))
+      .toBe(true);
     expect(files.filter((file) => file.startsWith("templates/ui.catalog/gallery/previews/")))
-      .toHaveLength(120);
+      .toHaveLength(UI_STYLE_IDS.length * 3);
     expect(files.some((file) => file.startsWith("templates/designs/"))).toBe(false);
-    expect(files.some((file) => /templates\/ui\.[^/]+\/(DESIGN\.md|style\.json)$/.test(file))).toBe(false);
-    expect(files.some((file) => /templates\/ui\.[^/]+\/assets\//.test(file))).toBe(false);
+    expect(files.some((file) => /templates\/ui\.[^/]+\/(brief\.txt|template\.json)$/.test(file))).toBe(false);
     expect(files.some((file) => file.startsWith("tests/"))).toBe(false);
     expect(files.some((file) => file.startsWith("scripts/"))).toBe(false);
   }, 30_000);

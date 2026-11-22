@@ -1,0 +1,602 @@
+"use client";
+/**
+ * HANA · website hero
+ *
+ * The first screen of a product leader's speaking and advisory site. A portrait
+ * of Hana against a mint paper backdrop, and between her and the camera a
+ * tall panel of reeded (fluted) glass. The glass is drawn live in WebGL: every
+ * flute is a little cylindrical lens that samples the picture behind it with
+ * its own offset, so she breaks into refracted, mirrored strips with a soft
+ * blur, a coloured fringe at the flute edges, a bright specular line on each
+ * flute, a window reflection fixed in the room and a shadow cast on the wall.
+ * The panel glides slowly across her on its own; the pointer takes it (it
+ * follows the pointer and glides back when the pointer leaves).
+ *
+ * Depth: four planes that part in parallax, on their own and under the
+ * pointer: the mint backdrop, Hana (a cut-out with her own soft shadow on the
+ * wall), the glass, and the type in front.
+ *
+ * One file, React only. The typefaces come from Google Fonts (loaded in the CSS).
+ *
+ *   <Hana />
+ *   <Hana flutes={18} drift={1.4} cta="Book Hana" />
+ *
+ * Props
+ *   name      the wordmark                                  "Hana Okoye"
+ *   cta       the main button                               "Book a talk"
+ *   flutes    how many flutes across the glass              14
+ *   drift     how fast the glass glides (1 = as shown)      1
+ *   backdrop  the clean mint backdrop                       "/design/websites/hana/backdrop.webp"
+ *   portrait  Hana cut out, same frame, with alpha          "/design/websites/hana/hana.webp"
+ *   sound     tiny synthesized sounds on interaction        true
+ *   onBook    called when "Book a talk" is pressed
+ *
+ * Fills its container's width; height is var(--design-h, 100svh), never under
+ * 640px. Responsive by container query: on a phone the copy sits on the open
+ * backdrop at the top, the portrait fills the lower part and the glass is
+ * narrower. The scene pauses off screen and in a hidden tab. Without WebGL the
+ * portrait is shown still, without the glass.
+ * Reduced motion: no entrance, one still frame with the glass resting on her
+ * shoulder, nothing drifts.
+ * Keyboard: the glass is a slider (Tab to it, arrows move it, Home/End).
+ * "Book a talk" confirms the request and resets after about 2.4 s so the next
+ * visitor can try (remove the timeout in `book` to keep it).
+ * Sound: silent until the visitor interacts, when `sound` is false, and when
+ * <html data-cd-mute="1">. The AudioContext is created on the first sound.
+ */
+import { useCallback, useEffect, useRef, useState } from "react";
+/* The photo is 2560×1707. Where to hold it when the frame crops it. */
+const IMG_W = 2560;
+const IMG_H = 1707;
+function useNote(on) {
+    const ctx = useRef(null);
+    useEffect(() => () => void ctx.current?.close().catch(() => { }), []);
+    return useCallback((n) => {
+        if (!on || typeof window === "undefined")
+            return;
+        if (document.documentElement.dataset.cdMute === "1")
+            return;
+        const ua = navigator.userActivation;
+        if (ua && !ua.hasBeenActive)
+            return;
+        try {
+            const AC = window.AudioContext ?? window.webkitAudioContext;
+            if (!AC)
+                return;
+            const a = (ctx.current ??= new AC());
+            if (a.state === "suspended")
+                void a.resume();
+            const t = a.currentTime + (n.at ?? 0);
+            const d = Math.min(n.d ?? 0.05, 0.06);
+            const amp = a.createGain();
+            amp.gain.setValueAtTime(0.0001, t);
+            amp.gain.exponentialRampToValueAtTime(Math.min(n.g ?? 0.03, 0.06), t + 0.004);
+            amp.gain.exponentialRampToValueAtTime(0.0001, t + d);
+            amp.connect(a.destination);
+            const o = a.createOscillator();
+            o.type = n.type ?? "sine";
+            o.frequency.setValueAtTime(n.f, t);
+            o.connect(amp);
+            o.start(t);
+            o.stop(t + d + 0.02);
+        }
+        catch {
+            /* no audio, no problem */
+        }
+    }, [on]);
+}
+/* ---------- The glass, in one fragment shader ---------- */
+const VERT = `
+attribute vec2 aPos;
+void main(){ gl_Position = vec4(aPos, 0.0, 1.0); }
+`;
+// Scene = backdrop (with Hana's soft shadow) + Hana cut-out, each with its own
+// parallax offset. Inside the panel every flute is a cylindrical lens: the
+// sample point is pushed by the slope of the flute (mirrored mini-image), with
+// a mip-bias blur, a chromatic fringe that grows at the flute edges, a dark
+// groove between flutes, a specular line from the window light on the right,
+// a reflection band fixed in the room, and polished side edges. Outside it, the
+// panel casts a soft shadow to its left.
+const FRAG = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+uniform sampler2D uBg;
+uniform sampler2D uHn;
+uniform vec2 uRes;
+uniform float uDpr;
+uniform vec4 uImg;
+uniform vec2 uPB;
+uniform vec2 uPH;
+uniform vec3 uGlass;
+uniform float uT;
+uniform float uK;
+uniform float uOn;
+
+vec2 toUv(vec2 p, vec2 off){ return (p - off - uImg.xy) / uImg.zw; }
+
+vec3 scene(vec2 p, float bias, float sh){
+  vec3 b = texture2D(uBg, toUv(p, uPB), bias).rgb;
+  b *= 1.0 - 0.2 * sh;
+  vec4 h = texture2D(uHn, toUv(p, uPH), bias);
+  return mix(b, h.rgb, h.a);
+}
+
+void main(){
+  vec2 p = vec2(gl_FragCoord.x, uRes.y * uDpr - gl_FragCoord.y) / uDpr;
+  float k = uK;
+  // Hana's shadow on the wall: her alpha, offset toward the window light, very blurred.
+  float sh = texture2D(uHn, toUv(p + vec2(30.0, -10.0) * k, uPH), 5.0).a;
+  sh *= smoothstep(0.0, 0.5, 1.0 - texture2D(uHn, toUv(p, uPH)).a);
+  float L = uGlass.x - uGlass.y * 0.5;
+  float R = uGlass.x + uGlass.y * 0.5;
+  vec3 col;
+  if (uOn > 0.5 && p.x >= L && p.x <= R) {
+    float fw = uGlass.z;
+    float lx = p.x - L;
+    float u = fract(lx / fw);
+    float s = u * 2.0 - 1.0;
+    float n = s / sqrt(max(1.0 - 0.8 * s * s, 0.06));
+    vec2 q = p + vec2(-n * fw * 0.9, 0.0);
+    float ca = n * 2.4 * k;
+    float bias = 1.8;
+    col.r = scene(q + vec2(ca, 0.0), bias, sh).r;
+    col.g = scene(q, bias, sh).g;
+    col.b = scene(q - vec2(ca, 0.0), bias, sh).b;
+    // frosted body of the glass: a touch lighter and cooler
+    col = mix(col, vec3(0.94, 0.985, 0.96), 0.075);
+    // grooves between flutes and the rounded shoulder of each flute
+    float groove = smoothstep(0.74, 1.0, abs(s));
+    col *= 1.0 - 0.2 * groove;
+    col *= 0.97 + 0.05 * (1.0 - s * s);
+    // window light from the right: a crisp line on each flute, a weaker one opposite
+    float sp = exp(-pow((s - 0.46) / 0.09, 2.0));
+    float yy = p.y / uRes.y;
+    float vy = (0.45 + 0.55 * smoothstep(1.0, 0.0, yy)) * (0.85 + 0.15 * sin(yy * 9.0 + 0.7));
+    col += vec3(0.2, 0.21, 0.2) * sp * vy;
+    col += 0.05 * exp(-pow((s + 0.6) / 0.15, 2.0));
+    // a reflection of the room's window, fixed in space: the panel slides through it
+    float d = (p.x + p.y * 0.42) - uRes.x * 0.83;
+    col += 0.09 * exp(-d * d / (2.0 * pow(110.0 * k, 2.0)));
+    // polished edges of the panel
+    float el = (p.x - L) / k;
+    float er = (R - p.x) / k;
+    col *= 1.0 - 0.18 * exp(-el / 2.5);
+    col += 0.42 * exp(-er / 1.2) + 0.1 * exp(-er / 7.0);
+    col += 0.18 * exp(-max(el - 1.5, 0.0) / 1.0) * step(1.5, el);
+  } else {
+    col = scene(p, 0.0, sh);
+    if (uOn > 0.5) {
+      // the panel's shadow on the wall, to its left (the light comes from the right)
+      float sd = (L - p.x) / k;
+      float ps = sd > 0.0 ? exp(-sd / 42.0) * smoothstep(0.0, 4.0, sd) : 0.0;
+      col *= 1.0 - 0.16 * ps;
+      // light through the flutes lands beside the shadow as faint bright lines
+      float c = pow(0.5 + 0.5 * cos(6.2832 * (L - p.x) / uGlass.z), 10.0);
+      col += 0.035 * c * exp(-sd / 60.0) * step(0.0, sd);
+    }
+  }
+  // soft vignette toward the corners
+  vec2 v = p / uRes - 0.5;
+  col *= 1.0 - 0.12 * dot(v, v);
+  gl_FragColor = vec4(col, 1.0);
+}
+`;
+const loadImg = (src) => new Promise((ok, no) => {
+    const im = new Image();
+    im.decoding = "async";
+    im.onload = () => ok(im);
+    im.onerror = no;
+    im.src = src;
+});
+/* Where the photo sits in a W×H frame: cover on wide frames (held at her face),
+   bottom-aligned in the lower 58% on a phone, with the open backdrop above. */
+function frameFor(W, H) {
+    if (W / H < 0.8) {
+        const dh = Math.max(H * 0.58, (W * 1.12 * IMG_H) / IMG_W);
+        const dw = (dh * IMG_W) / IMG_H;
+        return { ox: W * 0.56 - dw * 0.8, oy: H - dh, dw, dh };
+    }
+    const s = Math.max(W / IMG_W, H / IMG_H) * 1.02;
+    const dw = IMG_W * s;
+    const dh = IMG_H * s;
+    return { ox: (W - dw) * 0.62, oy: (H - dh) * 0.1, dw, dh };
+}
+export default function Hana({ name = "Hana Okoye", cta = "Book a talk", flutes = 14, drift = 1, backdrop = "/design/websites/hana/backdrop.webp", portrait = "/design/websites/hana/hana.webp", sound = true, onBook, }) {
+    const root = useRef(null);
+    const glRef = useRef(null);
+    const knob = useRef(null);
+    const [live, setLive] = useState(false);
+    const [booked, setBooked] = useState(false);
+    const bookTimer = useRef(0);
+    const fluteRef = useRef(flutes);
+    fluteRef.current = Math.max(6, Math.min(30, flutes));
+    const driftRef = useRef(drift);
+    driftRef.current = drift;
+    // Keyboard nudges for the glass (fraction of the travel), read by the loop.
+    const keyPos = useRef(null);
+    const note = useNote(sound);
+    useEffect(() => {
+        const el = root.current;
+        const cv = glRef.current;
+        if (!el || !cv)
+            return;
+        const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let dead = false;
+        let raf = 0;
+        let visible = true;
+        let W = 1;
+        let H = 1;
+        let dpr = 1;
+        let fr = frameFor(1440, 810);
+        // pointer: target in px, `on` while it is over the scene, eased values
+        const ptr = { x: 0, y: 0, on: false, w: 0, nx: 0, ny: 0 };
+        let gx = -1; // the glass centre, px, eased
+        let t = 0;
+        const layout = () => {
+            const r = el.getBoundingClientRect();
+            W = Math.max(1, Math.round(r.width));
+            H = Math.max(1, Math.round(r.height));
+            dpr = Math.min(2, window.devicePixelRatio || 1);
+            cv.width = Math.round(W * dpr);
+            cv.height = Math.round(H * dpr);
+            fr = frameFor(W, H);
+            el.style.setProperty("--hn-ox", `${fr.ox.toFixed(1)}px`);
+            el.style.setProperty("--hn-oy", `${fr.oy.toFixed(1)}px`);
+            el.style.setProperty("--hn-dw", `${fr.dw.toFixed(1)}px`);
+            el.style.setProperty("--hn-dh", `${fr.dh.toFixed(1)}px`);
+        };
+        layout();
+        const phone = () => W / H < 0.8;
+        // Travel of the glass, as screen fractions: from the open wall beside the
+        // copy, across her face, to her far shoulder.
+        const range = () => (phone() ? [0.2, 0.8] : [0.52, 0.9]);
+        const width = () => (phone() ? Math.max(96, W * 0.3) : Math.max(180, Math.min(340, W * 0.205)));
+        const gl = cv.getContext("webgl2", { antialias: false, alpha: false, premultipliedAlpha: false }) ?? cv.getContext("webgl", { antialias: false, alpha: false });
+        const isGL2 = typeof WebGL2RenderingContext !== "undefined" && gl instanceof WebGL2RenderingContext;
+        let prog = null;
+        const U = {};
+        const tex = [];
+        let ready = false;
+        if (gl) {
+            const sh = (type, src) => {
+                const s = gl.createShader(type);
+                gl.shaderSource(s, src);
+                gl.compileShader(s);
+                return s;
+            };
+            prog = gl.createProgram();
+            gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT));
+            gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
+            gl.linkProgram(prog);
+            if (!gl.getProgramParameter(prog, gl.LINK_STATUS))
+                prog = null;
+            if (prog) {
+                gl.useProgram(prog);
+                const buf = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+                const loc = gl.getAttribLocation(prog, "aPos");
+                gl.enableVertexAttribArray(loc);
+                gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+                for (const n of ["uBg", "uHn", "uRes", "uDpr", "uImg", "uPB", "uPH", "uGlass", "uT", "uK", "uOn"])
+                    U[n] = gl.getUniformLocation(prog, n);
+                const mk = (unit, src) => {
+                    const t = gl.createTexture();
+                    gl.activeTexture(gl.TEXTURE0 + unit);
+                    gl.bindTexture(gl.TEXTURE_2D, t);
+                    gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
+                    // mipmaps give the glass its soft blur (WebGL2 can mip any size)
+                    if (isGL2)
+                        gl.generateMipmap(gl.TEXTURE_2D);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, isGL2 ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                    tex.push(t);
+                };
+                Promise.all([loadImg(backdrop), loadImg(portrait)])
+                    .then(([a, b]) => {
+                    if (dead || !prog)
+                        return;
+                    gl.useProgram(prog);
+                    mk(0, a);
+                    mk(1, b);
+                    gl.uniform1i(U.uBg, 0);
+                    gl.uniform1i(U.uHn, 1);
+                    ready = true;
+                    if (still)
+                        frame(0);
+                })
+                    .catch(() => { });
+            }
+        }
+        // The glass on its own: a slow, eased glide across her and back (a sine,
+        // so it never stops hard), timed so it is over her face early on.
+        const ambient = (tt) => {
+            const [a, b] = range();
+            const ph = (tt * driftRef.current) / 11 + 0.318;
+            return W * (a + (b - a) * (0.5 - 0.5 * Math.cos(ph * Math.PI * 2)));
+        };
+        let shown = false;
+        const frame = (dt) => {
+            t += dt;
+            const [a, b] = range();
+            // pointer weight eases in and out, so taking and giving back the glass is smooth
+            ptr.w += ((ptr.on ? 1 : 0) - ptr.w) * (1 - Math.exp(-dt * 3.2));
+            let target = ambient(t);
+            if (keyPos.current !== null)
+                target = W * (a + (b - a) * keyPos.current);
+            else
+                target += (Math.max(W * (a - 0.06), Math.min(W * (b + 0.04), ptr.x)) - target) * ptr.w;
+            if (still && keyPos.current === null)
+                target = W * (a + (b - a) * 0.62);
+            // critically damped follow (exponential): no overshoot, no wobble
+            gx = gx < 0 || still ? target : gx + (target - gx) * (1 - Math.exp(-dt * 4.2));
+            // planes: a slow drift of their own plus the pointer
+            const tx = ptr.on ? (ptr.x / W) * 2 - 1 : 0;
+            const ty = ptr.on ? (ptr.y / H) * 2 - 1 : 0;
+            ptr.nx += (tx - ptr.nx) * (1 - Math.exp(-dt * 2.4));
+            ptr.ny += (ty - ptr.ny) * (1 - Math.exp(-dt * 2.4));
+            const k = Math.min(W / 1440, H / 810) * (phone() ? 1.6 : 1);
+            const ax = still ? 0 : Math.sin(t * 0.42) * 0.6;
+            const ay = still ? 0 : Math.sin(t * 0.31 + 1.1) * 0.5;
+            const bx = (-ptr.nx * 7 - ax * 4) * k;
+            const by = (-ptr.ny * 4 - ay * 3) * k;
+            const hx = (-ptr.nx * 18 - ax * 11) * k;
+            const hy = (-ptr.ny * 7 - ay * 5) * k;
+            el.style.setProperty("--hn-tx", `${((ptr.nx * 9 + ax * 5) * k).toFixed(2)}px`);
+            el.style.setProperty("--hn-ty", `${((ptr.ny * 5 + ay * 3) * k).toFixed(2)}px`);
+            const gw = width();
+            const fw = gw / fluteRef.current;
+            if (knob.current) {
+                knob.current.style.transform = `translate3d(${(gx - gw / 2).toFixed(1)}px,0,0)`;
+                knob.current.style.width = `${gw.toFixed(1)}px`;
+                knob.current.setAttribute("aria-valuenow", String(Math.round(((gx / W - a) / (b - a)) * 100)));
+            }
+            if (!gl || !prog || !ready)
+                return;
+            gl.viewport(0, 0, cv.width, cv.height);
+            gl.uniform2f(U.uRes, W, H);
+            gl.uniform1f(U.uDpr, cv.width / W);
+            gl.uniform4f(U.uImg, fr.ox, fr.oy, fr.dw, fr.dh);
+            gl.uniform2f(U.uPB, bx, by);
+            gl.uniform2f(U.uPH, hx, hy);
+            gl.uniform3f(U.uGlass, gx, gw, fw);
+            gl.uniform1f(U.uT, t);
+            gl.uniform1f(U.uK, Math.max(0.4, k));
+            gl.uniform1f(U.uOn, 1);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+            if (!shown) {
+                shown = true;
+                setLive(true);
+            }
+        };
+        let last = performance.now();
+        const loop = (now) => {
+            raf = requestAnimationFrame(loop);
+            const dt = Math.min(0.05, (now - last) / 1000);
+            last = now;
+            if (!visible || document.hidden)
+                return;
+            frame(dt);
+        };
+        if (still)
+            frame(0);
+        else
+            raf = requestAnimationFrame(loop);
+        const ro = new ResizeObserver(() => {
+            layout();
+            if (still)
+                frame(0);
+        });
+        ro.observe(el);
+        const io = new IntersectionObserver(([x]) => {
+            visible = x.isIntersecting;
+        });
+        io.observe(el);
+        const move = (e) => {
+            const r = el.getBoundingClientRect();
+            ptr.x = e.clientX - r.left;
+            ptr.y = e.clientY - r.top;
+            if (e.pointerType === "mouse" || e.buttons)
+                ptr.on = true;
+            keyPos.current = null;
+            if (still)
+                frame(0.016);
+        };
+        const leave = () => {
+            ptr.on = false;
+        };
+        const up = (e) => {
+            if (e.pointerType !== "mouse")
+                ptr.on = false;
+        };
+        el.addEventListener("pointermove", move);
+        el.addEventListener("pointerdown", move);
+        el.addEventListener("pointerleave", leave);
+        el.addEventListener("pointerup", up);
+        el.addEventListener("pointercancel", leave);
+        return () => {
+            dead = true;
+            cancelAnimationFrame(raf);
+            ro.disconnect();
+            io.disconnect();
+            el.removeEventListener("pointermove", move);
+            el.removeEventListener("pointerdown", move);
+            el.removeEventListener("pointerleave", leave);
+            el.removeEventListener("pointerup", up);
+            el.removeEventListener("pointercancel", leave);
+            if (gl) {
+                for (const x of tex)
+                    gl.deleteTexture(x);
+                if (prog)
+                    gl.deleteProgram(prog);
+            }
+        };
+    }, [backdrop, portrait]);
+    useEffect(() => () => window.clearTimeout(bookTimer.current), []);
+    const book = () => {
+        onBook?.();
+        if (booked)
+            return;
+        setBooked(true);
+        note({ f: 1318.5, d: 0.06, g: 0.028 });
+        note({ f: 1975.5, d: 0.06, g: 0.022, at: 0.09 });
+        // Demo reset so the next visitor can try. Remove to keep the confirmation.
+        window.clearTimeout(bookTimer.current);
+        bookTimer.current = window.setTimeout(() => setBooked(false), 2400);
+    };
+    const onKey = (e) => {
+        const cur = keyPos.current ?? 0.5;
+        let next = cur;
+        if (e.key === "ArrowRight" || e.key === "ArrowUp")
+            next = cur + 0.08;
+        else if (e.key === "ArrowLeft" || e.key === "ArrowDown")
+            next = cur - 0.08;
+        else if (e.key === "Home")
+            next = 0;
+        else if (e.key === "End")
+            next = 1;
+        else if (e.key === "Escape") {
+            keyPos.current = null;
+            return;
+        }
+        else
+            return;
+        e.preventDefault();
+        keyPos.current = Math.max(0, Math.min(1, next));
+        note({ f: 2200 + keyPos.current * 600, d: 0.03, g: 0.016, type: "triangle" });
+    };
+    return (<div ref={root} className={`hn-root${live ? " hn-live" : ""}`}>
+      <style>{css}</style>
+      <div className="hn-still" aria-hidden="true">
+        <img className="hn-still-img" src={backdrop} alt=""/>
+        <img className="hn-still-img" src={portrait} alt=""/>
+      </div>
+      <canvas ref={glRef} className="hn-gl" aria-hidden="true"/>
+      <div className="hn-grain" aria-hidden="true"/>
+
+      <div ref={knob} className="hn-knob" role="slider" tabIndex={0} aria-label="Reeded glass position" aria-valuemin={0} aria-valuemax={100} aria-valuenow={50} onKeyDown={onKey} onBlur={() => (keyPos.current = null)}/>
+
+      <nav className="hn-nav" aria-label="Main">
+        <span className="hn-logo">{name}</span>
+        <span className="hn-links">
+          <a href="#talks">Talks</a>
+          <a href="#advisory">Advisory</a>
+          <a href="#writing">Writing</a>
+        </span>
+        <button type="button" className="hn-navbtn" onClick={book}>
+          Book Hana
+        </button>
+      </nav>
+
+      <div className="hn-copy">
+        <p className="hn-eyebrow">Product leader · Speaker</p>
+        <h1 className="hn-h1">
+          I build teams
+          <br />
+          that <em>actually</em> ship.
+        </h1>
+        <p className="hn-lede">Ex-Spotify, ex-Monzo. Now advising seven startups on the hard part: getting things out the door.</p>
+        <div className="hn-actions">
+          <button type="button" className={`hn-cta${booked ? " hn-done" : ""}`} onClick={book} aria-live="polite">
+            <span className="hn-cta-a">{cta}</span>
+            <span className="hn-cta-b" aria-hidden={!booked}>
+              <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+                <path d="M3.2 8.4l3 3 6.6-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Request sent
+            </span>
+          </button>
+          <a className="hn-ghost" href="#newsletter">
+            Read the newsletter
+          </a>
+        </div>
+        <p className={`hn-reply${booked ? " hn-reply-on" : ""}`} aria-hidden={!booked}>
+          Hana replies within two days · next open date 12 March
+        </p>
+      </div>
+
+      <p className="hn-next">
+        <span className="hn-dot" aria-hidden="true"/>
+        Next talk · Mind the Product, London · 14.03
+      </p>
+    </div>);
+}
+const css = `
+@import url("https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Instrument+Serif:ital@1&family=JetBrains+Mono:wght@500&display=swap");
+.hn-root{container-type:inline-size;width:100%;height:var(--design-h,100svh);min-height:640px;position:relative;overflow:hidden;isolation:isolate;
+  background:#96b794;color:#0e2b22;font-family:"Inter Tight",ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+  --hn-ox:-120px;--hn-oy:-60px;--hn-dw:calc(100% + 240px);--hn-dh:auto;--hn-tx:0px;--hn-ty:0px}
+.hn-still{position:absolute;inset:0;z-index:0}
+.hn-still-img{position:absolute;left:var(--hn-ox);top:var(--hn-oy);width:var(--hn-dw);height:var(--hn-dh);display:block;user-select:none;pointer-events:none}
+.hn-gl{position:absolute;inset:0;width:100%;height:100%;z-index:1;display:block;opacity:0;transition:opacity .5s ease}
+.hn-live .hn-gl{opacity:1}
+.hn-grain{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:.09;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>")}
+.hn-knob{position:absolute;left:0;top:0;bottom:0;width:280px;z-index:3;border-radius:2px;outline:none;transform:translate3d(-999px,0,0)}
+.hn-knob:focus-visible{box-shadow:inset 0 0 0 2px #0e2b22,inset 0 0 0 4px rgba(255,255,255,.7)}
+.hn-nav{position:absolute;left:44px;right:44px;top:30px;z-index:5;display:flex;align-items:center;gap:30px;font-size:14px;font-weight:500;
+  transform:translate3d(calc(var(--hn-tx) * .35),0,0)}
+.hn-logo{font-weight:600;font-size:18px;letter-spacing:-.01em;margin-right:26px}
+.hn-links{display:flex;gap:28px;margin-right:auto}
+.hn-links a{color:inherit;text-decoration:none;opacity:.8;transition:opacity .2s}
+.hn-links a:hover{opacity:1}
+.hn-navbtn,.hn-cta,.hn-ghost{font:inherit;cursor:pointer;border:0;text-decoration:none}
+.hn-navbtn{padding:10px 18px;border-radius:999px;font-size:13.5px;font-weight:500;background:#0e2b22;color:#fff;transition:transform .18s cubic-bezier(.3,1.4,.5,1),background .2s}
+.hn-navbtn:hover{background:#163d31}
+.hn-navbtn:active,.hn-cta:active,.hn-ghost:active{transform:scale(.97)}
+.hn-copy{position:absolute;left:56px;top:50%;z-index:4;max-width:600px;
+  transform:translate3d(var(--hn-tx),calc(-46% + var(--hn-ty)),0);animation:hn-in 1.1s cubic-bezier(.2,.7,.2,1) both}
+.hn-eyebrow{margin:0;font-family:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase}
+.hn-h1{margin:18px 0 0;font-weight:500;font-size:clamp(44px,5.84cqi,96px);line-height:.98;letter-spacing:-.05em}
+.hn-h1 em{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-weight:400;letter-spacing:-.02em}
+.hn-lede{margin:20px 0 0;font-size:16px;line-height:1.5;max-width:400px;opacity:.82;text-wrap:pretty}
+.hn-actions{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap}
+.hn-cta{position:relative;display:inline-grid;place-items:center;padding:14px 24px;border-radius:999px;font-size:15px;font-weight:500;background:#0e2b22;color:#fff;
+  min-width:150px;overflow:hidden;transition:transform .18s cubic-bezier(.3,1.4,.5,1),background .25s}
+.hn-cta:hover{background:#163d31}
+.hn-cta-a,.hn-cta-b{grid-area:1/1;display:inline-flex;align-items:center;gap:8px;transition:transform .38s cubic-bezier(.3,1.3,.5,1),opacity .22s}
+.hn-cta-b{transform:translateY(120%);opacity:0}
+.hn-done .hn-cta-a{transform:translateY(-120%);opacity:0}
+.hn-done .hn-cta-b{transform:none;opacity:1}
+.hn-ghost{display:inline-flex;align-items:center;padding:14px 24px;border-radius:999px;font-size:15px;font-weight:500;color:#0e2b22;
+  background:rgba(255,255,255,.5);box-shadow:inset 0 0 0 1px rgba(255,255,255,.55);transition:background .2s,transform .18s}
+.hn-ghost:hover{background:rgba(255,255,255,.7)}
+.hn-navbtn:focus-visible,.hn-cta:focus-visible,.hn-ghost:focus-visible,.hn-links a:focus-visible{outline:2px solid #0e2b22;outline-offset:3px}
+.hn-reply{margin:14px 0 0;font-size:13px;opacity:0;transform:translateY(-4px);transition:opacity .3s,transform .3s}
+.hn-reply-on{opacity:.75;transform:none}
+.hn-next{position:absolute;left:56px;bottom:34px;z-index:4;margin:0;display:flex;align-items:center;gap:10px;
+  font-family:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.75;
+  transform:translate3d(var(--hn-tx),var(--hn-ty),0)}
+.hn-dot{width:6px;height:6px;border-radius:50%;background:#0e2b22;animation:hn-pulse 2.4s ease-in-out infinite}
+@keyframes hn-in{from{opacity:0;translate:0 14px}to{opacity:1;translate:0 0}}
+@keyframes hn-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@container (max-width: 1100px){
+  .hn-links{display:none}
+  .hn-logo{margin-right:auto}
+  .hn-copy{max-width:470px}
+}
+@container (max-width: 640px){
+  .hn-nav{left:20px;right:20px;top:20px}
+  .hn-logo{font-size:16px}
+  .hn-copy{left:22px;right:22px;top:84px;max-width:none;transform:translate3d(var(--hn-tx),var(--hn-ty),0)}
+  .hn-eyebrow{font-size:11px}
+  .hn-h1{font-size:42px;margin-top:12px}
+  .hn-lede{font-size:15px;margin-top:14px;max-width:330px}
+  .hn-actions{margin-top:18px;gap:8px}
+  .hn-cta,.hn-ghost{padding:12px 18px;font-size:14px}
+  .hn-cta{min-width:132px}
+  .hn-reply{font-size:12px}
+  .hn-next{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  .hn-copy{animation:none}
+  .hn-dot{animation:none}
+  .hn-gl,.hn-cta-a,.hn-cta-b,.hn-reply{transition:none}
+}
+`;

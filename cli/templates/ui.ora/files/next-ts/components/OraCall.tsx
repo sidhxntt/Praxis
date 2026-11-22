@@ -1,0 +1,912 @@
+"use client";
+
+/**
+ * ORA · website hero (AI voice receptionist)
+ *
+ * The first screen of Ora, an AI receptionist that answers a business's phone.
+ * One saturated electric blue, the headline in white in the middle, and a
+ * glossy glass ball in front of it, warm inside: deep red through orange to
+ * coral, marbled with lighter streaks. The ball drifts on a slow lazy
+ * figure-eight across the headline and works like a real lens: the letters
+ * under it swell, bend and split into a faint rainbow at its edge, then settle
+ * as it passes. Its marbled interior swirls slowly, it casts a soft shadow
+ * (with a little warm caustic) onto the type, and the three planes (the blue
+ * ground with its light, type, ball) part in parallax on their own and under the pointer. The pointer also
+ * tugs the ball toward it, so you can read the headline through it.
+ *
+ * "Hear it answer" plays a short synthesized ring and pick-up: the ball
+ * breathes with each ring (scale ≤ 1.04), soft ripples leave it, and Ora's
+ * greeting is typed under the buttons. It resets itself after ~3.5 s so the
+ * next visitor can try (remove the timeout in `call` to keep it).
+ *
+ * One file, React only. The typefaces come from Google Fonts (loaded in the CSS).
+ *
+ *   <OraCall />
+ *   <OraCall accent="#ff5a4e" drift={1.4} />
+ *
+ * Props
+ *   brand     the wordmark                                   "Ora"
+ *   cta       the main button                                "Hear it answer"
+ *   ground    the blue                                       "#0c7bf6"
+ *   accent    the italic line and the caption's name         "#c6f0ff"
+ *   drift     how fast the ball drifts (1 = as shown)       1
+ *   orb       the ball's marbling (square, transparent; it is
+ *             recoloured warm in the shader)                 "/design/websites/ora-call/orb.webp"
+ *   sound     tiny synthesized sounds on interaction         true
+ *   onCta     called when the main button is pressed
+ *
+ * Fills its container's width; height is var(--design-h, 100svh), never under
+ * 640px. Responsive by container query: on a phone the ball is smaller and
+ * the copy is re-set to fit. The scene is drawn in one WebGL canvas that pauses
+ * off screen and in a hidden tab; without WebGL the ground, ball and headline are
+ * shown as plain CSS, image and text. Reduced motion: the ball rests above the
+ * headline, nothing drifts. Keyboard: both buttons are real buttons.
+ * Sound: silent until the visitor interacts, when `sound` is false, and when
+ * <html data-cd-mute="1">. The AudioContext is created on the first sound.
+ */
+
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type PointerEvent as RPointerEvent } from "react";
+
+type Props = {
+  brand?: string;
+  cta?: string;
+  accent?: string;
+  drift?: number;
+  ground?: string;
+  orb?: string;
+  sound?: boolean;
+  onCta?: () => void;
+};
+
+const LINE1 = "Your phone, answered";
+const LINE2 = "before the second ring.";
+const GREETING = "“Good afternoon, Bianchi Dental. This is Ora, how can I help?”";
+
+/* Where the marbling sits in its image (fractions). */
+const ORB_C: [number, number] = [0.49705, 0.50312];
+const ORB_R = 0.4634;
+
+/* Sound: tiny synthesized notes made in the browser. Silent when `sound` is
+   false, when <html data-cd-mute="1">, and until the visitor has interacted. */
+type Blip = { f: number; to?: number; d?: number; g?: number; type?: OscillatorType; noise?: boolean; at?: number };
+function useBlip(on: boolean) {
+  const ctx = useRef<AudioContext | null>(null);
+  useEffect(() => () => void ctx.current?.close().catch(() => {}), []);
+  return useCallback(
+    (b: Blip) => {
+      if (!on || typeof window === "undefined") return;
+      if (document.documentElement.dataset.cdMute === "1") return;
+      const ua = (navigator as unknown as { userActivation?: { hasBeenActive: boolean } }).userActivation;
+      if (ua && !ua.hasBeenActive) return;
+      try {
+        const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+        if (!AC) return;
+        const a = (ctx.current ??= new AC());
+        if (a.state === "suspended") void a.resume();
+        const t = a.currentTime + (b.at ?? 0);
+        const d = Math.min(b.d ?? 0.04, 0.06);
+        const amp = a.createGain();
+        amp.gain.setValueAtTime(0.0001, t);
+        amp.gain.exponentialRampToValueAtTime(Math.min(b.g ?? 0.03, 0.06), t + (b.noise ? 0.006 : 0.005));
+        amp.gain.exponentialRampToValueAtTime(0.0001, t + d);
+        amp.connect(a.destination);
+        let src: AudioScheduledSourceNode;
+        if (b.noise) {
+          const buf = a.createBuffer(1, Math.ceil(a.sampleRate * d), a.sampleRate);
+          const ch = buf.getChannelData(0);
+          for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
+          const n = a.createBufferSource();
+          n.buffer = buf;
+          const bp = a.createBiquadFilter();
+          bp.type = "bandpass";
+          bp.frequency.value = b.f;
+          bp.Q.value = 1.4;
+          n.connect(bp).connect(amp);
+          src = n;
+        } else {
+          const o = a.createOscillator();
+          o.type = b.type ?? "sine";
+          o.frequency.setValueAtTime(b.f, t);
+          if (b.to) o.frequency.exponentialRampToValueAtTime(b.to, t + d);
+          o.connect(amp);
+          src = o;
+        }
+        src.start(t);
+        src.stop(t + d + 0.01);
+      } catch {
+        /* no sound is fine */
+      }
+    },
+    [on],
+  );
+}
+
+/* ---------- WebGL: ground, type and the glass ball in one pass ---------- */
+const hex3 = (h: string): [number, number, number] => {
+  const m = /^#?([0-9a-f]{6})$/i.exec(h.trim());
+  const n = m ? parseInt(m[1], 16) : 0x0c7bf6;
+  return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+};
+
+const VERT = `
+attribute vec2 aPos;
+varying vec2 vUv;
+void main() {
+  vUv = vec2(aPos.x * 0.5 + 0.5, 0.5 - aPos.y * 0.5);
+  gl_Position = vec4(aPos, 0.0, 1.0);
+}`;
+
+// Outside the lens: 2 taps. Near it: 6. Inside the ball: 8.
+const FRAG = `
+precision highp float;
+varying vec2 vUv;
+uniform vec2 uRes;
+uniform sampler2D uText;
+uniform sampler2D uOrb;
+uniform vec3 uGround;
+uniform vec2 uSkyOff;
+uniform vec3 uO;
+uniform float uT;
+uniform float uTextOn;
+uniform float uOrbOn;
+uniform float uRingA;
+uniform float uRingP;
+uniform vec3 uOrbTex;
+
+// The ground: one blue, a very soft lift toward the bottom and a wide pool of light (the far plane).
+vec3 groundAt(vec2 p) {
+  vec2 s = (p - uSkyOff) / uRes;
+  vec3 g = mix(uGround, mix(uGround, vec3(1.0), 0.32), smoothstep(0.62, 1.05, s.y) * 0.7);
+  vec2 lq = (s - vec2(0.5, 0.42)) * vec2(uRes.x / uRes.y, 1.0);
+  g = mix(g, mix(uGround, vec3(1.0), 0.18), exp(-dot(lq, lq) * 3.2) * 0.5);
+  return g;
+}
+float textA(vec2 p) {
+  return texture2D(uText, p / uRes).a * uTextOn;
+}
+// The ball's warm palette: deep red, red, orange, coral, pale streak.
+vec3 warm(float s) {
+  vec3 c = mix(vec3(0.43, 0.04, 0.05), vec3(0.75, 0.14, 0.06), smoothstep(0.0, 0.3, s));
+  c = mix(c, vec3(0.93, 0.31, 0.11), smoothstep(0.3, 0.55, s));
+  c = mix(c, vec3(1.0, 0.54, 0.38), smoothstep(0.55, 0.8, s));
+  return mix(c, vec3(1.0, 0.84, 0.76), smoothstep(0.8, 1.0, s));
+}
+float key(vec3 c) {
+  return smoothstep(0.38, 0.93, dot(c, vec3(0.299, 0.587, 0.114)) - 0.5 * (c.r - c.b));
+}
+vec3 sceneAt(vec2 p) {
+  vec4 t = texture2D(uText, p / uRes) * uTextOn;
+  return mix(groundAt(p), t.rgb, t.a);
+}
+
+void main() {
+  vec2 p = vUv * uRes;
+  vec2 c = uO.xy;
+  float R = uO.z;
+  vec2 v = p - c;
+  vec2 q = v / R;
+  float d = length(q);
+
+  // The type and ground near the ball swell toward its rim, with a faint rainbow split.
+  vec3 col;
+  float near = (1.0 - smoothstep(1.0, 1.75, d)) * uOrbOn;
+  if (near > 0.0) {
+    float m = 1.0 - 0.13 * near * near;
+    float ca = 0.0035 * near;
+    col = vec3(sceneAt(c + v * (m - ca)).r, sceneAt(c + v * m).g, sceneAt(c + v * (m + ca)).b);
+  } else {
+    col = sceneAt(p);
+  }
+
+  // Its soft shadow on the type, light from the upper left, and the warm caustic inside it.
+  vec2 sq = (v - vec2(0.2, 0.5) * R) / (R * vec2(1.0, 0.92));
+  float sh = 1.0 - smoothstep(0.3, 1.22, length(sq));
+  col *= mix(vec3(1.0), vec3(0.6, 0.66, 0.86), sh * 0.5 * uOrbOn);
+  vec2 cq = (v - vec2(0.34, 0.98) * R) / (R * vec2(0.46, 0.2));
+  col += vec3(1.0, 0.55, 0.3) * exp(-dot(cq, cq) * 1.6) * 0.16 * uOrbOn;
+  // The light around it: a pale halo on the blue, a touch of its warmth near the rim.
+  float halo = exp(-max(d - 1.0, 0.0) * 2.4) * step(1.0, d) * uOrbOn;
+  col = mix(col, vec3(0.86, 0.94, 1.0), halo * 0.34);
+  col += vec3(0.5, 0.18, 0.05) * 0.05 * exp(-max(d - 1.0, 0.0) * 9.0) * step(1.0, d) * uOrbOn;
+
+  // Ripples while it rings.
+  if (uRingA > 0.0) {
+    for (int k = 0; k < 2; k++) {
+      float ph = fract(uRingP + float(k) * 0.5);
+      float rr = 1.04 + ph * 1.1;
+      float band = exp(-pow((d - rr) / 0.022, 2.0)) * (1.0 - ph) * (1.0 - ph);
+      col = mix(col, vec3(1.0), band * uRingA * 0.55 * step(1.0, d));
+    }
+  }
+
+  if (d < 1.0) {
+    // Seen through the glass: the type magnified, with a chromatic edge.
+    float m = 0.5 + 0.3 * d * d;
+    float ca = 0.04 * d * d;
+    vec3 ta = vec3(textA(c + v * (m - ca)), textA(c + v * m), textA(c + v * (m + ca)));
+
+    // The marbled interior: a slow turn, a slower swirl that winds and unwinds, and a gentle flow.
+    float ang = uT * 0.07 + 0.55 * sin(uT * 0.16) * (1.0 - d) * (1.0 - d);
+    float cs = cos(ang);
+    float sn = sin(ang);
+    vec2 r = vec2(cs * q.x - sn * q.y, sn * q.x + cs * q.y);
+    r += 0.055 * (1.0 - d * d) * vec2(sin(r.y * 3.3 + uT * 0.41), sin(r.x * 2.9 - uT * 0.37));
+    vec3 sw = texture2D(uOrb, uOrbTex.xy + r * uOrbTex.z * 0.94).rgb;
+    vec3 orb = warm(0.1 + 0.8 * key(sw));
+    // Volume: lit from the upper left, deeper toward the lower right rim.
+    float lit = dot(normalize(vec3(q, sqrt(max(0.0, 1.0 - d * d)))), normalize(vec3(-0.45, -0.55, 0.7)));
+    orb *= 0.62 + 0.5 * clamp(lit, 0.0, 1.0);
+    orb = mix(orb, orb * vec3(0.55, 0.32, 0.4), smoothstep(0.7, 1.0, d) * smoothstep(-0.2, 0.6, q.x + q.y) * 0.7);
+    // The type through it, warm white.
+    orb = mix(orb, vec3(1.0, 0.92, 0.86), ta * 0.82);
+    // Gloss that stays put: the window highlight and sparkles from the image, a soft spot, a thin rim.
+    vec3 fx = texture2D(uOrb, uOrbTex.xy + q * uOrbTex.z * 0.985).rgb;
+    float hi = smoothstep(0.86, 0.99, min(fx.r, min(fx.g, fx.b)));
+    orb = mix(orb, vec3(1.0, 0.95, 0.92), hi * 0.42);
+    vec2 gq = (q - vec2(-0.36, -0.44)) / vec2(0.34, 0.24);
+    orb += vec3(1.0, 0.9, 0.85) * exp(-dot(gq, gq) * 1.4) * 0.3;
+    orb = mix(orb, vec3(1.0, 0.72, 0.6), smoothstep(0.9, 1.0, d) * smoothstep(0.2, -0.6, q.x + q.y) * 0.5);
+    float e = smoothstep(1.0, 1.0 - 2.4 / R, d);
+    col = mix(col, orb, e * uOrbOn);
+  }
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+type Layout = {
+  w: number;
+  h: number;
+  restX: number;
+  restY: number;
+  r: number;
+  hx: number;
+  ax: number;
+  yLow: number;
+};
+
+type CallState = "idle" | "ring" | "live";
+
+export default function OraCall({
+  brand = "Ora",
+  cta = "Hear it answer",
+  ground = "#0c7bf6",
+  accent = "#c6f0ff",
+  drift = 1,
+  orb = "/design/websites/ora-call/orb.webp",
+  sound = true,
+  onCta,
+}: Props) {
+  const rootRef = useRef<HTMLElement | null>(null);
+  const cvRef = useRef<HTMLCanvasElement | null>(null);
+  const slotRef = useRef<HTMLDivElement | null>(null);
+  const h1Ref = useRef<HTMLHeadingElement | null>(null);
+  const paraRef = useRef<HTMLParagraphElement | null>(null);
+  const ptr = useRef<{ x: number; y: number; on: boolean }>({ x: 0, y: 0, on: false });
+  const ringAt = useRef(-1);
+  const driftRef = useRef(drift);
+  driftRef.current = drift;
+  const groundRef = useRef<[number, number, number]>(hex3(ground));
+  groundRef.current = hex3(ground);
+
+  const [live, setLive] = useState(false);
+  const [state, setState] = useState<CallState>("idle");
+  const [said, setSaid] = useState("");
+  const [calls, setCalls] = useState(1284);
+  const timers = useRef<number[]>([]);
+  const blip = useBlip(sound);
+
+  /* The evidence: calls answered today, ticking up now and then. */
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(() => setCalls((c) => c + 1), 4200);
+    return () => window.clearInterval(id);
+  }, []);
+
+  useEffect(() => () => timers.current.forEach((t) => window.clearTimeout(t)), []);
+
+  const call = useCallback(() => {
+    onCta?.();
+    if (state !== "idle") return;
+    timers.current.forEach((t) => window.clearTimeout(t));
+    timers.current = [];
+    setState("ring");
+    setSaid("");
+    ringAt.current = performance.now();
+    // Two short rings (440/480 Hz trills), then the pick-up click and two rising notes.
+    for (let k = 0; k < 2; k++) for (let i = 0; i < 9; i++) blip({ f: i % 2 ? 480 : 440, d: 0.05, g: 0.022, at: k * 0.75 + i * 0.05 });
+    blip({ f: 2600, noise: true, d: 0.03, g: 0.03, at: 1.55 });
+    blip({ f: 660, d: 0.06, g: 0.026, type: "triangle", at: 1.64 });
+    blip({ f: 990, d: 0.06, g: 0.022, type: "triangle", at: 1.74 });
+    const words = GREETING.split(" ");
+    timers.current.push(
+      window.setTimeout(() => {
+        setState("live");
+        words.forEach((_, i) =>
+          timers.current.push(window.setTimeout(() => setSaid(words.slice(0, i + 1).join(" ")), i * 85)),
+        );
+      }, 1550),
+    );
+    // Demo reset so the next visitor can try (remove to keep the greeting).
+    timers.current.push(
+      window.setTimeout(() => {
+        setState("idle");
+        setSaid("");
+      }, 5200),
+    );
+  }, [blip, onCta, state]);
+
+  /* The scene. */
+  useEffect(() => {
+    const root = rootRef.current;
+    const cv = cvRef.current;
+    if (!root || !cv) return;
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const gl = cv.getContext("webgl", { antialias: false, alpha: false, premultipliedAlpha: false }) as WebGLRenderingContext | null;
+    if (!gl) return;
+
+    const compile = (type: number, src: string) => {
+      const s = gl.createShader(type)!;
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      return s;
+    };
+    const prog = gl.createProgram()!;
+    gl.attachShader(prog, compile(gl.VERTEX_SHADER, VERT));
+    gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FRAG));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+    gl.useProgram(prog);
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const aPos = gl.getAttribLocation(prog, "aPos");
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+    const U = (n: string) => gl.getUniformLocation(prog, n);
+    const u = {
+      res: U("uRes"), ground: U("uGround"), skyOff: U("uSkyOff"), o: U("uO"), t: U("uT"),
+      textOn: U("uTextOn"), orbOn: U("uOrbOn"), ringA: U("uRingA"), ringP: U("uRingP"), orbTex: U("uOrbTex"),
+    };
+    gl.uniform1i(U("uText"), 1);
+    gl.uniform1i(U("uOrb"), 2);
+    gl.uniform3f(u.orbTex, ORB_C[0], ORB_C[1], ORB_R);
+
+    const mkTex = (unit: number) => {
+      const t = gl.createTexture()!;
+      gl.activeTexture(gl.TEXTURE0 + unit);
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 0]));
+      return t;
+    };
+    const texText = mkTex(1);
+    const texOrb = mkTex(2);
+    let orbOn = 0;
+    let textOn = 0;
+    let disposed = false;
+    const load = (src: string, tex: WebGLTexture, unit: number, done: () => void) => {
+      const im = new Image();
+      im.decoding = "async";
+      im.onload = () => {
+        if (disposed) return;
+        gl.activeTexture(gl.TEXTURE0 + unit);
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, im);
+        done();
+        kick();
+      };
+      im.src = src;
+    };
+    load(orb, texOrb, 2, () => (orbOn = 1));
+
+    /* Layout: where the ball rests, how big it is and the path it drifts on,
+       all from the real DOM, and the headline drawn into a texture. */
+    const tc = document.createElement("canvas");
+    const tctx = tc.getContext("2d");
+    let L: Layout = { w: 1, h: 1, restX: 0, restY: 0, r: 1, hx: 0, ax: 0, yLow: 0 };
+    let dpr = 1;
+    const measure = () => {
+      const slot = slotRef.current;
+      const h1 = h1Ref.current;
+      const para = paraRef.current;
+      if (!slot || !h1 || !para) return;
+      const w = root.offsetWidth;
+      const h = root.offsetHeight;
+      const rr = root.getBoundingClientRect();
+      const k = w / Math.max(1, rr.width);
+      const box = (el: Element) => {
+        const b = el.getBoundingClientRect();
+        return { x: (b.left - rr.left) * k, y: (b.top - rr.top) * k, w: b.width * k, h: b.height * k };
+      };
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      const W = Math.max(1, Math.round(w * dpr));
+      const H = Math.max(1, Math.round(h * dpr));
+      if (cv.width !== W || cv.height !== H) {
+        cv.width = W;
+        cv.height = H;
+      }
+      const s = box(slot);
+      const hb = box(h1);
+      const pb = box(para);
+      const r = s.w / 2;
+      L = {
+        w,
+        h,
+        restX: s.x + s.w / 2,
+        restY: s.y + s.h / 2,
+        r,
+        hx: hb.x + hb.w / 2,
+        ax: hb.w * (w < 640 ? 0.26 : 0.4),
+        yLow: Math.max(s.y + s.h / 2, pb.y - r - 10),
+      };
+      // The headline, word by word, exactly where the (hidden) DOM text sits.
+      if (!tctx) return;
+      tc.width = W;
+      tc.height = H;
+      tctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      tctx.clearRect(0, 0, w, h);
+      h1.querySelectorAll<HTMLElement>("[data-w]").forEach((el) => {
+        const cs = getComputedStyle(el);
+        const b = box(el);
+        tctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+        (tctx as unknown as { letterSpacing: string }).letterSpacing = cs.letterSpacing === "normal" ? "0px" : cs.letterSpacing;
+        tctx.fillStyle = cs.color;
+        tctx.textBaseline = "alphabetic";
+        const mt = tctx.measureText("Hg");
+        const asc = mt.fontBoundingBoxAscent || parseFloat(cs.fontSize) * 0.9;
+        const desc = mt.fontBoundingBoxDescent || parseFloat(cs.fontSize) * 0.25;
+        tctx.fillText(el.textContent ?? "", b.x, b.y + (b.h * asc) / (asc + desc));
+      });
+      gl.activeTexture(gl.TEXTURE1);
+      gl.bindTexture(gl.TEXTURE_2D, texText);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tc);
+      textOn = 1;
+      gl.viewport(0, 0, W, H);
+      gl.uniform2f(u.res, W, H);
+      kick();
+    };
+
+    /* Motion state. */
+    let t = 9.5; // start where the ball is already crossing the headline
+    let last = 0;
+    let raf = 0;
+    let visible = true;
+    let running = false;
+    let intro = still ? 1 : 0;
+    const off = { x: 0, y: 0 };
+    const cam = { x: 0, y: 0 };
+    let shown = false;
+
+    const frame = (now: number) => {
+      raf = 0;
+      const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
+      last = now;
+      if (!still) {
+        t += dt;
+        intro = Math.min(1, intro + dt / 1.1);
+      }
+      const ease = 1 - Math.pow(1 - intro, 3);
+      // The lazy figure-eight across the headline.
+      const a = ((2 * Math.PI) / 30) * Math.max(0.2, driftRef.current);
+      const ph = t * a;
+      let x = still ? L.restX : L.hx + L.ax * Math.sin(ph);
+      let y = still ? L.restY : L.restY + (L.yLow - L.restY) * (0.5 + 0.5 * Math.sin(2 * ph - 0.6));
+      // The pointer tugs it (critically damped, no overshoot) and parts the planes.
+      const P = ptr.current;
+      const k = 1 - Math.exp(-dt * 2.6);
+      const tx = P.on && !still ? Math.max(-130, Math.min(130, (P.x - x) * 0.28)) : 0;
+      const ty = P.on && !still ? Math.max(-70, Math.min(70, (P.y - y) * 0.22)) : 0;
+      off.x += (tx - off.x) * k;
+      off.y += (ty - off.y) * k;
+      const nx = P.on ? (P.x / L.w) * 2 - 1 : 0;
+      const ny = P.on ? (P.y / L.h) * 2 - 1 : 0;
+      const cx = nx * 16 + (still ? 0 : Math.sin(t * 0.23) * 6);
+      const cy = ny * 10 + (still ? 0 : Math.cos(t * 0.19) * 3);
+      cam.x += (cx - cam.x) * (still ? 1 : k);
+      cam.y += (cy - cam.y) * (still ? 1 : k);
+      x += off.x - cam.x;
+      y = Math.min(L.yLow + 6, y + off.y) - cam.y;
+      // Ringing: the ball breathes with each ring (≤ 4 %), ripples leave it.
+      let pulse = 0;
+      let ringA = 0;
+      let ringP = 0;
+      if (ringAt.current > 0) {
+        const e = (now - ringAt.current) / 1000;
+        if (e < 1.5) pulse = 0.04 * (0.5 - 0.5 * Math.cos((2 * Math.PI * e) / 0.75));
+        ringA = e < 1.5 ? Math.min(1, e / 0.15) : Math.max(0, 1 - (e - 1.5) / 0.7);
+        ringP = e / 0.75;
+        if (e > 2.4) ringAt.current = -1;
+      }
+      const R = L.r * (0.94 + 0.06 * ease) * (1 + pulse);
+      y += (1 - ease) * 18;
+      gl.uniform3f(u.o, x * dpr, y * dpr, R * dpr);
+      gl.uniform2f(u.skyOff, (cam.x * 0.4 + (still ? 0 : Math.sin(t * 0.075) * 0.022 * L.w)) * dpr, cam.y * 0.4 * dpr);
+      gl.uniform3fv(u.ground, groundRef.current);
+      gl.uniform1f(u.t, t);
+      gl.uniform1f(u.textOn, textOn);
+      gl.uniform1f(u.orbOn, orbOn * ease);
+      gl.uniform1f(u.ringA, ringA);
+      gl.uniform1f(u.ringP, ringP);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      if (!shown && textOn && orbOn) {
+        shown = true;
+        setLive(true);
+      }
+      if (running && !still) raf = requestAnimationFrame(frame);
+    };
+    const start = () => {
+      if (running || !visible || document.hidden) return;
+      running = true;
+      last = 0;
+      raf = requestAnimationFrame(frame);
+    };
+    const stop = () => {
+      running = false;
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+    };
+    // Redraw once (still mode, late loads, resizes).
+    function kick() {
+      if (still || !running) {
+        if (!raf) raf = requestAnimationFrame(frame);
+      }
+    }
+
+    const ro = new ResizeObserver(measure);
+    ro.observe(root);
+    measure();
+    void document.fonts?.ready.then(() => !disposed && measure());
+    const onFonts = () => !disposed && measure();
+    document.fonts?.addEventListener?.("loadingdone", onFonts);
+    const io = new IntersectionObserver(([en]) => {
+      visible = en.isIntersecting;
+      if (visible && !still) start();
+      else stop();
+    });
+    io.observe(root);
+    const onVis = () => (document.hidden ? stop() : !still && start());
+    document.addEventListener("visibilitychange", onVis);
+    if (!still) start();
+    else kick();
+
+    return () => {
+      disposed = true;
+      stop();
+      ro.disconnect();
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVis);
+      document.fonts?.removeEventListener?.("loadingdone", onFonts);
+      gl.deleteTexture(texText);
+      gl.deleteTexture(texOrb);
+      gl.deleteBuffer(buf);
+      gl.deleteProgram(prog);
+    };
+  }, [orb]);
+
+  const onMove = (e: RPointerEvent<HTMLElement>) => {
+    const el = rootRef.current;
+    if (!el || e.pointerType === "touch") return;
+    const b = el.getBoundingClientRect();
+    const k = el.offsetWidth / Math.max(1, b.width);
+    ptr.current = { x: (e.clientX - b.left) * k, y: (e.clientY - b.top) * k, on: true };
+  };
+  const onLeave = () => {
+    ptr.current = { ...ptr.current, on: false };
+  };
+
+  const words = (s: string) =>
+    s.split(" ").map((w, i, all) => (
+      <span key={i}>
+        <span data-w="">{w}</span>
+        {i < all.length - 1 ? " " : ""}
+      </span>
+    ));
+
+  return (
+    <section
+      ref={rootRef}
+      className={`orc${live ? " orc-live" : ""}`}
+      style={{ "--orc-accent": accent, "--orc-ground": ground } as CSSProperties}
+      onPointerMove={onMove}
+      onPointerLeave={onLeave}
+      aria-label={`${brand}, the AI receptionist`}
+    >
+      <style>{css}</style>
+      <canvas ref={cvRef} className="orc-gl" aria-hidden="true" />
+      <div className="orc-grain" aria-hidden="true" />
+
+      <header className="orc-nav">
+        <a className="orc-logo" href="#" onClick={(e) => e.preventDefault()}>
+          <span className="orc-dot" aria-hidden="true" />
+          {brand}
+        </a>
+        <nav className="orc-links" aria-label="Main">
+          <a href="#" onClick={(e) => e.preventDefault()}>Product</a>
+          <a href="#" onClick={(e) => e.preventDefault()}>Use cases</a>
+          <a href="#" onClick={(e) => e.preventDefault()}>Pricing</a>
+        </nav>
+        <button type="button" className="orc-try" onClick={call}>
+          Try a call
+        </button>
+      </header>
+
+      <div className="orc-stage">
+        <div ref={slotRef} className="orc-slot" aria-hidden="true">
+          <img className="orc-orbimg" src={orb} alt="" draggable={false} />
+        </div>
+        <h1 ref={h1Ref} className="orc-h">
+          <span className="orc-l1">{words(LINE1)}</span>
+          <span className="orc-l2">{words(LINE2)}</span>
+        </h1>
+        <p ref={paraRef} className="orc-p">
+          An AI receptionist that books, reschedules and takes messages in your business&rsquo;s name.
+        </p>
+        <div className="orc-cta">
+          <button type="button" className="orc-btn orc-main" onClick={call} aria-live="polite" data-state={state}>
+            <span className="orc-ico" aria-hidden="true">
+              <svg viewBox="0 0 16 16" width="15" height="15">
+                <path
+                  d="M4.2 1.8l1.9 2.6c.3.4.2 1-.2 1.3l-1 .8c.7 1.6 1.9 2.9 3.6 3.7l.8-1c.3-.4.9-.5 1.3-.2l2.6 1.9c.4.3.5.9.2 1.3l-.8 1.1c-.5.7-1.4 1-2.2.8C6 13 3 10 2 5.8c-.2-.8.1-1.7.8-2.2l1.1-.8c.1-.1.2-.1.3 0z"
+                  fill="currentColor"
+                />
+              </svg>
+            </span>
+            {state === "ring" ? "Ringing…" : state === "live" ? "Ora picked up" : cta}
+          </button>
+          <button type="button" className="orc-btn orc-alt">
+            Get a number
+          </button>
+          <p className="orc-said" aria-live="polite">
+            {said ? (
+              <>
+                <b>Ora</b> {said}
+              </>
+            ) : null}
+          </p>
+        </div>
+      </div>
+
+      <footer className="orc-foot">
+        <span className="orc-stat">
+          <i aria-hidden="true" /> <b>{calls.toLocaleString("en-US")}</b> calls answered today
+        </span>
+        <span className="orc-meta">Avg. pick-up 0.8 s · 31 languages · Keeps your number</span>
+      </footer>
+    </section>
+  );
+}
+
+const css = `
+@import url("https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap");
+
+.orc {
+  container-type: inline-size;
+  width: 100%;
+  height: var(--design-h, 100svh);
+  min-height: 640px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  color: #fff;
+  font-family: "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  background: linear-gradient(180deg, var(--orc-ground) 0%, var(--orc-ground) 62%, color-mix(in srgb, var(--orc-ground) 78%, #fff) 108%);
+  -webkit-font-smoothing: antialiased;
+}
+.orc-gl {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+.orc-live .orc-gl { opacity: 1; }
+.orc-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: .12;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+}
+
+.orc-nav {
+  position: absolute;
+  left: 44px;
+  right: 44px;
+  top: 30px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.orc-logo {
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 18px;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+  letter-spacing: -.01em;
+}
+.orc-dot { width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+.orc-links { display: flex; gap: 28px; }
+.orc-links a { color: inherit; opacity: .78; text-decoration: none; transition: opacity .2s; }
+.orc-links a:hover { opacity: 1; }
+.orc-try {
+  font: inherit;
+  font-size: 13.5px;
+  border: 0;
+  cursor: pointer;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #fff;
+  color: #0846c4;
+  transition: transform .18s ease, background .2s;
+}
+.orc-try:hover { background: #eaf3ff; }
+.orc-try:active { transform: scale(.97); }
+
+.orc-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 24px 44px;
+  pointer-events: none;
+}
+.orc-stage > * { pointer-events: auto; }
+.orc-slot {
+  --orb: clamp(170px, 22.9cqi, 340px);
+  width: var(--orb);
+  height: var(--orb);
+  margin-bottom: 20px;
+  flex: none;
+  pointer-events: none;
+}
+.orc-orbimg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: hue-rotate(-28deg) saturate(1.9) brightness(.92) drop-shadow(0 40px 50px rgba(4, 30, 90, .3));
+  transition: opacity .5s ease;
+}
+.orc-live .orc-orbimg { opacity: 0; }
+.orc-h {
+  margin: 0;
+  font-weight: 500;
+  transition: opacity .5s ease;
+}
+.orc-live .orc-h { opacity: 0; }
+.orc-l1 {
+  display: block;
+  font-size: min(74px, 9.6cqi);
+  letter-spacing: -.045em;
+  line-height: 1;
+}
+.orc-l2 {
+  display: block;
+  font-family: "Instrument Serif", ui-serif, Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: min(96px, 11.8cqi);
+  line-height: 1;
+  letter-spacing: -.02em;
+  color: var(--orc-accent);
+}
+.orc-p {
+  margin: 22px auto 0;
+  max-width: 470px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, .84);
+}
+.orc-cta {
+  position: relative;
+  margin-top: 26px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+.orc-btn {
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  border: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 14px 24px;
+  border-radius: 999px;
+  transition: transform .18s ease, box-shadow .2s, background .2s;
+}
+.orc-btn:active { transform: scale(.97); }
+.orc-main {
+  background: #fff;
+  color: #0846c4;
+  min-width: 176px;
+  justify-content: center;
+  box-shadow: 0 10px 26px -12px rgba(4, 30, 90, .6);
+}
+.orc-main:hover { background: #f1f7ff; }
+.orc-main[data-state="ring"] .orc-ico { animation: orc-ring .375s ease-in-out infinite alternate; }
+.orc-ico { display: inline-flex; }
+.orc-alt {
+  background: rgba(255, 255, 255, .14);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .42);
+}
+.orc-alt:hover { background: rgba(255, 255, 255, .22); }
+.orc-btn:focus-visible, .orc-try:focus-visible, .orc-links a:focus-visible, .orc-logo:focus-visible {
+  outline: 2px solid var(--orc-accent);
+  outline-offset: 3px;
+}
+.orc-said {
+  position: absolute;
+  top: calc(100% + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: min(560px, 90cqi);
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: #fff;
+  min-height: 1.45em;
+}
+.orc-said b { color: var(--orc-accent); font-weight: 600; margin-right: 4px; }
+@keyframes orc-ring { from { transform: rotate(-10deg); } to { transform: rotate(10deg); } }
+
+.orc-foot {
+  position: absolute;
+  left: 44px;
+  right: 44px;
+  bottom: 26px;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, .78);
+}
+.orc-stat { display: inline-flex; align-items: center; gap: 6px; }
+.orc-stat b { font-weight: 600; color: #fff; font-variant-numeric: tabular-nums; }
+.orc-stat i { width: 7px; height: 7px; border-radius: 50%; background: #7dffc4; box-shadow: 0 0 0 3px rgba(125, 255, 196, .25); }
+
+@container (max-width: 860px) {
+  .orc-links { display: none; }
+  .orc-meta { display: none; }
+  .orc-foot { justify-content: center; }
+}
+@container (max-width: 640px) {
+  .orc-nav { left: 20px; right: 20px; top: 22px; }
+  .orc-stage { padding: 80px 20px 96px; }
+  .orc-slot { --orb: clamp(150px, 50cqi, 220px); margin-bottom: 26px; }
+  .orc-p { font-size: 15px; max-width: 310px; margin-top: 18px; }
+  .orc-cta { margin-top: 22px; gap: 8px; }
+  .orc-btn { padding: 13px 18px; font-size: 14.5px; }
+  .orc-main { min-width: 0; }
+  .orc-said { font-size: 13.5px; width: 86cqi; }
+  .orc-foot { bottom: 22px; left: 20px; right: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orc-gl, .orc-h, .orc-orbimg { transition: none; }
+  .orc-main[data-state="ring"] .orc-ico { animation: none; }
+}
+`;

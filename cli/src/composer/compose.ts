@@ -212,8 +212,12 @@ async function copyOverlay(
       await copyOverlay(sourcePath, destinationPath, config, staging, replace);
       continue;
     }
-    const contents = replaceTokens(await readFile(sourcePath, "utf8"), config);
     await mkdir(path.dirname(destinationPath), { recursive: true });
+    if (BINARY_EXTENSIONS.has(path.extname(entry.name).toLowerCase())) {
+      await copyBinary(sourcePath, destinationPath, staging, replace);
+      continue;
+    }
+    const contents = replaceTokens(await readFile(sourcePath, "utf8"), config);
     try {
       const existing = await readFile(destinationPath, "utf8");
       if (existing !== contents && !replace) {
@@ -229,6 +233,30 @@ async function copyOverlay(
       await writeFile(destinationPath, contents);
     }
   }
+}
+
+const BINARY_EXTENSIONS = new Set([
+  ".webp", ".png", ".jpg", ".jpeg", ".gif", ".avif", ".ico",
+  ".woff", ".woff2", ".ttf", ".otf", ".mp3", ".mp4", ".webm", ".wav",
+]);
+
+async function copyBinary(
+  sourcePath: string,
+  destinationPath: string,
+  staging: string,
+  replace: boolean,
+): Promise<void> {
+  const contents = await readFile(sourcePath);
+  let existing: Buffer | undefined;
+  try {
+    existing = await readFile(destinationPath);
+  } catch (error) {
+    if (!isNodeError(error) || error.code !== "ENOENT") throw error;
+  }
+  if (existing && !existing.equals(contents) && !replace) {
+    throw new Error(`file conflict at "${path.relative(staging, destinationPath)}"`);
+  }
+  if (!existing || !existing.equals(contents)) await writeFile(destinationPath, contents);
 }
 
 function replaceTokens(contents: string, config: PraxisConfig): string {

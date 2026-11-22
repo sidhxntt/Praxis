@@ -1,0 +1,911 @@
+"use client";
+
+/**
+ * LIMELIGHT · website hero
+ *
+ * The first screen of a brand studio whose pitch is being seen. On a yellow
+ * ground printed as a halftone, a woman stands in front of one giant word as
+ * a pure black silhouette. One soft, warm light travels slowly over her, and
+ * wherever it falls the real colour photograph appears inside the black: an
+ * eye, the other eye, a cheek, the mouth, the fringe, and back again. It is a
+ * light, not a hole: brightest in its middle, falling off to black, shaped by
+ * the face (a relief taken from the photo's own brightness), and everything
+ * else answers it too. The halftone dots swell and glow under it, the letters
+ * fill in white near it, a thin warm rim runs along the edge of her hair, and
+ * her head throws a soft shadow onto the letters on the far side.
+ *
+ * The pointer is a torch: move over the picture and the light is in your
+ * hand. Press anywhere for a studio flash: the whole portrait is lit for a
+ * moment, then falls back to black (with a soft pop). Four planes (the print,
+ * the word, the person, the copy and cards) part slowly in parallax on their
+ * own and more under the pointer. The numbers count up once and hold.
+ *
+ * One file, React only. The typefaces come from Google Fonts (loaded in the CSS).
+ *
+ *   <Limelight />
+ *   <Limelight word="NOTICED" tone="#fb8b1e" light={1.3} />
+ *
+ * Props
+ *   brand     the wordmark                               "Limelight"
+ *   word      the giant word behind her                  "SPOTTED"
+ *   cta       the nav button                             "Start a project"
+ *   tone      the ground colour                          "#f6b90c"
+ *   light     the size of the light, 1 = normal          1
+ *   portrait  the person, a transparent cut-out          "/design/websites/limelight/portrait.webp"
+ *   faces     three square avatars side by side          "/design/websites/limelight/faces.webp"
+ *   sound     a tiny synthesized pop on the flash        true
+ *   onCta     called when the nav button is pressed
+ *
+ * Fills its container's width; height is var(--design-h, 100svh), never under
+ * 640px. Responsive by container query: on a phone the word sits above her
+ * head and the copy and cards stack over her jumper.
+ * The scene pauses off screen and in a hidden tab. Without WebGL2 the same
+ * composition is shown still (CSS halftone, the word, the silhouette with the
+ * light resting on her eyes).
+ * Reduced motion: no entrance, no count-up, one finished frame with the light
+ * resting on her eyes.
+ * Keyboard: the hidden "Move the light" button (first Tab stop after the nav)
+ * moves the light with the arrow keys; Enter or Space fires the flash.
+ * Sound: silent until the visitor interacts, when `sound` is false, and when
+ * <html data-cd-mute="1">. The AudioContext is created on the first sound.
+ */
+
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+
+type Props = {
+  brand?: string;
+  word?: string;
+  cta?: string;
+  tone?: string;
+  light?: number;
+  portrait?: string;
+  faces?: string;
+  sound?: boolean;
+  onCta?: () => void;
+};
+
+/* Sound: a tiny synthesized click or pop, made in the browser.
+   Silent when `sound` is false, when <html data-cd-mute="1">, and until the
+   visitor has interacted. Delete this hook and its calls to make it silent. */
+type Blip = { f: number; to?: number; d?: number; g?: number; type?: OscillatorType; noise?: boolean; q?: number; at?: number };
+function useBlip(on: boolean) {
+  const ctx = useRef<AudioContext | null>(null);
+  useEffect(() => () => void ctx.current?.close().catch(() => {}), []);
+  return useCallback(
+    (b: Blip) => {
+      if (!on || typeof window === "undefined") return;
+      if (document.documentElement.dataset.cdMute === "1") return;
+      const ua = (navigator as unknown as { userActivation?: { hasBeenActive: boolean } }).userActivation;
+      if (ua && !ua.hasBeenActive) return;
+      try {
+        const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+        if (!AC) return;
+        const a = (ctx.current ??= new AC());
+        if (a.state === "suspended") void a.resume();
+        const t = a.currentTime + (b.at ?? 0);
+        const d = Math.min(b.d ?? 0.035, 0.16);
+        const amp = a.createGain();
+        amp.gain.setValueAtTime(0.0001, t);
+        amp.gain.exponentialRampToValueAtTime(Math.min(b.g ?? 0.035, 0.06), t + (b.noise ? 0.006 : 0.004));
+        amp.gain.exponentialRampToValueAtTime(0.0001, t + d);
+        amp.connect(a.destination);
+        let src: AudioScheduledSourceNode;
+        if (b.noise) {
+          const buf = a.createBuffer(1, Math.ceil(a.sampleRate * d), a.sampleRate);
+          const ch = buf.getChannelData(0);
+          for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
+          const n = a.createBufferSource();
+          n.buffer = buf;
+          const bp = a.createBiquadFilter();
+          bp.type = "bandpass";
+          bp.frequency.setValueAtTime(b.f, t);
+          if (b.to) bp.frequency.exponentialRampToValueAtTime(b.to, t + d);
+          bp.Q.value = b.q ?? 1.2;
+          n.connect(bp).connect(amp);
+          src = n;
+        } else {
+          const o = a.createOscillator();
+          o.type = b.type ?? "sine";
+          o.frequency.setValueAtTime(b.f, t);
+          if (b.to) o.frequency.exponentialRampToValueAtTime(b.to, t + d);
+          o.connect(amp);
+          src = o;
+        }
+        src.start(t);
+        src.stop(t + d + 0.01);
+      } catch {
+        /* no sound is fine */
+      }
+    },
+    [on],
+  );
+}
+
+const loadImg = (src: string) =>
+  new Promise<HTMLImageElement>((ok, no) => {
+    const im = new Image();
+    im.decoding = "async";
+    im.onload = () => ok(im);
+    im.onerror = no;
+    im.src = src;
+  });
+
+const hexRgb = (hex: string): [number, number, number] => {
+  const h = hex.replace("#", "");
+  const f = h.length === 3 ? h.split("").map((c) => c + c).join("") : h.padEnd(6, "0").slice(0, 6);
+  const n = parseInt(f, 16);
+  return Number.isFinite(n) ? [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255] : [0.965, 0.725, 0.047];
+};
+
+/* The light's own path: a closed, smooth loop over her face, in units of the
+   photo's height, x from the photo's centre line, y from its top.
+   Eye, eye, cheek, mouth, the other cheek, up to the temple, along the fringe, back. */
+const PATH: [number, number][] = [
+  [-0.0855, 0.364],
+  [0.0873, 0.3655],
+  [0.114, 0.468],
+  [0.004, 0.562],
+  [-0.118, 0.462],
+  [-0.112, 0.292],
+  [0.055, 0.262],
+];
+const LAP = 17.5; // seconds for one loop
+const EYES: [number, number] = [0.0, 0.368];
+
+/* ---------- The lit picture (WebGL2) ----------
+   One full-screen pass, three planes, all in layout px:
+   ground  a 45° halftone screen; each dot's radius is the light at that dot:
+           a warm halo behind her head, the uneven print, and the light itself.
+   word    the letters from a canvas texture, fading out downward, filled in
+           white where the light is near, with her head's shadow on them.
+   person  black by default (a hair of the photo left in it, a backlit wrap at
+           the edges); the light adds the colour photograph back, shaped by a
+           relief from the photo's own blurred brightness. */
+const VERT = `#version 300 es
+in vec2 aPos;
+void main(){ gl_Position = vec4(aPos, 0.0, 1.0); }`;
+
+const FRAG = `#version 300 es
+precision highp float;
+uniform vec2 uRes;
+uniform float uDpr, uIn, uFlash, uCell, uHL, uTL, uR, uTA, uBot;
+uniform vec2 uL, uGO, uWY;
+uniform vec4 uHR, uTR;
+uniform vec3 uTone;
+uniform sampler2D uHead, uText;
+out vec4 o;
+
+float bell(vec2 q, float s){ vec2 d = (q - uL) / s; return exp(-dot(d, d)); }
+vec2 huv(vec2 q){ vec2 uv = (q - uHR.xy) / uHR.zw; return vec2(uv.x, min(uv.y, .998)); }
+float headA(vec2 q, float lod){
+  vec2 uv = (q - uHR.xy) / uHR.zw;
+  if (uv.x < 0. || uv.x > 1. || uv.y < 0.) return 0.;
+  return textureLod(uHead, vec2(uv.x, min(uv.y, .998)), lod).a;
+}
+float headL(vec2 q, float lod){ return dot(textureLod(uHead, huv(q), lod).rgb, vec3(.299, .587, .114)); }
+float textA(vec2 q, float lod){
+  vec2 uv = (q - uTR.xy) / uTR.zw;
+  if (uv.x < 0. || uv.y < 0. || uv.x > 1. || uv.y > 1.) return 0.;
+  return textureLod(uText, uv, lod).a;
+}
+float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float vnoise(vec2 p){
+  vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);
+  return mix(mix(hash(i), hash(i + vec2(1., 0.)), f.x), mix(hash(i + vec2(0., 1.)), hash(i + vec2(1., 1.)), f.x), f.y);
+}
+
+void main(){
+  vec2 p = vec2(gl_FragCoord.x, uRes.y * uDpr - gl_FragCoord.y) / uDpr;
+  float LI = uIn;
+
+  // her head's shadow falls away from the light
+  vec2 hc = uHR.xy + uHR.zw * vec2(.5, .327);
+  vec2 dv = hc - uL;
+  float dl = max(length(dv), 1.);
+  vec2 dn = dv / dl;
+  vec2 offT = dn * min(dl * .24, uHR.w * .075);
+  float sT = headA(p - offT, uHL + 3.7);
+
+  /* ground: a 45 degree screen */
+  const float K = .70710678;
+  vec2 g = p - uGO;
+  vec2 gr = vec2((g.x - g.y) * K, (g.x + g.y) * K);
+  vec2 cr = (floor(gr / uCell) + .5) * uCell;
+  vec2 cc = vec2((cr.x + cr.y) * K, (cr.y - cr.x) * K) + uGO;
+  vec2 hq = (cc - mix(hc, uL, .2)) / (uHR.w * vec2(.59, .53));
+  float halo = exp(-dot(hq, hq));
+  vec2 hq2 = (p - mix(hc, uL, .2)) / (uHR.w * vec2(.64, .57));
+  float haloP = exp(-dot(hq2, hq2));
+  float pch = vnoise(cc / 140. + 3.7) * .62 + vnoise(cc / 43. + 11.) * .38;
+  float lg = bell(cc, uR * 2.5) * LI;
+  float lgP = bell(p, uR * 2.7) * LI;
+  float I = .02 + .22 * pch * pch + .74 * halo * halo + .16 * halo + .46 * lg + uFlash * .26;
+  // grit: no two dots of a real print are the same size, and a few barely took
+  float jt = hash(cr / uCell);
+  float r = uCell * (.07 + .43 * sqrt(clamp(I, 0., 1.4))) * (.74 + .5 * jt) * mix(.6, 1., step(.03, jt));
+  float aa = .75 / uDpr + .12;
+  float m = 1. - smoothstep(r - aa, r + aa, length(gr - cr));
+  vec3 inkA = mix(uTone * vec3(.98, .74, .6), vec3(.95, .34, .07), .42);
+  vec3 inkB = mix(uTone * .9, vec3(.91, .16, .07), .78);
+  vec3 ink = mix(inkA, inkB, smoothstep(.3, .95, I - lg * .25));
+  ink = mix(ink, vec3(1., .47, .10), lg * .45);
+  vec3 base = mix(uTone, vec3(.99, .52, .10), haloP * .50);
+  base = mix(base, vec3(.95, .30, .07), haloP * haloP * haloP * .42);
+  base = mix(base, vec3(1., .84, .34), lgP * .5);
+  base += vec3(.05, .05, .02) * uFlash;
+  vec3 col = mix(base, ink, m * mix(.62, .96, clamp(I, 0., 1.)));
+  col += (hash(floor(p * uDpr / 1.5) + 7.) - .5) * .03;
+
+  /* word */
+  vec2 tuv = (p - uTR.xy) / uTR.zw;
+  if (tuv.x > 0. && tuv.y > 0. && tuv.x < 1. && tuv.y < 1.) {
+    float T = textureLod(uText, tuv, max(0., uTL - log2(uDpr))).a * uTA;
+    if (T > .001) {
+      float ty = clamp((p.y - uWY.x) / max(1., uWY.y - uWY.x), 0., 1.);
+      float fade = mix(1., .14, smoothstep(.14, 1., ty));
+      float Lw = bell(p, uR * 3.1) * LI;
+      float lift = clamp(Lw * .9 + uFlash * .75, 0., 1.) * (1. - .85 * sT);
+      fade = mix(fade, 1., lift);
+      vec3 wc = mix(vec3(1., .975, .90), vec3(1.), clamp(Lw + uFlash, 0., 1.));
+      col = mix(col, wc, T * fade);
+      // her shadow on the letters
+      col = mix(col, col * vec3(.70, .47, .25), T * sT * (.40 + .4 * bell(p, uR * 5.) * LI));
+    }
+  }
+
+  // the floor of the picture goes a little darker, so the copy reads
+  float by = smoothstep(uBot, 1., p.y / uRes.y);
+  col = mix(col, col * vec3(.50, .40, .22), by * .62);
+
+  /* person */
+  vec2 uv = (p - uHR.xy) / uHR.zw;
+  if (uv.x > 0. && uv.x < 1. && uv.y > 0.) {
+    float l0 = max(0., uHL - log2(uDpr) - .35);
+    vec4 h = textureLod(uHead, vec2(uv.x, min(uv.y, .998)), l0);
+    if (h.a > .003) {
+      vec3 c = h.rgb / h.a;
+      // relief: brighter is nearer (nose, cheekbones, brow), darker falls back (eyes, lips, hair)
+      float bl = uHL + 3.4;
+      float e = uHR.w * .0082;
+      float h0 = headL(p, bl), hx = headL(p + vec2(e, 0.), bl), hy = headL(p + vec2(0., e), bl);
+      vec3 n = normalize(vec3((h0 - hx) * 3., (h0 - hy) * 3., 1.));
+      vec3 l3 = normalize(vec3(uL - p, uR * .95));
+      float ndl = clamp(dot(n, l3), 0., 1.);
+      vec2 dd = (p - uL) / uR;
+      float b = exp(-pow(dot(dd, dd), 1.2));
+      float E = 1.5 * b * mix(.6, 1., ndl) * LI;
+      E = max(E - .012, 0.) + uFlash * 1.06;
+      vec3 warm = mix(vec3(1.07, .985, .87), vec3(1.03, 1., .96), clamp(uFlash * 1.4, 0., 1.));
+      // the rows under the photograph's own frame are drawn in, not shot: they stay black
+      vec3 lit = pow(c, vec3(1.05)) * warm * min(E, 1.32) * (1. - smoothstep(.845, .915, uv.y));
+      // the black: a hair of the picture, and the ground's light wrapping round her edges
+      float wrap = 1. - headA(p, uHL + 3.6);
+      vec3 sil = c * .036 * vec3(1., .9, .78) + vec3(.55, .27, .05) * wrap * wrap * .34 * (.35 + c);
+      // a thin warm rim on the edge that faces the light
+      vec2 tl = uL - p;
+      vec2 ld = tl / max(length(tl), 1.);
+      float rim = clamp(1. - headA(p + ld * 3.2, l0 + .6), 0., 1.) + .35 * clamp(1. - headA(p + ld * 9., uHL + 1.8), 0., 1.);
+      sil += vec3(1., .80, .42) * rim * bell(p, uR * 3.6) * LI * 1.25;
+      col = mix(col, min(sil + lit, vec3(1.)), h.a);
+    }
+  }
+
+  col += vec3(1., .96, .86) * uFlash * uFlash * .10;
+  float nz = fract(sin(dot(floor(p * uDpr), vec2(12.9898, 78.233))) * 43758.5453);
+  col += (nz - .5) * .02;
+  o = vec4(col, 1.);
+}`;
+
+export default function Limelight({
+  brand = "Limelight",
+  word = "SPOTTED",
+  cta = "Start a project",
+  tone = "#f6b90c",
+  light = 1,
+  portrait = "/design/websites/limelight/portrait.webp",
+  faces = "/design/websites/limelight/faces.webp",
+  sound = true,
+  onCta,
+}: Props) {
+  const root = useRef<HTMLDivElement>(null);
+  const glRef = useRef<HTMLCanvasElement>(null);
+  const wordRef = useRef<HTMLHeadingElement>(null);
+  const wordIn = useRef<HTMLSpanElement>(null);
+  const headRef = useRef<HTMLImageElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+  const copyRef = useRef<HTMLDivElement>(null);
+  const n1 = useRef<HTMLSpanElement>(null);
+  const n2 = useRef<HTMLSpanElement>(null);
+  const [live, setLive] = useState(false);
+  const toneRef = useRef(tone);
+  toneRef.current = tone;
+  const lightRef = useRef(light);
+  lightRef.current = light;
+  const blip = useBlip(sound);
+  const flashRef = useRef<() => void>(() => {});
+  const keyRef = useRef<(dx: number, dy: number) => void>(() => {});
+  const blurRef = useRef<() => void>(() => {});
+  const blipRef = useRef(blip);
+  blipRef.current = blip;
+
+  /* The numbers count up once and hold. */
+  useEffect(() => {
+    const a = n1.current;
+    const b = n2.current;
+    if (!a || !b) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t0 = performance.now();
+    let raf = 0;
+    const tick = (now: number) => {
+      const k = Math.min(1, Math.max(0, (now - t0 - 300) / 1200));
+      const e = 1 - Math.pow(1 - k, 3);
+      a.textContent = String(Math.round(38 * e));
+      b.textContent = String(Math.round(212 * e));
+      if (k < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(raf);
+      a.textContent = "38";
+      b.textContent = "212";
+    };
+  }, []);
+
+  /* The scene. */
+  useEffect(() => {
+    const el = root.current;
+    const cv = glRef.current;
+    const wd = wordRef.current;
+    const wi = wordIn.current;
+    const im = headRef.current;
+    if (!el || !cv || !wd || !wi || !im) return;
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* The word runs edge to edge whatever it says: its size is fitted to the box. */
+    let kScale = 1; // the library shows the hero scaled down; everything here is in layout px
+    const fitWord = () => {
+      const r = el.getBoundingClientRect();
+      const W0 = el.offsetWidth || 1;
+      kScale = r.width / W0 || 1;
+      const fs = parseFloat(getComputedStyle(wd).fontSize) || 300;
+      const w = wi.getBoundingClientRect().width / kScale;
+      if (w < 10) return;
+      const want = (W0 * 1.012 * fs) / w;
+      if (Math.abs(want - fs) > 0.5) wd.style.fontSize = `${want.toFixed(1)}px`;
+    };
+    fitWord();
+
+    const gl = cv.getContext("webgl2", { antialias: false, alpha: false, premultipliedAlpha: false, powerPreference: "high-performance" });
+    let prog: WebGLProgram | null = null;
+    if (gl) {
+      const sh = (type: number, src: string) => {
+        const s = gl.createShader(type)!;
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        return s;
+      };
+      prog = gl.createProgram()!;
+      gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT));
+      gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) prog = null;
+    }
+    if (!gl || !prog) {
+      // No WebGL2: the CSS still stays. Keep the word fitted.
+      const ro0 = new ResizeObserver(fitWord);
+      ro0.observe(el);
+      const again = () => fitWord();
+      document.fonts?.addEventListener("loadingdone", again);
+      return () => {
+        ro0.disconnect();
+        document.fonts?.removeEventListener("loadingdone", again);
+      };
+    }
+    gl.useProgram(prog);
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, "aPos");
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const U: Record<string, WebGLUniformLocation | null> = {};
+    for (const n of ["uRes", "uDpr", "uIn", "uFlash", "uCell", "uHL", "uTL", "uR", "uTA", "uBot", "uL", "uGO", "uWY", "uHR", "uTR", "uTone", "uHead", "uText"])
+      U[n] = gl.getUniformLocation(prog, n);
+    gl.uniform1i(U.uHead, 0);
+    gl.uniform1i(U.uText, 1);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+    gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+    const mkTex = (unit: number) => {
+      const t = gl.createTexture()!;
+      gl.activeTexture(gl.TEXTURE0 + unit);
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      return t;
+    };
+    const headTex = mkTex(0);
+    const textTex = mkTex(1);
+    const upload = (unit: number, t: WebGLTexture, src: TexImageSource) => {
+      gl.activeTexture(gl.TEXTURE0 + unit);
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
+      gl.generateMipmap(gl.TEXTURE_2D);
+    };
+
+    let dead = false;
+    let raf = 0;
+    let visible = true;
+    let W = 1;
+    let H = 1;
+    let dpr = 1; // device px per layout px (the scale of the stage included)
+    let headPx = 1; // texels of the photo per layout px
+    let headReady = false;
+    let textReady = false;
+    let imgH = 1;
+    const HR = { x: 0, y: 0, w: 1, h: 1 };
+    const TR = { x: 0, y: 0, w: 1, h: 1, dpr: 1, y0: 0, y1: 1 };
+    const tc = document.createElement("canvas");
+
+    const drawWord = () => {
+      const r = el.getBoundingClientRect();
+      const wr = wd.getBoundingClientRect();
+      const cs = getComputedStyle(wd);
+      const fs = parseFloat(cs.fontSize) || 300;
+      const lh = parseFloat(cs.lineHeight) || fs * 0.8;
+      const pad = Math.round(fs * 0.2);
+      const tw = wr.width / kScale + pad * 2;
+      const th = wr.height / kScale + pad * 2;
+      const td = Math.min(Math.max(dpr, 1), 4096 / tw, 4096 / th);
+      tc.width = Math.max(2, Math.round(tw * td));
+      tc.height = Math.max(2, Math.round(th * td));
+      const x = tc.getContext("2d");
+      if (!x) return;
+      x.setTransform(td, 0, 0, td, 0, 0);
+      x.clearRect(0, 0, tw, th);
+      x.font = `${cs.fontWeight} ${fs}px ${cs.fontFamily}`;
+      x.textAlign = "center";
+      x.textBaseline = "alphabetic";
+      x.fillStyle = "#fff";
+      const txt = wi.textContent || "";
+      const mt = x.measureText(txt);
+      const A = mt.fontBoundingBoxAscent || fs * 0.88;
+      const D = mt.fontBoundingBoxDescent || fs * 0.21;
+      const base = pad + (lh - (A + D)) / 2 + A;
+      x.fillText(txt, tw / 2, base);
+      upload(1, textTex, tc);
+      TR.x = (wr.left - r.left) / kScale - pad;
+      TR.y = (wr.top - r.top) / kScale - pad;
+      TR.w = tw;
+      TR.h = th;
+      TR.dpr = td;
+      const cap = x.measureText("H").actualBoundingBoxAscent || fs * 0.69;
+      TR.y0 = base - cap;
+      TR.y1 = base;
+      textReady = true;
+    };
+
+    const layout = () => {
+      fitWord();
+      const r = el.getBoundingClientRect();
+      W = Math.max(1, el.offsetWidth);
+      H = Math.max(1, el.offsetHeight);
+      dpr = Math.min(2, Math.max(0.5, (window.devicePixelRatio || 1) * kScale));
+      cv.width = Math.round(W * dpr);
+      cv.height = Math.round(H * dpr);
+      gl.viewport(0, 0, cv.width, cv.height);
+      const hr = im.getBoundingClientRect();
+      HR.x = (hr.left - r.left) / kScale;
+      HR.y = (hr.top - r.top) / kScale;
+      HR.w = Math.max(1, hr.width / kScale);
+      HR.h = Math.max(1, hr.height / kScale);
+      headPx = imgH / HR.h;
+      if (fontsOk) drawWord();
+    };
+    // The word is drawn with the page's own font: wait for Archivo (at most 1.2 s),
+    // draw, and draw again whenever a font finishes loading.
+    let fontsOk = false;
+    const fs0 = parseFloat(getComputedStyle(wd).fontSize) || 300;
+    const go = () => {
+      if (dead) return;
+      fontsOk = true;
+      layout();
+      kick();
+    };
+    const fontTimer = window.setTimeout(go, 1200);
+    const onFonts = () => fontsOk && go();
+    if (document.fonts) {
+      document.fonts
+        .load(`800 ${fs0}px Archivo`, wi.textContent || "A")
+        .then(() => {
+          window.clearTimeout(fontTimer);
+          go();
+        })
+        .catch(() => {});
+      document.fonts.addEventListener("loadingdone", onFonts);
+    }
+    loadImg(portrait)
+      .then((img) => {
+        if (dead) return;
+        imgH = img.naturalHeight;
+        upload(0, headTex, img);
+        headReady = true;
+        layout();
+        kick();
+      })
+      .catch(() => {});
+    layout();
+    const ro = new ResizeObserver(() => {
+      layout();
+      kick();
+    });
+    ro.observe(el);
+    const io = new IntersectionObserver(([x]) => {
+      visible = x.isIntersecting;
+      if (visible) kick();
+    });
+    io.observe(el);
+    const onVis = () => kick();
+    document.addEventListener("visibilitychange", onVis);
+
+    /* The light's own path: a closed Catmull-Rom loop through the points of
+       PATH. It slows a little at each point and never stops. */
+    const N = PATH.length;
+    const at = (fx: number, fy: number): [number, number] => [HR.x + HR.w / 2 + fx * HR.h, HR.y + fy * HR.h];
+    const path = (t: number): [number, number] => {
+      const u = ((t / LAP) * N + 0.5) % N;
+      const i = Math.floor(u);
+      let s = u - i;
+      s = s - (0.55 / (2 * Math.PI)) * Math.sin(2 * Math.PI * s);
+      const P = (k: number) => PATH[(((i + k) % N) + N) % N];
+      const [a, b, c, d] = [P(-1), P(0), P(1), P(2)];
+      const cr = (j: 0 | 1) =>
+        0.5 * (2 * b[j] + (c[j] - a[j]) * s + (2 * a[j] - 5 * b[j] + 4 * c[j] - d[j]) * s * s + (3 * b[j] - a[j] - 3 * c[j] + d[j]) * s * s * s);
+      return at(cr(0), cr(1));
+    };
+    const ptr = { on: false, x: 0, y: 0, key: false };
+    const t0 = performance.now();
+    let last = t0;
+    let lx = 0;
+    let ly = 0;
+    let placed = false;
+    let cx = 0;
+    let cy = 0;
+    let pcx = 0;
+    let pcy = 0;
+    let kf = 2.2; // how tightly the light follows its target
+    let flashAt = -99;
+    let liveSet = false;
+
+    const frame = (now: number) => {
+      raf = 0;
+      if (dead) return;
+      if (!visible || document.hidden) return;
+      if (!still) raf = requestAnimationFrame(frame);
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      const t = still ? 0 : (now - t0) / 1000;
+      if (!headReady || !textReady) {
+        if (still) raf = requestAnimationFrame(frame);
+        return;
+      }
+      const phone = W < 640;
+      if (still) {
+        [lx, ly] = at(EYES[0], EYES[1]);
+      } else {
+        const [px, py] = ptr.on ? [ptr.x, ptr.y] : path(t);
+        if (!placed) {
+          placed = true;
+          lx = px;
+          ly = py;
+        }
+        // a torch in the hand: quick and eased, never past the target; a slow glide back to the path
+        kf += ((ptr.on ? 9 : 2.2) - kf) * (1 - Math.exp(-dt * 3));
+        const k = 1 - Math.exp(-dt * kf);
+        lx += (px - lx) * k;
+        ly += (py - ly) * k;
+        const tx = ptr.on && !ptr.key ? ((ptr.x / W) * 2 - 1) * 18 : 0;
+        const ty = ptr.on && !ptr.key ? ((ptr.y / H) * 2 - 1) * 10 : 0;
+        const kc = 1 - Math.exp(-dt * 2.6);
+        pcx += (tx - pcx) * kc;
+        pcy += (ty - pcy) * kc;
+        const amp = phone ? 0.45 : 1; // less travel on a phone, where the margins are 20px
+        cx = (Math.sin(t * 0.23) * 9 + pcx) * amp;
+        cy = (Math.sin(t * 0.17 + 1) * 4.5 + pcy) * amp;
+      }
+      const intro = still ? 1 : 1 - Math.pow(1 - Math.min(1, Math.max(0, (t - 0.05) / 1.15)), 3);
+      const fa = t - flashAt;
+      const fl = still || fa < 0 || fa > 3 ? 0 : Math.min(1, fa / 0.05) * Math.exp(-Math.max(0, fa - 0.05) * 4.3);
+      const rise = 1 - intro;
+      const size = Math.min(2.2, Math.max(0.4, lightRef.current || 1));
+      gl.useProgram(prog);
+      gl.uniform2f(U.uRes, W, H);
+      gl.uniform1f(U.uDpr, dpr);
+      gl.uniform1f(U.uIn, intro);
+      gl.uniform1f(U.uFlash, fl);
+      gl.uniform1f(U.uCell, phone ? 6 : 7);
+      gl.uniform1f(U.uTA, Math.min(1, intro * 1.8));
+      gl.uniform1f(U.uBot, phone ? 0.52 : 0.84);
+      gl.uniform1f(U.uR, HR.h * 0.127 * size * (still ? 1.2 : 1));
+      gl.uniform1f(U.uHL, Math.log2(Math.max(1e-3, headPx)));
+      gl.uniform1f(U.uTL, Math.log2(Math.max(1e-3, TR.dpr)));
+      gl.uniform2f(U.uL, lx, ly);
+      gl.uniform2f(U.uGO, -cx * 0.12, -cy * 0.12);
+      gl.uniform4f(U.uHR, HR.x - cx, HR.y - cy, HR.w, HR.h);
+      const wy = TR.y - cy * 0.42 + rise * 40;
+      gl.uniform4f(U.uTR, TR.x - cx * 0.42, wy, TR.w, TR.h);
+      gl.uniform2f(U.uWY, wy + TR.y0, wy + TR.y1);
+      const [r, g, b] = hexRgb(toneRef.current);
+      gl.uniform3f(U.uTone, r, g, b);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, headTex);
+      gl.activeTexture(gl.TEXTURE1);
+      gl.bindTexture(gl.TEXTURE_2D, textTex);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      if (copyRef.current) copyRef.current.style.transform = `translate3d(${(-cx * 1.4).toFixed(2)}px,${(-cy * 1.4 + rise * 18).toFixed(2)}px,0)`;
+      if (cardsRef.current) cardsRef.current.style.transform = `translate3d(${(-cx * 1.7).toFixed(2)}px,${(-cy * 1.7 + rise * 26).toFixed(2)}px,0)`;
+      if (!liveSet) {
+        liveSet = true;
+        setLive(true);
+      }
+    };
+    const kick = () => {
+      if (!raf && !dead) raf = requestAnimationFrame(frame);
+    };
+    kick();
+
+    const where = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      ptr.on = true;
+      ptr.key = false;
+      ptr.x = (e.clientX - r.left) / kScale;
+      ptr.y = (e.clientY - r.top) / kScale;
+    };
+    const move = (e: PointerEvent) => where(e);
+    const leave = () => {
+      if (!ptr.key) ptr.on = false;
+    };
+    const up = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") ptr.on = false;
+    };
+    // The flash: all of her for a moment, then back to black over about 0.9 s.
+    const fire = () => {
+      flashAt = (performance.now() - t0) / 1000;
+      blipRef.current({ f: 3200, to: 700, d: 0.11, g: 0.05, noise: true, q: 0.7 });
+      blipRef.current({ f: 170, to: 55, d: 0.09, g: 0.055, type: "sine" });
+      blipRef.current({ f: 5200, d: 0.012, g: 0.02, noise: true, q: 2 });
+      kick();
+    };
+    const down = (e: PointerEvent) => {
+      if ((e.target as HTMLElement).closest("a,button,input,label")) return;
+      where(e);
+      fire();
+    };
+    flashRef.current = fire;
+    keyRef.current = (dx, dy) => {
+      if (!ptr.on) {
+        ptr.x = lx;
+        ptr.y = ly;
+      }
+      ptr.on = true;
+      ptr.key = true;
+      ptr.x = Math.min(W, Math.max(0, ptr.x + dx * HR.h * 0.05));
+      ptr.y = Math.min(H, Math.max(0, ptr.y + dy * HR.h * 0.05));
+      kick();
+    };
+    blurRef.current = () => {
+      if (ptr.key) {
+        ptr.key = false;
+        ptr.on = false;
+      }
+    };
+    el.addEventListener("pointermove", move);
+    el.addEventListener("pointerleave", leave);
+    el.addEventListener("pointerdown", down);
+    el.addEventListener("pointerup", up);
+    el.addEventListener("pointercancel", up);
+
+    return () => {
+      dead = true;
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVis);
+      window.clearTimeout(fontTimer);
+      document.fonts?.removeEventListener("loadingdone", onFonts);
+      el.removeEventListener("pointermove", move);
+      el.removeEventListener("pointerleave", leave);
+      el.removeEventListener("pointerdown", down);
+      el.removeEventListener("pointerup", up);
+      el.removeEventListener("pointercancel", up);
+      gl.deleteTexture(headTex);
+      gl.deleteTexture(textTex);
+      gl.deleteBuffer(buf);
+      gl.deleteProgram(prog);
+      // Give the context back once the canvas has really left the page (not on a prop change or a strict-mode re-run).
+      const lose = gl.getExtension("WEBGL_lose_context");
+      window.setTimeout(() => {
+        if (!cv.isConnected) lose?.loseContext();
+      }, 0);
+    };
+  }, [portrait, word]);
+
+  const onLampKey = (e: KeyboardEvent<HTMLButtonElement>) => {
+    const d: Record<string, [number, number]> = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+    const v = d[e.key];
+    if (v) {
+      e.preventDefault();
+      keyRef.current(v[0], v[1]);
+    }
+  };
+
+  return (
+    <div ref={root} className="lml-root" data-live={live ? "1" : "0"} style={{ "--lml-tone": tone } as CSSProperties}>
+      <style>{css}</style>
+
+      <div className="lml-scene">
+        <i className="lml-dots" aria-hidden />
+        <i className="lml-glow" aria-hidden />
+        <h1 ref={wordRef} className="lml-word">
+          <span ref={wordIn}>{word}</span>
+        </h1>
+        <img ref={headRef} className="lml-head lml-head--dark" src={portrait} alt="" aria-hidden draggable={false} />
+        <img className="lml-head lml-head--lit" src={portrait} alt="" aria-hidden draggable={false} />
+        <i className="lml-floor" aria-hidden />
+        <canvas ref={glRef} className="lml-gl" aria-hidden />
+      </div>
+
+      <header className="lml-nav">
+        <a className="lml-brand" href="#" aria-label={brand}>
+          <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden>
+            <circle cx="10" cy="10" r="9" fill="#141006" />
+            <circle cx="12.6" cy="7.6" r="4.4" fill="#fff" />
+          </svg>
+          {brand}
+        </a>
+        <nav className="lml-links" aria-label="Main">
+          <a href="#">Work</a>
+          <a href="#">Services</a>
+          <a href="#">Studio</a>
+          <a href="#">Contact</a>
+        </nav>
+        <button
+          type="button"
+          className="lml-cta"
+          onClick={() => {
+            blip({ f: 3200, d: 0.016, g: 0.03, noise: true });
+            blip({ f: 880, to: 940, d: 0.045, g: 0.03, at: 0.02 });
+            onCta?.();
+          }}
+        >
+          {cta}
+        </button>
+      </header>
+
+      <button type="button" className="lml-lamp" onKeyDown={onLampKey} onClick={() => flashRef.current()} onBlur={() => blurRef.current()}>
+        Move the light with the arrow keys, Enter fires the flash
+      </button>
+
+      <div ref={copyRef} className="lml-copy">
+        <div className="lml-rated">
+          <span className="lml-faces" aria-hidden>
+            <i style={{ backgroundImage: `url(${faces})`, backgroundPosition: "0% 0" }} />
+            <i style={{ backgroundImage: `url(${faces})`, backgroundPosition: "50% 0" }} />
+            <i style={{ backgroundImage: `url(${faces})`, backgroundPosition: "100% 0" }} />
+          </span>
+          <span className="lml-rate">
+            Rated 4.9 by
+            <br />
+            <span ref={n2}>212</span> founders
+          </span>
+        </div>
+        <p>We put brands where the light is. Identity, campaigns and launch films for founders done with being overlooked.</p>
+      </div>
+
+      <div ref={cardsRef} className="lml-cards">
+        <div className="lml-card lml-card--light">
+          <span className="lml-k">
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden>
+              <circle cx="8" cy="3.4" r="2.1" fill="currentColor" />
+              <circle cx="3.6" cy="11.4" r="2.1" fill="currentColor" />
+              <circle cx="12.4" cy="11.4" r="2.1" fill="currentColor" />
+            </svg>
+            Brand recall
+          </span>
+          <b>
+            +<span ref={n1}>38</span>%
+          </b>
+          <small>average after a relaunch</small>
+        </div>
+        <div className="lml-card lml-card--dark">
+          <span className="lml-k">
+            Next opening
+            <em aria-hidden />
+          </span>
+          <b>March</b>
+          <small>2 slots left</small>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const css = `@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&display=swap');
+.lml-root{container-type:inline-size;width:100%;height:var(--design-h,100svh);min-height:640px;position:relative;overflow:hidden;isolation:isolate;
+  background:var(--lml-tone,#f6b90c);color:#fff;font-family:Archivo,ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased;touch-action:pan-y}
+.lml-root *{box-sizing:border-box}
+.lml-scene{position:absolute;inset:0;z-index:0}
+.lml-dots{position:absolute;inset:0;
+  background-image:radial-gradient(circle at center,rgba(240,112,16,.8) 1.1px,transparent 1.7px),radial-gradient(circle at center,rgba(240,112,16,.8) 1.1px,transparent 1.7px);
+  background-size:10px 10px;background-position:0 0,5px 5px}
+.lml-glow{position:absolute;inset:0;background:radial-gradient(30% 50% at 50% 43%,rgba(236,70,18,.62),rgba(244,120,20,.3) 55%,transparent 100%)}
+.lml-word{position:absolute;left:50%;top:58%;margin:0;transform:translate(-50%,-50%);font-family:Archivo,"Arial Black",ui-sans-serif,sans-serif;font-weight:800;
+  font-size:20.3cqi;line-height:.8;letter-spacing:0;color:#fff;white-space:nowrap;pointer-events:none;user-select:none;
+  -webkit-mask-image:linear-gradient(180deg,#000 12%,rgba(0,0,0,.12) 88%);mask-image:linear-gradient(180deg,#000 12%,rgba(0,0,0,.12) 88%)}
+.lml-word span{display:inline-block}
+.lml-head{position:absolute;left:50%;top:11.5%;height:95.7%;width:auto;max-width:none;transform:translateX(-50%);pointer-events:none;user-select:none;-webkit-user-drag:none}
+.lml-head--dark{filter:brightness(0)}
+.lml-head--lit{-webkit-mask-image:radial-gradient(circle at 50% 37.2%,#000 0,rgba(0,0,0,.86) 6%,rgba(0,0,0,.4) 12%,rgba(0,0,0,.1) 17%,transparent 21%);mask-image:radial-gradient(circle at 50% 37.2%,#000 0,rgba(0,0,0,.86) 6%,rgba(0,0,0,.4) 12%,rgba(0,0,0,.1) 17%,transparent 21%)}
+.lml-floor{position:absolute;left:0;right:0;bottom:0;height:16%;background:linear-gradient(180deg,transparent,rgba(70,48,0,.42))}
+.lml-gl{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .4s ease}
+.lml-root[data-live="1"] .lml-gl{opacity:1}
+
+.lml-nav{position:absolute;left:3.06cqi;right:3.06cqi;top:28px;z-index:5;display:flex;align-items:center;gap:30px;font-size:14.5px;font-weight:500}
+.lml-brand{margin-right:auto;display:flex;align-items:center;gap:9px;font-size:21px;font-weight:700;letter-spacing:-.025em;color:#fff;text-decoration:none;text-shadow:0 1px 12px rgba(150,80,0,.35)}
+.lml-links{display:flex;gap:30px}
+.lml-links a{color:#fff;text-decoration:none;text-shadow:0 1px 10px rgba(150,80,0,.5);transition:opacity .2s;opacity:.96}
+.lml-links a:hover{opacity:.75}
+.lml-cta{font:inherit;font-size:13.5px;font-weight:600;border:0;border-radius:999px;padding:12px 20px;background:#fff;color:#17130a;cursor:pointer;
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s;box-shadow:0 1px 0 rgba(0,0,0,.05),0 10px 24px -12px rgba(110,60,0,.6)}
+.lml-cta:hover{transform:translateY(-1px)}
+.lml-cta:active{transform:scale(.97)}
+.lml-root a:focus-visible,.lml-cta:focus-visible,.lml-lamp:focus-visible{outline:2px solid #fff;outline-offset:3px;border-radius:8px}
+.lml-lamp{position:absolute;left:3.06cqi;top:78px;z-index:6;font:inherit;font-size:12.5px;font-weight:500;padding:8px 12px;border-radius:999px;border:0;background:#141006;color:#fff;
+  clip-path:inset(50%);width:1px;height:1px;overflow:hidden;white-space:nowrap}
+.lml-lamp:focus-visible{clip-path:none;width:auto;height:auto}
+
+.lml-copy{position:absolute;left:3.06cqi;bottom:42px;z-index:4;width:372px;max-width:42cqi;will-change:transform}
+.lml-rated{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.lml-faces{display:flex}
+.lml-faces i{width:38px;height:38px;border-radius:50%;background-size:300% 100%;border:2px solid #fff;box-shadow:0 4px 12px -6px rgba(90,50,0,.6)}
+.lml-faces i+i{margin-left:-12px}
+.lml-rate{font-size:13.5px;line-height:1.28;font-weight:500;font-variant-numeric:tabular-nums;text-shadow:0 1px 10px rgba(150,80,0,.45)}
+.lml-copy p{margin:0;font-size:19.5px;line-height:1.3;font-weight:500;letter-spacing:-.012em;text-wrap:pretty;text-shadow:0 1px 14px rgba(120,66,0,.5)}
+.lml-cards{position:absolute;right:3.06cqi;bottom:42px;z-index:4;display:flex;gap:14px;will-change:transform}
+.lml-card{width:178px;height:138px;border-radius:18px;padding:16px 17px 15px;display:flex;flex-direction:column;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.lml-card:hover{transform:translateY(-4px)}
+.lml-k{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;letter-spacing:-.005em;line-height:1.2}
+.lml-card b{display:block;margin-top:auto;font-size:36px;font-weight:600;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.lml-card small{display:block;font-size:11.5px;font-weight:500;margin-top:6px;opacity:.62;white-space:nowrap}
+.lml-card--light{background:#fff;color:#17130a;box-shadow:0 1px 0 rgba(0,0,0,.04),0 22px 44px -22px rgba(90,50,0,.7)}
+.lml-card--dark{background:rgba(72,54,10,.80);background:color-mix(in srgb,color-mix(in srgb,var(--lml-tone,#f6b90c) 27%,#170f03) 82%,transparent);color:#fff;-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);box-shadow:inset 0 0 0 1px rgba(255,236,170,.12),0 22px 44px -22px rgba(60,34,0,.8)}
+.lml-card--dark .lml-k{justify-content:space-between}
+.lml-card--dark em{width:8px;height:8px;border-radius:50%;background:#ffd23a;box-shadow:0 0 0 4px rgba(255,210,58,.22)}
+.lml-card--dark b{font-size:30px}
+
+@container (max-width:900px){
+  .lml-links{display:none}
+  .lml-copy{width:300px}
+  .lml-copy p{font-size:17px}
+  .lml-card{width:150px;height:126px}
+}
+@container (max-width:640px){
+  .lml-nav{left:20px;right:20px;top:20px}
+  .lml-brand{font-size:19px}
+  .lml-cta{padding:10px 16px;font-size:13px}
+  .lml-word{top:16.2%}
+  .lml-head{top:17.5%;height:66%}
+  .lml-floor{height:46%;background:linear-gradient(180deg,transparent,rgba(40,26,0,.7) 60%)}
+  .lml-copy{left:20px;right:20px;bottom:158px;width:auto;max-width:none}
+  .lml-copy p{font-size:17px;max-width:32ch}
+  .lml-cards{left:20px;right:20px;bottom:22px;gap:10px}
+  .lml-card{flex:1;width:auto;height:120px;padding:14px 15px}
+  .lml-card b{font-size:32px}
+  .lml-card--dark b{font-size:27px}
+}
+@media (prefers-reduced-motion: reduce){
+  .lml-gl{transition:none}
+  .lml-cta,.lml-card{transition:none}
+}
+`;

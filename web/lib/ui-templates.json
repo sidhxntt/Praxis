@@ -1,0 +1,272 @@
+[
+  {
+    "id": "alpina",
+    "label": "Alpina",
+    "description": "A night train crossing a stone viaduct at sunrise, alive like footage: the train runs car by car while mist and light move through the valley.",
+    "traits": [
+      "travel",
+      "cinematic",
+      "photographic"
+    ],
+    "theme": "mixed",
+    "thumbnail": "/templates/previews/alpina-thumbnail.webp",
+    "desktop": "/templates/previews/alpina-desktop.webp",
+    "mobile": "/templates/previews/alpina-mobile.webp",
+    "live": "/templates/live/alpina/index.html"
+  },
+  {
+    "id": "apogee",
+    "label": "Apogee",
+    "description": "A weekly letter about the night sky: one living photograph of a tidal flat at dusk with a ringed planet half-set behind the horizon.",
+    "traits": [
+      "newsletter",
+      "cinematic",
+      "photographic"
+    ],
+    "theme": "dark",
+    "thumbnail": "/templates/previews/apogee-thumbnail.webp",
+    "desktop": "/templates/previews/apogee-desktop.webp",
+    "mobile": "/templates/previews/apogee-mobile.webp",
+    "live": "/templates/live/apogee/index.html"
+  },
+  {
+    "id": "commons",
+    "label": "Commons",
+    "description": "A guide to a city's parks drawn as a lawn seen from above, a grainy flat illustration where the afternoon carries on by itself.",
+    "traits": [
+      "guide",
+      "illustrated",
+      "calm"
+    ],
+    "theme": "light",
+    "thumbnail": "/templates/previews/commons-thumbnail.webp",
+    "desktop": "/templates/previews/commons-desktop.webp",
+    "mobile": "/templates/previews/commons-mobile.webp",
+    "live": "/templates/live/commons/index.html"
+  },
+  {
+    "id": "farsight",
+    "label": "Farsight",
+    "description": "A magazine of places seen from far away: seven aerial photographs turn on a ring in real 3D under a thin serif headline.",
+    "traits": [
+      "editorial",
+      "photographic",
+      "3d"
+    ],
+    "theme": "dark",
+    "thumbnail": "/templates/previews/farsight-thumbnail.webp",
+    "desktop": "/templates/previews/farsight-desktop.webp",
+    "mobile": "/templates/previews/farsight-mobile.webp",
+    "live": "/templates/live/farsight/index.html"
+  },
+  {
+    "id": "furrow",
+    "label": "Furrow",
+    "description": "Field intelligence for growers: a huge aerial photograph of fields with a survey grid, live sensors and a sweep of light across the farm.",
+    "traits": [
+      "agritech",
+      "data",
+      "photographic"
+    ],
+    "theme": "light",
+    "thumbnail": "/templates/previews/furrow-thumbnail.webp",
+    "desktop": "/templates/previews/furrow-desktop.webp",
+    "mobile": "/templates/previews/furrow-mobile.webp",
+    "live": "/templates/live/furrow/index.html"
+  },
+  {
+    "id": "hana",
+    "label": "Hana",
+    "description": "A speaker and advisor's site: a calm portrait on mint paper behind a pane of reeded glass rendered as live refraction.",
+    "traits": [
+      "personal",
+      "editorial",
+      "portrait"
+    ],
+    "theme": "light",
+    "thumbnail": "/templates/previews/hana-thumbnail.webp",
+    "desktop": "/templates/previews/hana-desktop.webp",
+    "mobile": "/templates/previews/hana-mobile.webp",
+    "live": "/templates/live/hana/index.html"
+  },
+  {
+    "id": "juno",
+    "label": "Juno",
+    "description": "A designer's portfolio as a page of her notebook, with polaroids and notes stuck on lined paper that visitors can pick up.",
+    "traits": [
+      "portfolio",
+      "playful",
+      "tactile"
+    ],
+    "theme": "light",
+    "thumbnail": "/templates/previews/juno-thumbnail.webp",
+    "desktop": "/templates/previews/juno-desktop.webp",
+    "mobile": "/templates/previews/juno-mobile.webp",
+    "live": "/templates/live/juno/index.html"
+  },
+  {
+    "id": "leo",
+    "label": "Leo",
+    "description": "A film photographer's portfolio: an enormous red greeting and a black-and-white cut-out who turns his head to follow the pointer.",
+    "traits": [
+      "portfolio",
+      "playful",
+      "photographic"
+    ],
+    "theme": "light",
+    "thumbnail": "/templates/previews/leo-thumbnail.webp",
+    "desktop": "/templates/previews/leo-desktop.webp",
+    "mobile": "/templates/previews/leo-mobile.webp",
+    "live": "/templates/live/leo/index.html"
+  },
+  {
+    "id": "limelight",
+    "label": "Limelight",
+    "description": "A brand studio on a yellow halftone ground: a black silhouette before a giant word, with a moving light revealing the colour photograph.",
+    "traits": [
+      "agency",
+      "bold",
+      "colorful"
+    ],
+    "theme": "light",
+    "thumbnail": "/templates/previews/limelight-thumbnail.webp",
+    "desktop": "/templates/previews/limelight-desktop.webp",
+    "mobile": "/templates/previews/limelight-mobile.webp",
+    "live": "/templates/live/limelight/index.html"
+  },
+  {
+    "id": "nocturne",
+    "label": "Nocturne",
+    "description": "A streaming service whose film is already playing: one picture fills the page and moves like a dolly shot under a floating interface.",
+    "traits": [
+      "streaming",
+      "cinematic",
+      "photographic"
+    ],
+    "theme": "dark",
+    "thumbnail": "/templates/previews/nocturne-thumbnail.webp",
+    "desktop": "/templates/previews/nocturne-desktop.webp",
+    "mobile": "/templates/previews/nocturne-mobile.webp",
+    "live": "/templates/live/nocturne/index.html"
+  },
+  {
+    "id": "ora",
+    "label": "Ora",
+    "description": "An AI voice receptionist on electric blue, with a glossy glass ball drifting across the headline and bending the words like a real lens.",
+    "traits": [
+      "ai",
+      "saas",
+      "bold"
+    ],
+    "theme": "dark",
+    "thumbnail": "/templates/previews/ora-thumbnail.webp",
+    "desktop": "/templates/previews/ora-desktop.webp",
+    "mobile": "/templates/previews/ora-mobile.webp",
+    "live": "/templates/live/ora/index.html"
+  },
+  {
+    "id": "quanta",
+    "label": "Quanta",
+    "description": "A fast reasoning model launch: a ring of light made of thousands of particles orbits a live console, all drawn in code.",
+    "traits": [
+      "ai",
+      "developer",
+      "technical"
+    ],
+    "theme": "dark",
+    "thumbnail": "/templates/previews/quanta-thumbnail.webp",
+    "desktop": "/templates/previews/quanta-desktop.webp",
+    "mobile": "/templates/previews/quanta-mobile.webp",
+    "live": "/templates/live/quanta/index.html"
+  },
+  {
+    "id": "ritaglio",
+    "label": "Ritaglio",
+    "description": "A paper-cut animation studio on black: two huge words beside a cut-paper swimming pool whose pieces move in stop-motion and can be picked up.",
+    "traits": [
+      "studio",
+      "illustrated",
+      "playful"
+    ],
+    "theme": "dark",
+    "thumbnail": "/templates/previews/ritaglio-thumbnail.webp",
+    "desktop": "/templates/previews/ritaglio-desktop.webp",
+    "mobile": "/templates/previews/ritaglio-mobile.webp",
+    "live": "/templates/live/ritaglio/index.html"
+  },
+  {
+    "id": "sayso",
+    "label": "Sayso",
+    "description": "A product that builds a small app from one spoken sentence: a red moulded device like a toy radio alone on warm paper.",
+    "traits": [
+      "ai",
+      "product",
+      "playful"
+    ],
+    "theme": "light",
+    "thumbnail": "/templates/previews/sayso-thumbnail.webp",
+    "desktop": "/templates/previews/sayso-desktop.webp",
+    "mobile": "/templates/previews/sayso-mobile.webp",
+    "live": "/templates/live/sayso/index.html"
+  },
+  {
+    "id": "slate",
+    "label": "Slate",
+    "description": "An architecture studio showing one house, its name set huge across the sky behind the roofline with a script word in front.",
+    "traits": [
+      "architecture",
+      "editorial",
+      "photographic"
+    ],
+    "theme": "mixed",
+    "thumbnail": "/templates/previews/slate-thumbnail.webp",
+    "desktop": "/templates/previews/slate-desktop.webp",
+    "mobile": "/templates/previews/slate-mobile.webp",
+    "live": "/templates/live/slate/index.html"
+  },
+  {
+    "id": "solene",
+    "label": "Solène",
+    "description": "A thermal bath house: one rounded, living photograph on a sage page, with a quiet statement and the name set large and thin along the bottom.",
+    "traits": [
+      "hospitality",
+      "calm",
+      "photographic"
+    ],
+    "theme": "light",
+    "thumbnail": "/templates/previews/solene-thumbnail.webp",
+    "desktop": "/templates/previews/solene-desktop.webp",
+    "mobile": "/templates/previews/solene-mobile.webp",
+    "live": "/templates/live/solene/index.html"
+  },
+  {
+    "id": "sora",
+    "label": "Sora",
+    "description": "A travel-money card floating over a 3D field of enamel tiles that swell red, hopping and flipping to pay while the receipt rolls through cities.",
+    "traits": [
+      "finance",
+      "3d",
+      "bold"
+    ],
+    "theme": "light",
+    "thumbnail": "/templates/previews/sora-thumbnail.webp",
+    "desktop": "/templates/previews/sora-desktop.webp",
+    "mobile": "/templates/previews/sora-mobile.webp",
+    "live": "/templates/live/sora/index.html"
+  },
+  {
+    "id": "vesper",
+    "label": "Vesper",
+    "description": "A personal system that reads your day, shown as thirteen live tiles floating at three depths around a figure on a black stage.",
+    "traits": [
+      "product",
+      "data",
+      "3d"
+    ],
+    "theme": "mixed",
+    "thumbnail": "/templates/previews/vesper-thumbnail.webp",
+    "desktop": "/templates/previews/vesper-desktop.webp",
+    "mobile": "/templates/previews/vesper-mobile.webp",
+    "live": "/templates/live/vesper/index.html"
+  }
+]

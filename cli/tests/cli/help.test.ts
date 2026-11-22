@@ -18,7 +18,7 @@ describe("formatHelp", () => {
     expect(help).toContain("Vue");
     expect(help).toContain("Astro");
     expect(help).toContain("Angular (TypeScript only)");
-    expect(help).toContain("40");
+    expect(help).toContain("landing-page heroes");
     expect(help).toContain("local visual gallery");
     expect(help).toContain("terminal fallback");
     expect(help).toContain("DESIGN.md");

@@ -11,7 +11,7 @@ export async function confirmVisualGallery(): Promise<boolean> {
 export async function selectUiStyleInTerminal(): Promise<UiStyleId> {
   const query = notCancelled(await p.text({
     message: "Filter landing-page styles (optional)",
-    placeholder: "e.g. minimal, editorial, developer",
+    placeholder: "e.g. photographic, playful, ai",
   })).trim().toLowerCase();
   const matches = UI_STYLES.filter((style) => !query || [
     style.label,
@@ -19,7 +19,7 @@ export async function selectUiStyleInTerminal(): Promise<UiStyleId> {
     ...style.traits,
   ].join(" ").toLowerCase().includes(query));
   const choices = matches.length > 0 ? matches : UI_STYLES;
-  if (matches.length === 0) p.log.warn("No exact matches; showing all 40 styles.");
+  if (matches.length === 0) p.log.warn(`No exact matches; showing all ${UI_STYLES.length} styles.`);
   const result = await p.select({
     message: "Landing-page style",
     options: choices.map((style) => ({

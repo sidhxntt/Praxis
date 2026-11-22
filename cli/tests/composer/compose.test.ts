@@ -126,7 +126,7 @@ describe("composeProject", () => {
     );
     await addModule(
       root,
-      "ui.apple",
+      "ui.ora",
       { overlays: [{ scope: "frontend", source: "files/common", replace: true }] },
       { "src/App.tsx": "designed landing page" },
     );
@@ -136,13 +136,34 @@ describe("composeProject", () => {
     config.deployment = [];
     const destination = path.join(root, "output", "acme");
 
-    await composeProject(config, ["base", "ui.apple"], {
+    await composeProject(config, ["base", "ui.ora"], {
       templatesRoot: path.join(root, "templates"),
       destination,
     });
 
     expect(await readFile(path.join(destination, "src/App.tsx"), "utf8"))
       .toBe("designed landing page");
+  });
+
+  it("copies pictures byte for byte", async () => {
+    const root = await fixtureRoot();
+    await addModule(root, "ui.ora", { overlays: [{ scope: "frontend", source: "files/common" }] });
+    const picture = Buffer.from([0x52, 0x49, 0x46, 0x46, 0xff, 0xfe, 0x00, 0x80, 0xc3, 0x28]);
+    const source = path.join(root, "templates", "ui.ora", "files", "common", "public", "orb.webp");
+    await mkdir(path.dirname(source), { recursive: true });
+    await writeFile(source, picture);
+    const config = quickConfig("acme");
+    config.projectType = "frontend";
+    config.backend = undefined;
+    config.deployment = [];
+    const destination = path.join(root, "output", "acme");
+
+    await composeProject(config, ["ui.ora"], {
+      templatesRoot: path.join(root, "templates"),
+      destination,
+    });
+
+    expect((await readFile(path.join(destination, "public", "orb.webp"))).equals(picture)).toBe(true);
   });
 
   it("applies ordered manifest patches", async () => {

@@ -1,0 +1,26 @@
+{
+  "id": "leo",
+  "name": "Leo",
+  "component": "Leo",
+  "description": "A film photographer's portfolio: an enormous red greeting and a black-and-white cut-out who turns his head to follow the pointer.",
+  "traits": [
+    "portfolio",
+    "playful",
+    "photographic"
+  ],
+  "theme": "light",
+  "images": [
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/leo/body.webp",
+      "path": "design/websites/leo/body.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/leo/heads.webp",
+      "path": "design/websites/leo/heads.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/leo/prints.webp",
+      "path": "design/websites/leo/prints.webp"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "furrow",
+  "name": "Furrow",
+  "component": "Furrow",
+  "description": "Field intelligence for growers: a huge aerial photograph of fields with a survey grid, live sensors and a sweep of light across the farm.",
+  "traits": [
+    "agritech",
+    "data",
+    "photographic"
+  ],
+  "theme": "light",
+  "images": [
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/furrow/fields.webp",
+      "path": "design/websites/furrow/fields.webp"
+    }
+  ]
+}

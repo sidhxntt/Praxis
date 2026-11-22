@@ -25,6 +25,7 @@ import { generateProject } from "../generator/generate";
 import { showRandomAnimation } from "../controllers/user_touch";
 import { answersToConfig, proAnswersToConfig } from "./answers";
 import { resolveUiStyle } from "../ui/resolveUi";
+import { supportsUiTemplates, UI_STYLES } from "../ui/catalog";
 
 type CreateCommand = Extract<ParsedCommand, { kind: "create" }>;
 
@@ -119,8 +120,10 @@ async function resolveCreateConfig(command: CreateCommand): Promise<PraxisConfig
   }
   const uiMode = projectType === "backend"
     ? undefined
+    : !supportsUiTemplates(frontendFramework)
+    ? "starter"
     : await select<"template" | "starter">("Use a landing page template?", [
-        ["template", "Yes — browse 40 visual styles"],
+        ["template", `Yes — browse ${UI_STYLES.length} visual styles`],
         ["starter", "No — plain Tailwind + shadcn starter"],
       ]);
   const frontendUi = uiMode === "template"

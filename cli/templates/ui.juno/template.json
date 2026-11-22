@@ -1,0 +1,26 @@
+{
+  "id": "juno",
+  "name": "Juno",
+  "component": "Juno",
+  "description": "A designer's portfolio as a page of her notebook, with polaroids and notes stuck on lined paper that visitors can pick up.",
+  "traits": [
+    "portfolio",
+    "playful",
+    "tactile"
+  ],
+  "theme": "light",
+  "images": [
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/juno/juno.webp",
+      "path": "design/websites/juno/juno.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/juno/tram.webp",
+      "path": "design/websites/juno/tram.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/juno/desk.webp",
+      "path": "design/websites/juno/desk.webp"
+    }
+  ]
+}

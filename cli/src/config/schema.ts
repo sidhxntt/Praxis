@@ -5,7 +5,7 @@ import {
   proStacks,
   resolveProCapabilities,
 } from "./pro";
-import { isUiStyleId, UiStyleId } from "../ui/catalog";
+import { isUiStyleId, supportsUiTemplates, UiStyleId } from "../ui/catalog";
 
 export type ProjectType = "frontend" | "backend" | "fullstack";
 export type Language = "typescript" | "javascript";
@@ -283,6 +283,12 @@ function validateFrontend(value: unknown, language: Language): void {
     throw new Error("Angular templates require TypeScript");
   }
   validateFrontendUi(frontend.ui);
+  if (
+    (frontend.ui as { mode?: unknown } | undefined)?.mode === "template" &&
+    !supportsUiTemplates(frontend.framework as string)
+  ) {
+    throw new Error("UI templates are React components and require next or vite");
+  }
 }
 
 function validateFrontendUi(value: unknown): void {

@@ -1,0 +1,54 @@
+{
+  "id": "ritaglio",
+  "name": "Ritaglio",
+  "component": "Ritaglio",
+  "description": "A paper-cut animation studio on black: two huge words beside a cut-paper swimming pool whose pieces move in stop-motion and can be picked up.",
+  "traits": [
+    "studio",
+    "illustrated",
+    "playful"
+  ],
+  "theme": "dark",
+  "images": [
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/ritaglio/pool.webp",
+      "path": "design/websites/ritaglio/pool.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/ritaglio/swimmer.webp",
+      "path": "design/websites/ritaglio/swimmer.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/ritaglio/floater.webp",
+      "path": "design/websites/ritaglio/floater.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/ritaglio/diver.webp",
+      "path": "design/websites/ritaglio/diver.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/ritaglio/ball.webp",
+      "path": "design/websites/ritaglio/ball.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/ritaglio/ring.webp",
+      "path": "design/websites/ritaglio/ring.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/ritaglio/umbrella.webp",
+      "path": "design/websites/ritaglio/umbrella.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/ritaglio/lido.webp",
+      "path": "design/websites/ritaglio/lido.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/ritaglio/market.webp",
+      "path": "design/websites/ritaglio/market.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/ritaglio/parade.webp",
+      "path": "design/websites/ritaglio/parade.webp"
+    }
+  ]
+}

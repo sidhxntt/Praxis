@@ -5,6 +5,8 @@ import { afterEach, describe, expect, it } from "vitest";
 import { composeProject } from "../../src/composer/compose";
 import { resolveModules } from "../../src/config/resolver";
 import { LegacyPraxisConfig, quickConfig } from "../../src/config/schema";
+// @ts-expect-error The authoring script is plain ESM without type declarations.
+import { parseBrief, stripTypes } from "../../scripts/ui/add-template.mjs";
 
 const roots: string[] = [];
 
@@ -24,34 +26,55 @@ async function scaffold(config: LegacyPraxisConfig): Promise<string> {
 }
 
 describe("selected UI composition", () => {
-  it("replaces a frontend-only starter with native landing code and root DESIGN.md", async () => {
+  it("replaces a frontend-only starter with the hero exactly as written and its brief as DESIGN.md", async () => {
     const config = quickConfig("stillform");
     config.projectType = "frontend";
     config.backend = undefined;
     config.deployment = [];
-    config.frontend!.ui = { mode: "template", style: "apple" };
+    config.frontend!.ui = { mode: "template", style: "ora" };
 
     const destination = await scaffold(config);
+    const brief = parseBrief(await readFile(path.resolve("templates/ui.ora/brief.txt"), "utf8"));
 
     expect(await readFile(path.join(destination, "app/page.tsx"), "utf8"))
-      .toContain("Stillform");
+      .toContain('import OraCall from "../components/OraCall";');
+    expect(await readFile(path.join(destination, "components/OraCall.tsx"), "utf8"))
+      .toBe(brief.source);
     expect(await readFile(path.join(destination, "DESIGN.md"), "utf8"))
-      .toContain("DESIGN-apple.md");
-    expect(await readFile(
-      path.join(destination, "public/ui/apple/stillform-stage.svg"),
-      "utf8",
-    )).toContain("Stillform product composition");
+      .toBe(brief.design);
+    expect(await readFile(path.join(destination, "components/ui/button.tsx"), "utf8"))
+      .toContain("Button");
+  });
+
+  it("gives JavaScript Vite projects the same hero without its types", async () => {
+    const config = quickConfig("stillform-js");
+    config.projectType = "frontend";
+    config.language = "javascript";
+    config.backend = undefined;
+    config.deployment = [];
+    config.frontend = { framework: "vite", styling: "tailwind-shadcn", ui: { mode: "template", style: "sayso" } };
+
+    const destination = await scaffold(config);
+    const brief = parseBrief(await readFile(path.resolve("templates/ui.sayso/brief.txt"), "utf8"));
+
+    expect(await readFile(path.join(destination, "src/App.jsx"), "utf8"))
+      .toContain('import Sayso from "./components/Sayso";');
+    expect(await readFile(path.join(destination, "src/components/Sayso.jsx"), "utf8"))
+      .toBe(stripTypes(brief.source, "Sayso.tsx"));
+    await expect(readFile(path.join(destination, "src/components/Sayso.tsx"), "utf8")).rejects.toThrow();
   });
 
   it("places the selected design inside frontend/ for fullstack projects", async () => {
     const config = quickConfig("stillform-stack");
     config.deployment = [];
-    config.frontend!.ui = { mode: "template", style: "apple" };
+    config.frontend!.ui = { mode: "template", style: "ora" };
 
     const destination = await scaffold(config);
 
     expect(await readFile(path.join(destination, "frontend/DESIGN.md"), "utf8"))
-      .toContain("DESIGN-apple.md");
+      .toContain("# Ora");
+    expect(await readFile(path.join(destination, "frontend/components/OraCall.tsx"), "utf8"))
+      .toContain("export default function OraCall");
     await expect(readFile(path.join(destination, "DESIGN.md"), "utf8"))
       .rejects.toThrow();
   });

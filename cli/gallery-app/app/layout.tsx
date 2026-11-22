@@ -5,7 +5,7 @@ import "./drawer.css";
 
 export const metadata: Metadata = {
   title: "Choose a Praxis Flow landing page",
-  description: "Browse and select one of forty framework-native Praxis landing-page directions.",
+  description: "Browse and select one of the animated Praxis landing-page heroes.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

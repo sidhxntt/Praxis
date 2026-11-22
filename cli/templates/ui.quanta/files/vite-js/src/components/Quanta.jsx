@@ -1,0 +1,927 @@
+"use client";
+/**
+ * QUANTA · website hero
+ *
+ * The launch screen of a fast reasoning model (or any inference API), and the
+ * speed is the scene. A ring of light made of thousands of particles orbits
+ * the product: you sit low beside it, so its far side is a razor line on the
+ * horizon and its near side sweeps past the lens out of focus, in front of the
+ * console. The console is live: real prompts are answered at the model's
+ * speed (the whole answer lands in a blink, each token arriving hot and
+ * cooling), while a second lane shows a typical model still writing. Every
+ * run fires a bright bunch round the ring. A throughput reading rolls its
+ * digits like an odometer. The pointer moves the camera, so the planes part.
+ *
+ * One file, React only. Space Grotesk + JetBrains Mono from Google Fonts (in the CSS).
+ *
+ *   <Quanta />
+ *   <Quanta model="Quanta 3 Mini" tps={2400} tone="#0a7d4b" accent="#ffe14a" />
+ *
+ * Props
+ *   brand    the wordmark                                   "Quanta"
+ *   model    the model's name (console, lane, eyebrow)      "Quanta 3"
+ *   tps      tokens per second it serves                    1240
+ *   tone     the colour of the whole stage (any colour)     "#1230d0"
+ *   accent   the live colour (dot, bunch, your lane)        "#d4ff3a"
+ *   ask      which prompt runs first (0–3)                  0
+ *   cta      the main button                                "Get an API key"
+ *   onCta    called when the button is pressed
+ *   sound    a soft click on a prompt, a short burst of ticks when the answer lands
+ *            (only after a first click or key, silent while html[data-cd-mute="1"])   true
+ *
+ * Keyboard: the prompts are buttons (Enter or Space runs one). Fills its
+ * container's width; height is var(--design-h, 100svh), never under 640px.
+ * Responsive by container query. Paused off screen. Reduced motion: one still
+ * frame of the ring, a finished answer, nothing loops.
+ */
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+const ASKS = [
+    {
+        label: "Primes proof",
+        q: "Prove there are infinitely many primes.",
+        a: "Suppose there were only finitely many: p₁, p₂, …, pₙ. Let N = p₁·p₂·…·pₙ + 1. Dividing N by any pᵢ leaves a remainder of 1, so none of them divides it. But every integer above 1 has a prime factor, so N has one that is not on the list. The list was never complete.",
+    },
+    {
+        label: "Refund reply",
+        q: "A customer was charged twice. Draft the reply.",
+        a: "Hi Dana, you are right, and I am sorry: order 4417 was charged twice on 14 November. I have refunded the second charge of $48.00 in full, and it will be back on your card within 3 to 5 business days. I have also added a $10 credit to your account. Nothing else is needed from you.",
+    },
+    {
+        label: "Two-sum in O(n)",
+        q: "Make this two-sum loop run in O(n).",
+        a: "Walk the array once with a hash map from value to index. For each x, look up target − x: if it is already in the map, return both indices; if it is not, store x and move on. Every lookup is O(1), so the whole pass is O(n) time and O(n) space, down from O(n²).",
+    },
+    {
+        label: "Blue sky",
+        q: "Why is the sky blue, but sunsets red?",
+        a: "Air scatters short wavelengths far more than long ones (Rayleigh scattering goes as 1/λ⁴). At noon that scattered blue reaches you from every direction. At sunset the light crosses up to 40 times more air, so the blue is scattered away before it arrives, and what is left is orange and red.",
+    },
+];
+// A believable tokenizer for the demo: words, with long ones split in two.
+function tokenize(text) {
+    const out = [];
+    for (const w of text.match(/\S+\s*/g) ?? []) {
+        const core = w.trimEnd();
+        if (core.length > 7) {
+            const cut = Math.ceil(core.length / 2);
+            out.push(w.slice(0, cut), w.slice(cut));
+        }
+        else
+            out.push(w);
+    }
+    return out;
+}
+const RIVAL_TPS = 92; // a typical frontier model, for the second lane
+const FIRST = 180; // ms to first token
+const RIVAL_FIRST = 620;
+// Readings a stream might really show, as fractions of the nominal speed.
+const READ = [0.991, 1.012, 0.984, 1.004, 1.021, 0.997, 0.978, 1.009, 1.016, 0.989, 1.002, 0.995, 1.024, 0.981, 1.007, 0.999, 1.013, 0.986, 1.003, 1.018, 0.992, 0.976, 1.01, 1.001, 0.988, 1.015, 0.996, 1.006];
+function Odometer({ value }) {
+    const text = Math.round(value).toLocaleString("en-US");
+    const chars = text.split("");
+    return (<span className="qa-odo" role="img" aria-label={`${text} tokens per second`}>
+      {chars.map((c, i) => /\d/.test(c) ? (<span key={chars.length - i} className="qa-dig" aria-hidden>
+            <span style={{ transform: `translateY(${-Number(c) * 10}%)` }}>
+              {"0123456789".split("").map((d) => (<b key={d}>{d}</b>))}
+            </span>
+          </span>) : (<span key={`s${i}`} className="qa-sep" aria-hidden>
+            {c}
+          </span>))}
+    </span>);
+}
+export default function Quanta({ brand = "Quanta", model = "Quanta 3", tps = 1240, tone = "#1230d0", accent = "#d4ff3a", ask = 0, cta = "Get an API key", onCta, sound = true, }) {
+    const root = useRef(null);
+    const back = useRef(null);
+    const front = useRef(null);
+    const pivot = useRef(null);
+    const audio = useRef(null);
+    const armed = useRef(false);
+    const burstAt = useRef(0);
+    const lastRun = useRef(0);
+    const tpsRef = useRef(tps);
+    const accentRef = useRef(accent);
+    tpsRef.current = tps;
+    accentRef.current = accent;
+    const TOKS = useMemo(() => ASKS.map((x) => tokenize(x.a)), []);
+    const first = Math.abs(ask) % ASKS.length;
+    const [cur, setCur] = useState(first);
+    const [runId, setRunId] = useState(0);
+    const [shown, setShown] = useState(TOKS[first].length);
+    const [rival, setRival] = useState(TOKS[first].length);
+    const [tick, setTick] = useState(0);
+    const toks = TOKS[cur];
+    const n = toks.length;
+    const mine = (FIRST + (n / tps) * 1000) / 1000;
+    const theirs = (RIVAL_FIRST + (n / RIVAL_TPS) * 1000) / 1000;
+    const landed = shown >= n;
+    const raced = rival >= n;
+    const play = useCallback((kind) => {
+        if (!sound || !armed.current || document.documentElement.dataset.cdMute === "1")
+            return;
+        try {
+            if (!audio.current) {
+                const AC = window.AudioContext || window.webkitAudioContext;
+                if (!AC)
+                    return;
+                audio.current = new AC();
+            }
+            const ac = audio.current;
+            if (ac.state === "suspended")
+                void ac.resume();
+            const t = ac.currentTime;
+            // "land" is the answer arriving: five ticks inside 55 ms, rising. "click" is one soft tap.
+            const hits = kind === "land" ? [0, 0.011, 0.022, 0.033, 0.044] : [0];
+            hits.forEach((d, i) => {
+                const o = ac.createOscillator();
+                const g = ac.createGain();
+                o.type = kind === "land" ? "sine" : "triangle";
+                o.frequency.setValueAtTime(kind === "land" ? 1900 + i * 240 : 620, t + d);
+                g.gain.setValueAtTime(0.0001, t + d);
+                g.gain.exponentialRampToValueAtTime(kind === "land" ? 0.03 : 0.05, t + d + 0.003);
+                g.gain.exponentialRampToValueAtTime(0.0001, t + d + (kind === "land" ? 0.012 : 0.04));
+                o.connect(g).connect(ac.destination);
+                o.start(t + d);
+                o.stop(t + d + 0.05);
+            });
+        }
+        catch {
+            /* no audio here */
+        }
+    }, [sound]);
+    const run = useCallback((i) => {
+        lastRun.current = performance.now();
+        burstAt.current = performance.now();
+        setCur(i);
+        setRunId((r) => r + 1);
+    }, []);
+    // One run: the answer streams at `tps`, the second lane at a typical model's pace.
+    useEffect(() => {
+        if (runId === 0)
+            return;
+        const count = TOKS[cur].length;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            setShown(count);
+            setRival(count);
+            return;
+        }
+        const dur = (count / tpsRef.current) * 1000;
+        const rdur = (count / RIVAL_TPS) * 1000;
+        const t0 = performance.now();
+        let raf = 0;
+        let done = false;
+        setShown(0);
+        setRival(0);
+        const step = (now) => {
+            const t = now - t0;
+            const s = t < FIRST ? 0 : Math.min(count, Math.ceil(((t - FIRST) / dur) * count));
+            const r = t < RIVAL_FIRST ? 0 : Math.min(count, Math.floor(((t - RIVAL_FIRST) / rdur) * count));
+            setShown(s);
+            setRival(r);
+            if (s >= count && !done) {
+                done = true;
+                play("land");
+            }
+            if (r < count)
+                raf = requestAnimationFrame(step);
+        };
+        raf = requestAnimationFrame(step);
+        return () => cancelAnimationFrame(raf);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [runId]);
+    // The demo: a first run shortly after it appears, then the next prompt every few seconds.
+    // (A member can remove this effect: the console then only runs when someone picks a prompt.)
+    useEffect(() => {
+        const el = root.current;
+        if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+            return;
+        let visible = true;
+        const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting));
+        io.observe(el);
+        let k = first;
+        const start = window.setTimeout(() => run(k), 900);
+        const id = window.setInterval(() => {
+            if (!visible || document.hidden || performance.now() - lastRun.current < 6400)
+                return;
+            k = (k + 1) % ASKS.length;
+            run(k);
+        }, 800);
+        const live = window.setInterval(() => visible && !document.hidden && setTick((x) => x + 1), 1100);
+        return () => {
+            io.disconnect();
+            window.clearTimeout(start);
+            window.clearInterval(id);
+            window.clearInterval(live);
+        };
+    }, [first, run]);
+    useEffect(() => () => void audio.current?.close(), []);
+    // The ring: a real perspective projection of ~10,000 particles, drawn on two canvases
+    // (the far half behind the console, the near half in front of it).
+    useEffect(() => {
+        const el = root.current;
+        const cb = back.current;
+        const cf = front.current;
+        const pv = pivot.current;
+        if (!el || !cb || !cf || !pv)
+            return;
+        const gb = cb.getContext("2d");
+        const gf = cf.getContext("2d");
+        if (!gb || !gf)
+            return;
+        const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        // Seeded, so the still frame is always the same picture.
+        let seed = 20261118;
+        const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+        const gauss = () => (rnd() + rnd() + rnd() + rnd() - 2) * 1.732;
+        // radius, width, share of the particles, brightness
+        const BANDS = [
+            [1, 0.003, 0.36, 1],
+            [1, 0.03, 0.18, 0.55],
+            [0.905, 0.011, 0.12, 0.6],
+            [1.09, 0.016, 0.11, 0.5],
+            [0.79, 0.045, 0.08, 0.32],
+            [2.5, 0.12, 0.15, 0.62], // a wide outer ring: you sit inside it, so it passes right by the lens
+        ];
+        const small = el.clientWidth < 640;
+        const N = small ? 5200 : 10500;
+        const BN = 640; // the bunch fired by a run
+        const ang = new Float32Array(N + BN);
+        const rad = new Float32Array(N + BN);
+        const hgt = new Float32Array(N + BN);
+        const spd = new Float32Array(N);
+        const siz = new Float32Array(N + BN);
+        const bri = new Float32Array(N);
+        const hotp = new Float32Array(N); // a few particles catch the light: they are the bokeh you notice
+        let c = 0;
+        BANDS.forEach(([r, w, share, b], k) => {
+            const count = k === BANDS.length - 1 ? N - c : Math.round(N * share);
+            for (let i = 0; i < count && c < N; i++, c++) {
+                const rr = r + gauss() * w;
+                ang[c] = rnd() * Math.PI * 2;
+                rad[c] = rr;
+                hgt[c] = gauss() * w * 0.45;
+                spd[c] = Math.pow(rr, -1.5) * (1 + gauss() * 0.03);
+                siz[c] = 0.7 + Math.pow(rnd(), 3) * 1.5;
+                bri[c] = b * (0.45 + rnd() * 0.55);
+                hotp[c] = rnd() < 0.07 ? 3.5 + rnd() * 4 : 0.75;
+            }
+        });
+        for (let j = 0; j < BN; j++) {
+            // offsets behind the head of the bunch: a dense head and a long tail
+            ang[N + j] = -Math.abs(gauss()) * 0.035 - Math.pow(rnd(), 2.2) * 0.9;
+            rad[N + j] = 1 + gauss() * 0.006;
+            hgt[N + j] = gauss() * 0.003;
+            siz[N + j] = 0.9 + rnd() * 1.2;
+        }
+        // Far dust, well beyond the ring.
+        const SN = 420;
+        const dust = new Float32Array(SN * 4);
+        for (let i = 0; i < SN; i++) {
+            dust[i * 4] = Math.PI * (0.12 + rnd() * 0.76);
+            dust[i * 4 + 1] = 6 + rnd() * 7;
+            dust[i * 4 + 2] = -0.4 + Math.pow(rnd(), 1.4) * 5.6;
+            dust[i * 4 + 3] = 0.12 + Math.pow(rnd(), 3) * 0.6;
+        }
+        const disc = (color) => {
+            const s = document.createElement("canvas");
+            s.width = s.height = 64;
+            const g = s.getContext("2d");
+            if (g) {
+                const grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+                grad.addColorStop(0, color);
+                grad.addColorStop(0.42, color);
+                grad.addColorStop(1, "rgba(255,255,255,0)");
+                g.globalAlpha = 0.95;
+                g.fillStyle = grad;
+                g.fillRect(0, 0, 64, 64);
+            }
+            return s;
+        };
+        const white = disc("#ffffff");
+        let hotColor = accentRef.current;
+        let hot = disc(hotColor);
+        let W = 0;
+        let H = 0;
+        let dpr = 1;
+        let cx = 0;
+        let cy = 0;
+        let f = 1000;
+        let h0 = 0.31;
+        const D = 2.25;
+        const fit = () => {
+            W = el.clientWidth;
+            H = el.clientHeight;
+            dpr = Math.min(2, window.devicePixelRatio || 1);
+            if (W * H * dpr * dpr > 3.4e6)
+                dpr = Math.max(1, Math.sqrt(3.4e6 / (W * H)));
+            for (const cv of [cb, cf]) {
+                cv.width = Math.round(W * dpr);
+                cv.height = Math.round(H * dpr);
+            }
+            cx = pv.offsetLeft;
+            cy = pv.offsetTop;
+            f = pv.offsetWidth * 2.27; // the pivot's width is the ring's half width on screen
+            h0 = Math.max(0.1, pv.offsetHeight / 100); // and its height is how high the camera sits (31px = 0.31 radii)
+            if (still || !visible)
+                draw(performance.now());
+        };
+        // camera
+        let tx = 0;
+        let ty = 0;
+        let px = 0;
+        let py = 0;
+        let ca = 1;
+        let sa = 0;
+        let cp = 1;
+        let sp = 0;
+        let h = 0.31;
+        let ox = 0;
+        let oy = 0;
+        let oz = 0;
+        let ol = 0;
+        const proj = (a, r, y) => {
+            const x = r * Math.cos(a);
+            const z = r * Math.sin(a);
+            const x1 = x * ca - z * sa;
+            const z1 = x * sa + z * ca;
+            const Y = y - h;
+            const Z = z1 + D;
+            const Z2 = Z * cp - Y * sp;
+            oz = Z2;
+            ol = z1 > 0 ? 0 : 1;
+            if (Z2 < 0.1)
+                return false;
+            ox = cx + (f * x1) / Z2;
+            oy = cy - (f * (Y * cp + Z * sp)) / Z2;
+            return true;
+        };
+        let visible = true;
+        let raf = 0;
+        let last = performance.now();
+        const born = last;
+        let bAng = -Math.PI / 2 - 0.2; // where the bunch rests in the still frame: just left of centre, in front
+        let bVel = 4;
+        let bSeen = 0;
+        const LEVELS = [0.34, 0.6, 0.95];
+        const WIDTHS = [1, 1.25, 1.7];
+        const ringGlow = (R, alpha, width) => {
+            const SEG = 150;
+            let lx = 0;
+            let ly = 0;
+            let ok = false;
+            for (let i = 0; i <= SEG; i++) {
+                const a = (i / SEG) * Math.PI * 2;
+                const vis = proj(a, R, 0);
+                if (vis && ok) {
+                    const g = ol ? gf : gb;
+                    const coc = 0.009 * f * Math.abs(1 / oz - 0.345);
+                    g.lineWidth = Math.max(1, (width * f) / oz + coc * 2);
+                    g.strokeStyle = `rgba(255,255,255,${(alpha / (1 + coc * 0.5)).toFixed(4)})`;
+                    g.beginPath();
+                    g.moveTo(lx, ly);
+                    g.lineTo(ox, oy);
+                    g.stroke();
+                }
+                lx = ox;
+                ly = oy;
+                ok = vis;
+            }
+        };
+        const draw = (now) => {
+            const dt = still ? 0.016 : Math.min(0.05, (now - last) / 1000);
+            last = now;
+            px += (tx - px) * 0.06;
+            py += (ty - py) * 0.06;
+            el.style.setProperty("--qa-px", px.toFixed(3));
+            el.style.setProperty("--qa-py", py.toFixed(3));
+            const az = px * 0.075;
+            h = h0 - py * 0.05;
+            const pitch = Math.atan2(h, D);
+            cp = Math.cos(pitch);
+            sp = Math.sin(pitch);
+            ca = Math.cos(az);
+            sa = Math.sin(az);
+            const since = burstAt.current ? (now - burstAt.current) / 1000 : 99;
+            const spin = still ? 1 : 1 + 2.4 * Math.exp(-(now - born) / 900); // it spins up fast, then settles
+            const w0 = 0.34 * Math.pow(Math.max(200, tpsRef.current) / 1240, 0.6) * (1 + 1.7 * Math.exp(-since / 0.5)) * spin;
+            const fade = still ? 1 : Math.min(1, (now - born) / 1300);
+            const shutter = 0.024;
+            for (const g of [gb, gf]) {
+                g.setTransform(dpr, 0, 0, dpr, 0, 0);
+                g.clearRect(0, 0, W, H);
+                g.globalCompositeOperation = "lighter";
+                g.lineCap = "round";
+                g.globalAlpha = 1;
+            }
+            // far plane: dust and one distant ring
+            gb.fillStyle = "#fff";
+            for (let i = 0; i < SN; i++) {
+                if (!proj(dust[i * 4], dust[i * 4 + 1], dust[i * 4 + 2]))
+                    continue;
+                if (ox < 0 || ox > W || oy < 0 || oy > H)
+                    continue;
+                gb.globalAlpha = dust[i * 4 + 3] * fade * 0.5;
+                gb.fillRect(ox, oy, 1.3, 1.3);
+            }
+            gb.globalAlpha = fade;
+            gf.globalAlpha = fade;
+            if (h0 < 0.5)
+                ringGlow(4.4, 0.14, 0.0018);
+            // the bloom of the main ring
+            ringGlow(1, 0.045, 0.05);
+            ringGlow(1, 0.1, 0.014);
+            ringGlow(1, 0.34, 0.0012);
+            const bp = [new Path2D(), new Path2D(), new Path2D()];
+            const fp = [new Path2D(), new Path2D(), new Path2D()];
+            for (let i = 0; i < N; i++) {
+                const w = spd[i] * w0;
+                let a = ang[i] + w * dt;
+                if (a > 6.2831853)
+                    a -= 6.2831853;
+                ang[i] = a;
+                const r = rad[i];
+                if (!proj(a, r, hgt[i]))
+                    continue;
+                const sx = ox;
+                const sy = oy;
+                if (sx < -90 || sx > W + 90 || sy < -90 || sy > H + 90)
+                    continue;
+                if (r > 2 && !ol)
+                    continue; // the outer ring is only for the lens: its far side would cross the words
+                const coc = 0.009 * f * Math.abs(1 / oz - 0.345);
+                const size = siz[i] * 0.5 + coc;
+                const g = ol ? gf : gb;
+                if (size < 1.9) {
+                    // in focus: a fine streak, as long as the shutter is open
+                    const k = bri[i] > 0.7 ? 2 : bri[i] > 0.42 ? 1 : 0;
+                    const path = ol ? fp[k] : bp[k];
+                    proj(a - w * shutter, r, hgt[i]);
+                    path.moveTo(ox, oy);
+                    path.lineTo(sx + 0.01, sy);
+                }
+                else {
+                    // out of focus: a soft disc, stretched along its path by its own speed
+                    proj(a - w * shutter * 1.6, r, hgt[i]);
+                    const dx = sx - ox;
+                    const dy = sy - oy;
+                    const len = Math.sqrt(dx * dx + dy * dy) || 0.001;
+                    const d = Math.min(size, 90) * 2;
+                    const L = (len + d) / 64;
+                    const T = d / 64;
+                    const ux = dx / len;
+                    const uy = dy / len;
+                    g.globalAlpha = Math.min(1, bri[i] * hotp[i] * (1.5 / (1 + (size * size) / 3.2)) + 0.006) * fade;
+                    g.setTransform(dpr * ux * L, dpr * uy * L, -dpr * uy * T, dpr * ux * T, dpr * (sx + ox) * 0.5, dpr * (sy + oy) * 0.5);
+                    g.drawImage(white, -32, -32);
+                }
+            }
+            gb.setTransform(dpr, 0, 0, dpr, 0, 0);
+            gf.setTransform(dpr, 0, 0, dpr, 0, 0);
+            for (let k = 0; k < 3; k++) {
+                for (const [g, p] of [
+                    [gb, bp[k]],
+                    [gf, fp[k]],
+                ]) {
+                    g.globalAlpha = fade;
+                    g.lineWidth = WIDTHS[k];
+                    g.strokeStyle = `rgba(255,255,255,${LEVELS[k]})`;
+                    g.stroke(p);
+                }
+            }
+            // the bunch: fired by a run, it whips round the near side and fades over two seconds
+            if (burstAt.current && burstAt.current !== bSeen) {
+                bSeen = burstAt.current;
+                bAng = Math.PI - 0.42;
+                bVel = 10.5;
+            }
+            const bAlpha = still ? 0.9 : Math.min(1, Math.max(0, 1.25 - since / 3.2));
+            if (bAlpha > 0.01) {
+                if (!still) {
+                    bVel += (w0 - bVel) * (1 - Math.exp(-dt / 0.7));
+                    bAng += bVel * dt;
+                }
+                if (accentRef.current !== hotColor) {
+                    hotColor = accentRef.current;
+                    hot = disc(hotColor);
+                }
+                const hb = new Path2D();
+                const hf = new Path2D();
+                for (let j = 0; j < BN; j++) {
+                    const a = bAng + ang[N + j] * (0.35 + Math.min(1, bVel / 6));
+                    if (!proj(a, rad[N + j], hgt[N + j]))
+                        continue;
+                    const sx = ox;
+                    const sy = oy;
+                    if (sx < -70 || sx > W + 70 || sy < -70 || sy > H + 70)
+                        continue;
+                    const coc = 0.009 * f * Math.abs(1 / oz - 0.345);
+                    const size = siz[N + j] * 0.5 + coc;
+                    if (size < 2.2) {
+                        const path = ol ? hf : hb;
+                        proj(a - bVel * shutter, rad[N + j], hgt[N + j]);
+                        path.moveTo(ox, oy);
+                        path.lineTo(sx + 0.01, sy);
+                    }
+                    else {
+                        const g = ol ? gf : gb;
+                        const d = Math.min(size, 60) * 2;
+                        g.globalAlpha = Math.min(1, 2.6 / (1 + (size * size) / 6) + 0.04) * bAlpha;
+                        g.drawImage(hot, sx - d / 2, sy - d / 2, d, d);
+                    }
+                }
+                for (const [g, p] of [
+                    [gb, hb],
+                    [gf, hf],
+                ]) {
+                    g.globalAlpha = bAlpha;
+                    g.lineWidth = 1.9;
+                    g.strokeStyle = hotColor;
+                    g.stroke(p);
+                }
+                // its comet: a line of light along the ring behind the head, and the head's own glow
+                const tail = 0.16 + Math.min(1, bVel / 6) * 0.75;
+                let lx = 0;
+                let ly = 0;
+                let ok = false;
+                for (let k = 0; k <= 30; k++) {
+                    const vis = proj(bAng - (k / 30) * tail, 1, 0);
+                    if (vis && ok) {
+                        const g = ol ? gf : gb;
+                        const coc = 0.009 * f * Math.abs(1 / oz - 0.345);
+                        const fall = (1 - k / 30) * (1 - k / 30);
+                        g.strokeStyle = hotColor;
+                        g.lineWidth = (0.007 * f) / oz + coc * 1.5;
+                        g.globalAlpha = (bAlpha * fall * 0.55) / (1 + coc * 0.25);
+                        g.beginPath();
+                        g.moveTo(lx, ly);
+                        g.lineTo(ox, oy);
+                        g.stroke();
+                        g.lineWidth = (0.03 * f) / oz + coc * 2.5;
+                        g.globalAlpha = (bAlpha * fall * 0.12) / (1 + coc * 0.2);
+                        g.stroke();
+                    }
+                    lx = ox;
+                    ly = oy;
+                    ok = vis;
+                }
+                if (proj(bAng, 1, 0)) {
+                    const g = ol ? gf : gb;
+                    const d = Math.min(320, (0.14 * f) / oz);
+                    g.globalAlpha = 0.55 * bAlpha;
+                    g.drawImage(hot, ox - d / 2, oy - d / 2, d, d);
+                    g.globalAlpha = 0.9 * bAlpha;
+                    g.drawImage(white, ox - d / 8, oy - d / 8, d / 4, d / 4);
+                }
+            }
+        };
+        const frame = (now) => {
+            draw(now);
+            if (visible && !still)
+                raf = requestAnimationFrame(frame);
+        };
+        fit();
+        const ro = new ResizeObserver(fit);
+        ro.observe(el);
+        const io = new IntersectionObserver(([e]) => {
+            visible = e.isIntersecting;
+            cancelAnimationFrame(raf);
+            if (visible && !still) {
+                last = performance.now();
+                raf = requestAnimationFrame(frame);
+            }
+        });
+        io.observe(el);
+        if (still)
+            draw(performance.now());
+        const move = (e) => {
+            const r = el.getBoundingClientRect();
+            tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+            ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+        };
+        const leave = () => {
+            tx = 0;
+            ty = 0;
+        };
+        if (!still) {
+            el.addEventListener("pointermove", move);
+            el.addEventListener("pointerleave", leave);
+        }
+        return () => {
+            cancelAnimationFrame(raf);
+            ro.disconnect();
+            io.disconnect();
+            el.removeEventListener("pointermove", move);
+            el.removeEventListener("pointerleave", leave);
+        };
+    }, []);
+    const reading = tps * READ[tick % READ.length];
+    const trace = READ.map((_, i) => READ[(tick + 1 + i) % READ.length]);
+    const pick = (i) => {
+        armed.current = true;
+        play("click");
+        run(i);
+    };
+    const live = (<>
+      <span className="qa-lab">
+        <i className="qa-dot" aria-hidden/>
+        Live, per stream
+      </span>
+      <span className="qa-read">
+        <Odometer value={reading}/>
+        <small>tok/s</small>
+      </span>
+    </>);
+    return (<div ref={root} className="qa-root" style={{ "--qa-tone": tone, "--qa-accent": accent }} onPointerDown={() => (armed.current = true)} onKeyDown={() => (armed.current = true)}>
+      <style>{css}</style>
+      <div className="qa-sky" aria-hidden/>
+      <canvas ref={back} className="qa-canvas qa-back" aria-hidden/>
+      <i ref={pivot} className="qa-pivot" aria-hidden/>
+
+      <header className="qa-nav">
+        <a className="qa-brand" href="#" aria-label={brand}>
+          <svg viewBox="0 0 26 26" aria-hidden>
+            <ellipse cx="13" cy="13" rx="11" ry="4.6" fill="none" stroke="currentColor" strokeWidth="1.8" transform="rotate(-24 13 13)"/>
+            <circle cx="13" cy="13" r="2.6" fill="currentColor"/>
+          </svg>
+          {brand}
+        </a>
+        <nav className="qa-links" aria-label="Main">
+          <a href="#">Models</a>
+          <a href="#">API</a>
+          <a href="#">Pricing</a>
+          <a href="#">Research</a>
+          <a href="#">Docs</a>
+        </nav>
+        <a className="qa-signin" href="#">
+          Sign in
+        </a>
+      </header>
+
+      <div className="qa-mid">
+        <div className="qa-head">
+          <p className="qa-eyebrow">
+            <i className="qa-dot" aria-hidden/>
+            {model} is live in the API
+          </p>
+          <h1 className="qa-title">
+            <span>Frontier reasoning,</span> <span>at the speed of autocomplete.</span>
+          </h1>
+          <p className="qa-sub">
+            {model} thinks like the largest models and answers at {Math.round(tps).toLocaleString("en-US")} tokens a second, so agents, voice and search feel instant.
+            <span> It speaks the OpenAI API: change one line.</span>
+          </p>
+          <div className="qa-actions">
+            <button type="button" className="qa-cta" onClick={() => (play("click"), onCta?.())}>
+              {cta}
+              <svg viewBox="0 0 16 16" aria-hidden>
+                <path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            <a className="qa-ghost" href="#">
+              Read the benchmarks
+            </a>
+          </div>
+        </div>
+
+        <section className={`qa-card${landed && runId ? " is-land" : ""}`} aria-label={`${model}, answering live`}>
+          <div className="qa-card-top">
+            <span className="qa-model">
+              <i className="qa-dot" aria-hidden/>
+              {model}
+            </span>
+            <span className="qa-mini">{live}</span>
+            <span className="qa-verdict" data-on={raced || undefined}>
+              {raced ? `Answered ${(theirs / mine).toFixed(1)}× sooner` : "Racing…"}
+            </span>
+          </div>
+          <p className="qa-q">
+            <span aria-hidden>›</span>
+            {ASKS[cur].q}
+          </p>
+          <p className="qa-a" aria-live="polite" aria-label={ASKS[cur].a}>
+            {toks.map((t, i) => (<span key={i} className="qa-tok" data-on={i < shown || undefined} aria-hidden>
+                {t}
+              </span>))}
+          </p>
+          <div className="qa-race">
+            <div className="qa-lane" data-me>
+              <span className="qa-who">{model}</span>
+              <span className="qa-track" aria-hidden>
+                <i style={{ transform: `scaleX(${shown / n})` }}/>
+              </span>
+              <span className="qa-time">{landed ? `${n} tokens · ${mine.toFixed(2)} s` : "…"}</span>
+            </div>
+            <div className="qa-lane">
+              <span className="qa-who">Typical frontier model</span>
+              <span className="qa-track" aria-hidden>
+                <i style={{ transform: `scaleX(${rival / n})` }}/>
+              </span>
+              <span className="qa-time">{raced ? `${n} tokens · ${theirs.toFixed(2)} s` : `${rival} of ${n} tokens`}</span>
+            </div>
+          </div>
+          <div className="qa-asks" role="group" aria-label="Ask something else">
+            {ASKS.map((x, i) => (<button key={x.label} type="button" aria-pressed={i === cur} onClick={() => pick(i)}>
+                {x.label}
+              </button>))}
+          </div>
+        </section>
+      </div>
+
+      <div className="qa-flank qa-fl">
+        {live}
+        <span className="qa-trace" aria-hidden>
+          {trace.map((v, i) => (<i key={i} style={{ height: `${Math.round(22 + (v - 0.97) * 1300)}%` }}/>))}
+        </span>
+      </div>
+      <dl className="qa-flank qa-fr">
+        <div>
+          <dt>First token, p50</dt>
+          <dd>180 ms</dd>
+        </div>
+        <div>
+          <dt>Context</dt>
+          <dd>400k tokens</dd>
+        </div>
+        <div>
+          <dt>Per million tokens</dt>
+          <dd>$0.60 in · $2.40 out</dd>
+        </div>
+        <div>
+          <dt>Uptime, 90 days</dt>
+          <dd>99.99%</dd>
+        </div>
+      </dl>
+
+      <canvas ref={front} className="qa-canvas qa-front" aria-hidden/>
+      <div className="qa-grain" aria-hidden/>
+    </div>);
+}
+const css = `
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+.qa-root {
+  --qa-tone: #1230d0; --qa-accent: #d4ff3a; --qa-px: 0; --qa-py: 0;
+  --qa-ink: #f4f7ff; --qa-mute: rgba(232,238,255,.72);
+  --qa-deep: color-mix(in oklab, var(--qa-tone), #000 78%);
+  container-type: size;
+  position: relative; isolation: isolate; overflow: hidden;
+  width: 100%; height: var(--design-h, 100svh); min-height: 640px;
+  background: var(--qa-deep); color: var(--qa-ink);
+  font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+/* Far atmosphere: the stage is one colour, lit from where the ring meets the horizon. */
+.qa-sky {
+  position: absolute; inset: -4%; z-index: 0; pointer-events: none;
+  transform: translate3d(calc(var(--qa-px) * -1.2%), calc(var(--qa-py) * -.8%), 0);
+  background:
+    radial-gradient(54% 17% at 50% 60%, color-mix(in oklab, var(--qa-tone), #fff 38%) 0%, transparent 100%),
+    radial-gradient(92% 74% at 50% 66%, var(--qa-tone) 0%, color-mix(in oklab, var(--qa-tone), #000 22%) 40%, color-mix(in oklab, var(--qa-tone), #000 56%) 74%, var(--qa-deep) 100%);
+}
+.qa-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+.qa-back { z-index: 1; }
+.qa-front { z-index: 4; }
+.qa-pivot { position: absolute; z-index: -1; left: 50%; top: 64.5cqh; width: 56cqi; height: 31px; visibility: hidden; pointer-events: none; }
+.qa-grain {
+  position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: .2; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.qa-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--qa-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--qa-accent), transparent 80%); flex: none; }
+
+/* Nav */
+.qa-nav { position: absolute; z-index: 6; inset: 24px 40px auto; display: flex; align-items: center; gap: 30px; }
+.qa-brand { display: inline-flex; align-items: center; gap: 9px; color: inherit; text-decoration: none; font-weight: 600; font-size: 19px; letter-spacing: -.02em; }
+.qa-brand svg { width: 24px; height: 24px; }
+.qa-links { display: flex; gap: 26px; margin-left: 22px; font-size: 14.5px; }
+.qa-links a, .qa-signin, .qa-ghost { color: var(--qa-mute); text-decoration: none; transition: color .2s; }
+.qa-links a:hover, .qa-signin:hover, .qa-ghost:hover { color: #fff; }
+.qa-signin { margin-left: auto; font-size: 14.5px; }
+.qa-root a:focus-visible, .qa-root button:focus-visible { outline: 2px solid var(--qa-accent); outline-offset: 3px; border-radius: 8px; }
+
+/* The centre column: the words at the top, the console standing inside the ring. */
+.qa-mid {
+  position: absolute; z-index: 3; left: 50%; top: 92px; bottom: calc(32cqh - 136px); transform: translateX(-50%);
+  width: min(680px, calc(100% - 40px)); display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 18px;
+}
+.qa-head { display: flex; flex-direction: column; align-items: center; text-align: center; animation: qa-rise 1s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes qa-rise { from { opacity: 0; transform: translateY(18px); } }
+.qa-eyebrow {
+  margin: 0 0 16px; display: inline-flex; align-items: center; gap: 9px; height: 30px; padding: 0 13px 0 11px; border-radius: 999px;
+  font-size: 13px; font-weight: 500; color: var(--qa-ink); background: rgba(255,255,255,.09); box-shadow: inset 0 0 0 1px rgba(255,255,255,.14);
+}
+.qa-title { margin: 0; font-weight: 500; font-size: clamp(33px, 4.05cqi, 62px); line-height: 1.02; letter-spacing: -.04em; white-space: nowrap; }
+.qa-title span { display: block; }
+.qa-sub { margin: 16px 0 0; max-width: 560px; font-size: 16.5px; line-height: 1.45; color: var(--qa-mute); text-wrap: balance; }
+.qa-actions { display: flex; align-items: center; gap: 20px; margin-top: 20px; }
+.qa-cta {
+  display: inline-flex; align-items: center; gap: 9px; height: 46px; padding: 0 20px 0 22px; border: 0; border-radius: 999px; cursor: pointer;
+  font: inherit; font-size: 15px; font-weight: 600; color: color-mix(in oklab, var(--qa-tone), #000 62%); background: #fff;
+  box-shadow: 0 14px 30px -14px rgba(0,0,0,.6); transition: transform .3s cubic-bezier(.3,1.5,.5,1), box-shadow .3s;
+}
+.qa-cta svg { width: 15px; height: 15px; transition: transform .25s; }
+.qa-cta:hover svg { transform: translateX(3px); }
+.qa-cta:active { transform: scale(.96); }
+.qa-ghost { font-size: 15px; text-decoration: underline; text-underline-offset: 5px; text-decoration-color: rgba(255,255,255,.3); }
+
+/* The console */
+.qa-card {
+  position: relative; width: 100%; padding: 16px 20px 16px; border-radius: 20px; text-align: left;
+  background: color-mix(in oklab, var(--qa-deep), transparent 30%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.13), inset 0 1px 0 rgba(255,255,255,.16), 0 40px 80px -30px rgba(0,0,10,.75);
+  backdrop-filter: blur(20px) saturate(1.3); -webkit-backdrop-filter: blur(20px) saturate(1.3);
+}
+.qa-card::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(70% 46% at 50% 108%, rgba(255,255,255,.2), rgba(255,255,255,0) 70%);
+}
+.qa-card.is-land::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  box-shadow: inset 0 0 0 1px var(--qa-accent), 0 0 40px -6px var(--qa-accent); animation: qa-flash .9s ease-out both;
+}
+@keyframes qa-flash { from { opacity: .9; } to { opacity: 0; } }
+.qa-card-top { display: flex; align-items: center; gap: 14px; font-size: 13px; }
+.qa-model { display: inline-flex; align-items: center; gap: 9px; font-weight: 600; }
+.qa-mini { display: none; align-items: baseline; gap: 8px; margin-left: auto; font: 500 13px/1 "JetBrains Mono", ui-monospace, monospace; }
+.qa-mini .qa-lab { display: none; }
+.qa-verdict { margin-left: auto; font: 500 12px/1 "JetBrains Mono", ui-monospace, monospace; color: var(--qa-mute); transition: color .3s; }
+.qa-verdict[data-on] { color: var(--qa-accent); }
+.qa-q { margin: 14px 0 8px; display: flex; gap: 10px; font-size: 17px; font-weight: 500; letter-spacing: -.01em; }
+.qa-q span { color: var(--qa-accent); }
+.qa-a { margin: 0; min-height: 6.1em; font-size: 15px; line-height: 1.52; color: rgba(240,244,255,.9); white-space: pre-wrap; }
+.qa-tok { opacity: 0; }
+/* Each token lands hot and cools, so you can see the answer arrive. */
+.qa-tok[data-on] { opacity: 1; animation: qa-cool .75s cubic-bezier(.2,.7,.3,1) both; }
+@keyframes qa-cool { 0% { color: var(--qa-accent); text-shadow: 0 0 14px var(--qa-accent); } 100% { color: inherit; text-shadow: none; } }
+.qa-race { display: grid; gap: 8px; margin-top: 12px; padding-top: 13px; border-top: 1px solid rgba(255,255,255,.1); font: 400 12px/1 "JetBrains Mono", ui-monospace, monospace; }
+.qa-lane { display: grid; grid-template-columns: 172px 1fr 150px; align-items: center; gap: 14px; color: var(--qa-mute); }
+.qa-lane[data-me] { color: var(--qa-ink); }
+.qa-track { height: 4px; border-radius: 2px; background: rgba(255,255,255,.12); overflow: hidden; }
+.qa-track i { display: block; height: 100%; border-radius: 2px; background: rgba(255,255,255,.55); transform-origin: left; }
+.qa-lane[data-me] .qa-track i { background: var(--qa-accent); box-shadow: 0 0 10px var(--qa-accent); }
+.qa-time { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.qa-asks { display: flex; gap: 7px; margin-top: 14px; }
+.qa-asks button {
+  height: 32px; padding: 0 13px; border: 0; border-radius: 999px; cursor: pointer; font: inherit; font-size: 13px; font-weight: 500; white-space: nowrap;
+  color: var(--qa-mute); background: rgba(255,255,255,.08); transition: background .2s, color .2s, transform .25s cubic-bezier(.3,1.5,.5,1);
+}
+.qa-asks button:hover { background: rgba(255,255,255,.15); color: #fff; }
+.qa-asks button:active { transform: scale(.94); }
+.qa-asks button[aria-pressed="true"] { background: #fff; color: color-mix(in oklab, var(--qa-tone), #000 62%); }
+
+/* The readings beside the ring */
+.qa-flank { position: absolute; z-index: 3; bottom: 32px; margin: 0; animation: qa-rise 1s .3s cubic-bezier(.2,.8,.2,1) both; }
+.qa-fl { left: 40px; display: grid; gap: 9px; }
+.qa-lab { display: inline-flex; align-items: center; gap: 9px; font-size: 13px; color: var(--qa-mute); }
+.qa-read { display: inline-flex; align-items: baseline; gap: 10px; }
+.qa-read small { font: 400 13px/1 "JetBrains Mono", ui-monospace, monospace; color: var(--qa-mute); }
+.qa-odo { display: inline-flex; font-weight: 500; font-size: 46px; line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.qa-dig { display: inline-block; height: 1em; overflow: hidden; }
+.qa-dig > span { display: flex; flex-direction: column; transition: transform .7s cubic-bezier(.3,1.2,.4,1); }
+.qa-dig b { display: block; height: 1em; font-weight: inherit; }
+.qa-mini .qa-odo { font-size: 13px; letter-spacing: 0; font-family: inherit; }
+.qa-trace { display: flex; align-items: flex-end; gap: 3px; height: 30px; width: 190px; }
+.qa-trace i { flex: 1; min-height: 2px; border-radius: 1px; background: rgba(255,255,255,.3); transition: height .6s cubic-bezier(.3,1.2,.4,1); }
+.qa-trace i:last-child { background: var(--qa-accent); }
+.qa-fr { right: 40px; display: flex; gap: 34px; }
+.qa-fr dt { font-size: 12.5px; color: var(--qa-mute); }
+.qa-fr dd { margin: 6px 0 0; font: 500 14px/1.2 "JetBrains Mono", ui-monospace, monospace; }
+
+@container (max-height: 800px) {
+  .qa-sub span { display: none; }
+  .qa-eyebrow { margin-bottom: 12px; }
+  .qa-title { font-size: clamp(31px, 3.5cqi, 52px); }
+  .qa-a { font-size: 14px; }
+}
+@container (max-height: 700px) {
+  .qa-sub { display: none; }
+  .qa-mid { top: 78px; }
+}
+@container (max-width: 1160px) {
+  .qa-links { display: none; }
+  .qa-flank { display: none; }
+  .qa-verdict { margin-left: 0; }
+  .qa-mini { display: inline-flex; }
+}
+@container (max-width: 640px) {
+  .qa-nav { inset: 16px 20px auto; }
+  .qa-pivot { top: calc(100cqh - 318px); width: 150cqi; height: 75px; }
+  .qa-mid { top: 70px; bottom: 44px; width: calc(100% - 32px); gap: 14px; }
+  .qa-eyebrow { height: 28px; font-size: 12.5px; margin-bottom: 12px; }
+  .qa-title { font-size: 8.5cqi; white-space: normal; }
+  .qa-title span { display: inline; }
+  .qa-sub { font-size: 15px; margin-top: 12px; }
+  .qa-sub span { display: none; }
+  .qa-actions { margin-top: 16px; gap: 16px; }
+  .qa-card { padding: 14px 15px; border-radius: 18px; }
+  .qa-verdict { display: none; }
+  .qa-q { font-size: 15.5px; line-height: 1.4; min-height: 2.8em; margin: 12px 0 6px; }
+  .qa-a { font-size: 13.5px; line-height: 1.5; min-height: 10.5em; }
+  .qa-lane { grid-template-columns: 1fr 1fr; gap: 6px 10px; }
+  .qa-lane .qa-track { grid-column: 1 / -1; grid-row: 2; }
+  .qa-asks { overflow-x: auto; margin: 12px -15px 0; padding: 0 15px; scrollbar-width: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .qa-head, .qa-flank, .qa-tok[data-on], .qa-card.is-land::after { animation: none; }
+  .qa-card.is-land::after { opacity: 0; }
+  .qa-dig > span, .qa-trace i { transition: none; }
+}
+`;

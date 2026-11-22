@@ -1,0 +1,13 @@
+{
+  "id": "quanta",
+  "name": "Quanta",
+  "component": "Quanta",
+  "description": "A fast reasoning model launch: a ring of light made of thousands of particles orbits a live console, all drawn in code.",
+  "traits": [
+    "ai",
+    "developer",
+    "technical"
+  ],
+  "theme": "dark",
+  "images": []
+}

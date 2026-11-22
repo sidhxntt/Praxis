@@ -1,0 +1,42 @@
+{
+  "id": "farsight",
+  "name": "Farsight",
+  "component": "Farsight",
+  "description": "A magazine of places seen from far away: seven aerial photographs turn on a ring in real 3D under a thin serif headline.",
+  "traits": [
+    "editorial",
+    "photographic",
+    "3d"
+  ],
+  "theme": "dark",
+  "images": [
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/farsight/delta.webp",
+      "path": "design/websites/farsight/delta.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/farsight/salt.webp",
+      "path": "design/websites/farsight/salt.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/farsight/glacier.webp",
+      "path": "design/websites/farsight/glacier.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/farsight/dunes.webp",
+      "path": "design/websites/farsight/dunes.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/farsight/reef.webp",
+      "path": "design/websites/farsight/reef.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/farsight/fields.webp",
+      "path": "design/websites/farsight/fields.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/farsight/city.webp",
+      "path": "design/websites/farsight/city.webp"
+    }
+  ]
+}

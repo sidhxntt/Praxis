@@ -6,31 +6,35 @@ import { UI_STYLE_IDS } from "../../src/ui/catalog";
 import { FrontendFramework, Language, validateConfig } from "../../src/config/schema";
 import { generateProject } from "../../src/generator/generate";
 
-export const ADAPTER_TARGETS = [
-  target("next-js", "next", "javascript", "app/page.jsx"),
-  target("next-ts", "next", "typescript", "app/page.tsx"),
-  target("vite-js", "vite", "javascript", "src/App.jsx"),
-  target("vite-ts", "vite", "typescript", "src/App.tsx"),
-  target("vue-js", "vue", "javascript", "src/App.vue"),
-  target("vue-ts", "vue", "typescript", "src/App.vue"),
-  target("astro-js", "astro", "javascript", "src/pages/index.astro"),
-  target("astro-ts", "astro", "typescript", "src/pages/index.astro"),
-  target("angular-ts", "angular", "typescript", "src/app/app.html"),
+export const TEMPLATE_TARGETS = [
+  target("next-js", "next", "javascript", "app/page.jsx", "components", "jsx"),
+  target("next-ts", "next", "typescript", "app/page.tsx", "components", "tsx"),
+  target("vite-js", "vite", "javascript", "src/App.jsx", "src/components", "jsx"),
+  target("vite-ts", "vite", "typescript", "src/App.tsx", "src/components", "tsx"),
+] as const;
+
+const STARTER_TARGETS = [
+  ...TEMPLATE_TARGETS,
+  target("vue-js", "vue", "javascript", "src/App.vue", "", ""),
+  target("vue-ts", "vue", "typescript", "src/App.vue", "", ""),
+  target("astro-js", "astro", "javascript", "src/pages/index.astro", "", ""),
+  target("astro-ts", "astro", "typescript", "src/pages/index.astro", "", ""),
+  target("angular-ts", "angular", "typescript", "src/app/app.html", "", ""),
 ] as const;
 
 describe("complete generated UI matrix", () => {
-  it("defines exactly 360 unique styled outputs and nine starters", () => {
+  it("defines one styled output per style and React target, plus nine starters", () => {
     const styled = UI_STYLE_IDS.flatMap((style) =>
-      ADAPTER_TARGETS.map(({ id }) => `${style}:${id}`));
-    expect(styled).toHaveLength(360);
-    expect(new Set(styled).size).toBe(360);
-    expect(ADAPTER_TARGETS).toHaveLength(9);
+      TEMPLATE_TARGETS.map(({ id }) => `${style}:${id}`));
+    expect(styled).toHaveLength(UI_STYLE_IDS.length * 4);
+    expect(new Set(styled).size).toBe(styled.length);
+    expect(STARTER_TARGETS).toHaveLength(9);
   });
 
-  it("generates and validates all 369 framework outputs", async () => {
+  it("generates every styled output and every starter", async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "praxis-ui-matrix-"));
     try {
-      for (const adapter of ADAPTER_TARGETS) {
+      for (const adapter of TEMPLATE_TARGETS) {
         for (const styleId of UI_STYLE_IDS) {
           const name = `styled-${adapter.id}-${styleId}`;
           const output = await generateProject(frontendConfig(
@@ -39,32 +43,34 @@ describe("complete generated UI matrix", () => {
             adapter.language,
             { mode: "template", style: styleId },
           ), { cwd: root });
-          const style = JSON.parse(
-            await readFile(path.resolve("templates", `ui.${styleId}`, "style.json"), "utf8"),
-          ) as { sourceDesign: string; sections: Array<{ brand?: string }>; assets: Array<{ source: string }> };
+          const template = JSON.parse(
+            await readFile(path.resolve("templates", `ui.${styleId}`, "template.json"), "utf8"),
+          ) as { component: string; images: Array<{ path: string }> };
           const entry = await readFile(path.join(output, adapter.entry), "utf8");
-          expect(entry, `${styleId}:${adapter.id} original brand`)
-            .toContain(style.sections.find(({ brand }) => brand)?.brand);
-          expect(await readFile(path.join(output, "DESIGN.md"), "utf8"))
-            .toContain(style.sourceDesign);
-          for (const asset of style.assets) {
-            await expect(readFile(path.join(
-              output,
-              "public/ui",
-              styleId,
-              asset.source.slice("assets/".length),
-            )), `${styleId}:${adapter.id} local asset`).resolves.toBeTruthy();
+          expect(entry, `${styleId}:${adapter.id} renders its hero`)
+            .toContain(`<${template.component} />`);
+          const component = await readFile(
+            path.join(output, adapter.components, `${template.component}.${adapter.extension}`),
+            "utf8",
+          );
+          expect(component, `${styleId}:${adapter.id} component`)
+            .toContain(`export default function ${template.component}`);
+          if (adapter.language === "javascript") {
+            expect(component, `${styleId}:${adapter.id} has no type syntax`).not.toMatch(/\bimport type\b|\btype [A-Z]\w* = /);
           }
+          expect(await readFile(path.join(output, "DESIGN.md"), "utf8"))
+            .toMatch(/^# /);
           expect(await unresolvedTokens(output), `${styleId}:${adapter.id} unresolved tokens`)
             .toEqual([]);
           const packageJson = JSON.parse(await readFile(path.join(output, "package.json"), "utf8"));
           expect(packageJson.scripts.build, `${styleId}:${adapter.id} build script`).toBeTruthy();
           await rm(output, { recursive: true });
         }
+      }
 
-        const starterName = `starter-${adapter.id}`;
+      for (const adapter of STARTER_TARGETS) {
         const starter = await generateProject(frontendConfig(
-          starterName,
+          `starter-${adapter.id}`,
           adapter.framework,
           adapter.language,
           { mode: "starter" },
@@ -72,7 +78,7 @@ describe("complete generated UI matrix", () => {
         await expect(readFile(path.join(starter, adapter.entry), "utf8")).resolves.toBeTruthy();
         expect(await readFile(path.join(starter, "DESIGN.md"), "utf8"))
           .toContain(`Framework: \`${adapter.framework}\``);
-        await expect(readdir(path.join(starter, "public/ui"))).rejects.toThrow();
+        await expect(readdir(path.join(starter, "public/design"))).rejects.toThrow();
         await rm(starter, { recursive: true });
       }
     } finally {
@@ -105,7 +111,8 @@ async function unresolvedTokens(root: string, relative = ""): Promise<string[]> 
   for (const entry of await readdir(path.join(root, relative), { withFileTypes: true })) {
     const child = path.join(relative, entry.name);
     if (entry.isDirectory()) found.push(...await unresolvedTokens(root, child));
-    else if ((await readFile(path.join(root, child), "utf8")).includes("{{")) found.push(child);
+    else if (!/\.(webp|png|jpe?g|gif|avif|ico|woff2?)$/i.test(entry.name)
+      && /\{\{[A-Za-z]+\}\}/.test(await readFile(path.join(root, child), "utf8"))) found.push(child);
   }
   return found;
 }
@@ -115,6 +122,8 @@ function target(
   framework: FrontendFramework,
   language: Language,
   entry: string,
+  components: string,
+  extension: string,
 ) {
-  return { id, framework, language, entry };
+  return { id, framework, language, entry, components, extension };
 }
