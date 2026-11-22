@@ -13,7 +13,7 @@ function session(selection: Promise<UiStyleId>) {
 
 describe("resolveUiStyle", () => {
   it("returns a selection made in the visual gallery", async () => {
-    const gallery = session(Promise.resolve("apple"));
+    const gallery = session(Promise.resolve("ora"));
     const selectTerminal = vi.fn();
     await expect(resolveUiStyle({
       confirmGallery: vi.fn(async () => true),
@@ -21,7 +21,7 @@ describe("resolveUiStyle", () => {
       openBrowser: vi.fn(async () => true),
       selectTerminal,
       env: {},
-    })).resolves.toBe("apple");
+    })).resolves.toBe("ora");
     expect(selectTerminal).not.toHaveBeenCalled();
   });
 

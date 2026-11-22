@@ -1,0 +1,18 @@
+{
+  "id": "vesper",
+  "name": "Vesper",
+  "component": "Vesper",
+  "description": "A personal system that reads your day, shown as thirteen live tiles floating at three depths around a figure on a black stage.",
+  "traits": [
+    "product",
+    "data",
+    "3d"
+  ],
+  "theme": "mixed",
+  "images": [
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/vesper/figure.webp",
+      "path": "design/websites/vesper/figure.webp"
+    }
+  ]
+}

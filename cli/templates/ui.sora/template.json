@@ -1,0 +1,13 @@
+{
+  "id": "sora",
+  "name": "Sora",
+  "component": "Sora",
+  "description": "A travel-money card floating over a 3D field of enamel tiles that swell red, hopping and flipping to pay while the receipt rolls through cities.",
+  "traits": [
+    "finance",
+    "3d",
+    "bold"
+  ],
+  "theme": "light",
+  "images": []
+}

@@ -1,0 +1,18 @@
+{
+  "id": "solene",
+  "name": "Solène",
+  "component": "Solene",
+  "description": "A thermal bath house: one rounded, living photograph on a sage page, with a quiet statement and the name set large and thin along the bottom.",
+  "traits": [
+    "hospitality",
+    "calm",
+    "photographic"
+  ],
+  "theme": "light",
+  "images": [
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/solene/bath.webp",
+      "path": "design/websites/solene/bath.webp"
+    }
+  ]
+}

@@ -1,255 +1,50 @@
 "use client";
-import { cn } from "@/lib/utils";
-import { IconMenu2, IconX } from "@tabler/icons-react";
-import {
-  motion,
-  AnimatePresence,
-  useScroll,
-  useMotionValueEvent,
-} from "motion/react";
-import Link from "next/link";
-import React, { useRef, useState } from "react";
-import { usePathname } from "next/navigation";
-import { Button } from "./button";
-import { Logo } from "./logo";
 
-interface NavbarProps {
-  navItems: {
-    name: string;
-    link: string;
-  }[];
-  visible: boolean;
-}
+import { useEffect, useState } from "react";
+import { products, type ProductKey } from "@/lib/products";
 
-export const Navbar = () => {
-  const pathname = usePathname();
-  const isPro = pathname.startsWith("/pro");
-  const base = isPro ? "/pro" : "";
-  const navItems = [
-    {
-      name: "Home",
-      link: `${base}/#home`,
-    },
-    {
-      name: "Product",
-      link: `${base}/#product`,
-    },
-    { name: "FAQ", link: `${base}/#faqs` },
-    { name: isPro ? "Praxis Flow" : "Praxis Pro", link: isPro ? "/" : "/pro" },
+/** A slim bar that takes over once the hero (and its own nav) has scrolled away. */
+export function SiteNav({ product }: { product: ProductKey }) {
+  const p = products[product];
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShown(window.scrollY > window.innerHeight * 0.85);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const links = [
+    { label: "Product", href: "#product" },
+    { label: "How it works", href: "#how" },
+    { label: "FAQ", href: "#faqs" },
+    { label: p.other.name, href: p.other.href },
   ];
 
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollY } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-  const [visible, setVisible] = useState<boolean>(false);
-
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    if (latest > 100) {
-      setVisible(true);
-    } else {
-      setVisible(false);
-    }
-  });
-
   return (
-    <motion.div ref={ref} className="w-full fixed top-2 inset-x-0 z-50">
-      <DesktopNav visible={visible} navItems={navItems} />
-      <MobileNav visible={visible} navItems={navItems} />
-    </motion.div>
-  );
-};
-
-const DesktopNav = ({ navItems, visible }: NavbarProps) => {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
-  return (
-    <motion.div
-      onMouseLeave={() => setHoveredIndex(null)}
-      animate={{
-        backdropFilter: "blur(16px)",
-        background: visible ? "rgba(0, 0, 0, 0.7)" : "rgba(0, 0, 0, 0.4)",
-        width: visible ? "38%" : "80%",
-        height: visible ? "48px" : "64px",
-        y: visible ? 8 : 0,
-      }}
-      initial={{
-        width: "80%",
-        height: "64px",
-        background: "rgba(0, 0, 0, 0.4)",
-      }}
-      transition={{
-        type: "spring",
-        stiffness: 400,
-        damping: 30,
-      }}
-      className={cn(
-        "hidden lg:flex flex-row self-center items-center justify-between py-2 mx-auto px-6 rounded-full relative z-[60] backdrop-saturate-[1.8]"
-      )}
+    <div
+      className={`fixed inset-x-0 top-3 z-50 flex justify-center px-3 transition duration-300 ${
+        shown ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-3 opacity-0"
+      }`}
+      aria-hidden={!shown}
     >
-      <Logo />
-      <motion.div
-        className="lg:flex flex-row flex-1 items-center justify-center space-x-1 text-sm"
-        animate={{
-          scale: visible ? 0.9 : 1,
-          justifyContent: visible ? "flex-end" : "center",
-        }}
-      >
-        {navItems.map((navItem, idx) => (
-          <motion.div
-            key={`nav-item-${idx}`}
-            onHoverStart={() => setHoveredIndex(idx)}
-            className="relative"
-          >
-            <Link
-              className="text-white/90 relative px-3 py-1.5 transition-colors"
-              href={navItem.link}
-            >
-              <span className="relative z-10">{navItem.name}</span>
-              {hoveredIndex === idx && (
-                <motion.div
-                  layoutId="menu-hover"
-                  className="absolute inset-0 rounded-full bg-gradient-to-r from-white/10 to-white/20"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{
-                    opacity: 1,
-                    scale: 1.1,
-                    background:
-                      "radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 50%, transparent 100%)",
-                  }}
-                  exit={{
-                    opacity: 0,
-                    scale: 0.8,
-                    transition: {
-                      duration: 0.2,
-                    },
-                  }}
-                  transition={{
-                    type: "spring",
-                    bounce: 0.4,
-                    duration: 0.4,
-                  }}
-                />
-              )}
-            </Link>
-          </motion.div>
-        ))}
-      </motion.div>
-      <div className="flex items-center gap-2">
-        <AnimatePresence mode="popLayout" initial={false}>
-          {!visible && (
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{
-                scale: 1,
-                opacity: 1,
-                transition: {
-                  type: "spring",
-                  stiffness: 400,
-                  damping: 25,
-                },
-              }}
-              exit={{
-                scale: 0.8,
-                opacity: 0,
-                transition: {
-                  duration: 0.2,
-                },
-              }}
-            >
-              <Button
-                as={Link}
-                href="https://github.com/sidhxntt/Praxis/wiki/Agent-Guide"
-                variant="primary"
-                className="hidden md:block rounded-full bg-white/20 hover:bg-white/30 text-white border-0"
-              >
-                Agent Wiki
-              </Button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </motion.div>
+      <header className="flex w-full max-w-[760px] items-center gap-6 rounded-full bg-white/80 py-2 pl-5 pr-2 text-[14px] font-medium shadow-[0_10px_30px_-14px_rgba(11,22,48,0.35),inset_0_0_0_1px_rgba(11,22,48,0.07)] backdrop-blur-xl backdrop-saturate-150">
+        <a href="#home" tabIndex={shown ? 0 : -1} className="mr-auto flex items-center gap-2 text-[16px] font-semibold tracking-[-0.01em] text-ink">
+          <span className="h-3.5 w-3.5 rounded-full bg-brand" aria-hidden="true" />
+          {p.name}
+        </a>
+        <nav aria-label="Sections" className="hidden items-center gap-6 md:flex">
+          {links.map((l) => (
+            <a key={l.href} href={l.href} tabIndex={shown ? 0 : -1} className="text-ink/70 transition hover:text-ink">
+              {l.label}
+            </a>
+          ))}
+        </nav>
+        <a href={p.wiki} tabIndex={shown ? 0 : -1} className="pill pill-brand !px-[18px] !py-[9px] !text-[13.5px]">
+          Agent Wiki
+        </a>
+      </header>
+    </div>
   );
-};
-
-const MobileNav = ({ navItems, visible }: NavbarProps) => {
-  const [open, setOpen] = useState(false);
-  return (
-    <>
-      <motion.div
-        animate={{
-          backdropFilter: "blur(16px)",
-          background: visible ? "rgba(0, 0, 0, 0.7)" : "rgba(0, 0, 0, 0.4)",
-          width: visible ? "80%" : "90%",
-          y: visible ? 0 : 8,
-          borderRadius: open ? "24px" : "9999px",
-          padding: "8px 16px",
-        }}
-        initial={{
-          width: "80%",
-          background: "rgba(0, 0, 0, 0.4)",
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 400,
-          damping: 30,
-        }}
-        className={cn(
-          "flex relative flex-col lg:hidden w-full justify-between items-center max-w-[calc(100vw-2rem)] mx-auto z-50 backdrop-saturate-[1.8] border border-solid border-white/40 rounded-full"
-        )}
-      >
-        <div className="flex flex-row justify-between items-center w-full">
-          <Logo />
-          {open ? (
-            <IconX className="text-white/90" onClick={() => setOpen(!open)} />
-          ) : (
-            <IconMenu2
-              className="text-white/90"
-              onClick={() => setOpen(!open)}
-            />
-          )}
-        </div>
-
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              initial={{
-                opacity: 0,
-                y: -20,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-              }}
-              exit={{
-                opacity: 0,
-                y: -20,
-              }}
-              transition={{
-                type: "spring",
-                stiffness: 400,
-                damping: 30,
-              }}
-              className="flex rounded-3xl absolute top-16 bg-black/80 backdrop-blur-xl backdrop-saturate-[1.8] inset-x-0 z-50 flex-col items-start justify-start gap-4 w-full px-6 py-8"
-            >
-              {navItems.map(
-                (navItem: { link: string; name: string }, idx: number) => (
-                  <Link
-                    key={`link=${idx}`}
-                    href={navItem.link}
-                    onClick={() => setOpen(false)}
-                    className="relative text-white/90 hover:text-white transition-colors"
-                  >
-                    <motion.span className="block">{navItem.name}</motion.span>
-                  </Link>
-                )
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-    </>
-  );
-};
+}

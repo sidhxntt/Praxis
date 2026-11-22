@@ -39,7 +39,7 @@ test("standard configuration resolves ordered frontend, backend, and integration
     projectName: "acme",
     projectType: "fullstack",
     packageManager: "npm",
-    frontend: { framework: "next", language: "typescript", styling: "tailwind-shadcn", ui: { mode: "template", style: "apple" } },
+    frontend: { framework: "next", language: "typescript", styling: "tailwind-shadcn", ui: { mode: "template", style: "leo" } },
     backend: { framework: "express", language: "typescript", database: "postgres", auth: "self-hosted", cache: "redis" },
     deployment: ["docker"],
   });
@@ -52,7 +52,7 @@ test("standard configuration resolves ordered frontend, backend, and integration
     assert.ok(result.bundleIds.includes(id), `missing resolved ${id}`);
   for (const source of [
     "cli/templates/frontend.next",
-    "cli/templates/ui.apple",
+    "cli/templates/ui.leo",
     "cli/templates/backend.express",
     "cli/templates/database.postgres",
     "cli/templates/auth.self-hosted",

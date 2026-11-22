@@ -1,113 +1,82 @@
-"use client";
-import Link from "next/link";
-import { Logo } from "./logo";
-import { usePathname } from "next/navigation";
+import { products, type ProductKey } from "@/lib/products";
 
-export function Footer() {
-  const isPro = usePathname().startsWith("/pro");
-  const documentation = [
-    { title: "Overview", href: "https://github.com/sidhxntt/Praxis#readme" },
-    { title: "Architecture", href: "https://github.com/sidhxntt/Praxis/tree/main/docs" },
-    { title: isPro ? "Praxis Pro" : "Standard projects", href: isPro ? "https://github.com/sidhxntt/Praxis/blob/main/docs/praxis-pro.md" : "https://github.com/sidhxntt/Praxis/blob/main/docs/standard-projects.md" },
-  ];
-
-  const resources = [
-    { title: "GitHub", href: "https://github.com/sidhxntt/Praxis" },
-    { title: "CLI help", href: "https://github.com/sidhxntt/Praxis#cli-reference" },
-    { title: "UI templates", href: "https://github.com/sidhxntt/Praxis#landing-page-template-gallery" },
-  ];
-
-  const company = [
-    { title: "Praxis Flow", href: "/" },
-    { title: "Praxis Pro", href: "/pro" },
-    { title: "FAQ", href: `${isPro ? "/pro" : ""}/#faqs` },
-  ];
-
-  const legal = [
-    { title: "MIT License", href: "https://github.com/sidhxntt/Praxis/blob/main/LICENSE" },
+export function Footer({ product }: { product: ProductKey }) {
+  const content = products[product];
+  const isPro = product === "pro";
+  const columns = [
+    {
+      title: "Documentation",
+      links: [
+        { title: "Overview", href: "https://github.com/sidhxntt/Praxis#readme" },
+        { title: "Architecture", href: "https://github.com/sidhxntt/Praxis/tree/main/docs" },
+        isPro
+          ? { title: "Praxis Pro", href: "https://github.com/sidhxntt/Praxis/blob/main/docs/praxis-pro.md" }
+          : { title: "Standard projects", href: "https://github.com/sidhxntt/Praxis/blob/main/docs/standard-projects.md" },
+      ],
+    },
+    {
+      title: "Resources",
+      links: [
+        { title: "GitHub", href: "https://github.com/sidhxntt/Praxis" },
+        { title: "Agent Wiki", href: content.wiki },
+        { title: "UI templates", href: "/preview" },
+      ],
+    },
+    {
+      title: "Products",
+      links: [
+        { title: "Praxis Flow", href: "/" },
+        { title: "Praxis Pro", href: "/pro" },
+        { title: "FAQ", href: "#faqs" },
+      ],
+    },
+    {
+      title: "Legal",
+      links: [{ title: "MIT License", href: "https://github.com/sidhxntt/Praxis/blob/main/LICENSE.txt" }],
+    },
   ];
 
   return (
-    <div className="relative border-t border-white/[0.1] px-8 py-20 bg-black w-full overflow-hidden mx-auto max-w-7xl">
-      <div className="absolute bottom-full left-1/2 -translate-x-1/2 -mb-px flex h-8 items-end overflow-hidden">
-        <div className="flex -mb-px h-[2px] w-56">
-          <div className="w-full flex-none [background-image:linear-gradient(90deg,rgba(255,255,255,0)_0%,#FFFFFF_32.29%,rgba(255,255,255,0.3)_67.19%,rgba(255,255,255,0)_100%)] blur-xs" />
-        </div>
-      </div>
-
-      <div className="max-w-7xl my-28 mx-auto text-sm text-neutral-400 flex flex-col justify-between md:px-8">
-        <div className="flex flex-col md:flex-row justify-between">
-          <div className="mb-10 md:mb-0">
-            <Logo />
+    <footer className="bg-brand-deep text-white/70">
+      <div className="mx-auto max-w-[1200px] px-5 pb-10 pt-20 md:px-11">
+        <div className="flex flex-col gap-14 md:flex-row md:justify-between">
+          <div>
+            <a href="#home" className="flex items-center gap-2.5 text-[18px] font-semibold tracking-[-0.01em] text-white">
+              <span className="h-4 w-4 rounded-full bg-white" aria-hidden="true" />
+              {content.name}
+            </a>
+            <p className="mt-4 max-w-[280px] text-[14px] leading-[1.5]">
+              A configuration-driven CLI that composes standalone projects from maintained modules.
+            </p>
           </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 lg:gap-20">
-            <div className="flex flex-col space-y-4">
-              <p className="text-white font-semibold">Documentation</p>
-              <ul className="space-y-3">
-                {documentation.map((item, idx) => (
-                  <li key={`doc-${idx}`}>
-                    <Link
-                      href={item.href}
-                      className="hover:text-white transition-colors"
-                    >
-                      {item.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="flex flex-col space-y-4">
-              <p className="text-white font-semibold">Resources</p>
-              <ul className="space-y-3">
-                {resources.map((item, idx) => (
-                  <li key={`resource-${idx}`}>
-                    <Link
-                      href={item.href}
-                      className="hover:text-white transition-colors"
-                    >
-                      {item.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="flex flex-col space-y-4">
-              <p className="text-white font-semibold">Company</p>
-              <ul className="space-y-3">
-                {company.map((item, idx) => (
-                  <li key={`company-${idx}`}>
-                    <Link
-                      href={item.href}
-                      className="hover:text-white transition-colors"
-                    >
-                      {item.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="flex flex-col space-y-4">
-              <p className="text-white font-semibold">Legal</p>
-              <ul className="space-y-3">
-                {legal.map((item, idx) => (
-                  <li key={`legal-${idx}`}>
-                    <Link
-                      href={item.href}
-                      className="hover:text-white transition-colors"
-                    >
-                      {item.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="grid grid-cols-2 gap-10 text-[14px] sm:grid-cols-4 lg:gap-16">
+            {columns.map((col) => (
+              <div key={col.title}>
+                <p className="font-medium text-white">{col.title}</p>
+                <ul className="mt-4 space-y-3">
+                  {col.links.map((l) => (
+                    <li key={l.title}>
+                      <a href={l.href} className="transition hover:text-white">
+                        {l.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
+        <p
+          aria-hidden="true"
+          className="mt-20 select-none font-serif text-[clamp(64px,17vw,220px)] italic leading-[0.8] tracking-[-0.03em] text-white/[0.08]"
+        >
+          {content.name}
+        </p>
+        <div className="mt-8 flex flex-col justify-between gap-2 border-t border-white/10 pt-6 text-[12.5px] sm:flex-row">
+          <span>MIT licensed · Generated code is yours.</span>
+          <span className="font-mono">{content.command}</span>
+        </div>
       </div>
-    </div>
+    </footer>
   );
 }

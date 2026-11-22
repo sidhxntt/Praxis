@@ -1,42 +1,62 @@
-import { products, type ProductKey } from "@/lib/products";
 import {
   IconActivityHeartbeat,
+  IconBox,
   IconBrandDjango,
   IconBrandDocker,
   IconBrandGolang,
   IconBrandNextjs,
   IconBrandNodejs,
   IconBrandTerraform,
-  IconBrandVite,
-  IconBrandVercel,
   IconBrandTypescript,
-  IconBox,
-  IconBrandDatabricks,
+  IconBrandVercel,
+  IconBrandVite,
   IconDatabase,
   IconPalette,
+  IconStack2,
 } from "@tabler/icons-react";
+import { products, type ProductKey } from "@/lib/products";
 
-export function SpotlightLogoCloud({ product = "flow" }: { product?: ProductKey }) {
+export function StackStrip({ product }: { product: ProductKey }) {
   const content = products[product];
-  const items = product === "flow"
-    ? [
-        ["Next.js", IconBrandNextjs, "Frontend"], ["Vite React", IconBrandVite, "Frontend"],
-        ["Express", IconBrandNodejs, "Backend"], ["PostgreSQL", IconDatabase, "Backend"],
-        ["Vercel", IconBrandVercel, "Deployment"], ["Docker", IconBrandDocker, "Deployment"],
-        ["40 UI styles", IconPalette, "Tooling"], ["JavaScript + TypeScript", IconBrandTypescript, "Language"],
-      ] as const
-    : [
-        ["Django + DRF", IconBrandDjango, "Backend"], ["Go + Gin", IconBrandGolang, "Backend"],
-        ["PostgreSQL", IconDatabase, "Data"], ["Redis", IconBrandDatabricks, "Data"],
-        ["Docker", IconBrandDocker, "Deployment"], ["Kubernetes", IconBox, "Deployment"],
-        ["Terraform", IconBrandTerraform, "Infrastructure"], ["OpenTelemetry", IconActivityHeartbeat, "Observability"],
-      ] as const;
+  const items =
+    product === "flow"
+      ? ([
+          ["Next.js", IconBrandNextjs, "Frontend"],
+          ["Vite React", IconBrandVite, "Frontend"],
+          ["Express", IconBrandNodejs, "Backend"],
+          ["PostgreSQL", IconDatabase, "Data"],
+          ["Vercel", IconBrandVercel, "Deploy"],
+          ["Docker", IconBrandDocker, "Deploy"],
+          ["UI heroes", IconPalette, "Tooling"],
+          ["JS + TS", IconBrandTypescript, "Language"],
+        ] as const)
+      : ([
+          ["Django + DRF", IconBrandDjango, "Backend"],
+          ["Go + Gin", IconBrandGolang, "Backend"],
+          ["PostgreSQL", IconDatabase, "Data"],
+          ["Redis", IconStack2, "Data"],
+          ["Docker", IconBrandDocker, "Deploy"],
+          ["Kubernetes", IconBox, "Deploy"],
+          ["Terraform", IconBrandTerraform, "Infra"],
+          ["OpenTelemetry", IconActivityHeartbeat, "Observe"],
+        ] as const);
 
   return (
-    <section className="relative w-full overflow-hidden border-y border-white/[0.07] py-14">
-      <p className="mx-auto mb-8 max-w-2xl px-4 text-center text-sm text-neutral-500">{content.name} generates native projects across the tools teams already use.</p>
-      <div className="mx-auto grid max-w-6xl grid-cols-2 border-l border-t border-white/[0.07] sm:grid-cols-4">
-        {items.map(([name, Icon, category]) => <div key={name} className="flex min-h-28 flex-col items-center justify-center gap-2 border-b border-r border-white/[0.07] px-4 text-center"><span className="text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-600">{category}</span><Icon size={27} stroke={1.5} className="text-neutral-200" aria-hidden="true" /><span className="text-sm font-medium text-neutral-300">{name}</span></div>)}
+    <section aria-label="Supported stack" className="border-b border-ink/[0.07] bg-white">
+      <div className="mx-auto max-w-[1200px] px-5 py-14 md:px-11">
+        <p className="mx-auto max-w-[520px] text-center text-[15px] leading-[1.5] text-ink/60">{content.stackLine}</p>
+        <ul className="mt-9 grid grid-cols-2 overflow-hidden rounded-[22px] border border-ink/[0.08] sm:grid-cols-4 lg:grid-cols-8">
+          {items.map(([name, Icon, category]) => (
+            <li
+              key={name}
+              className="-mb-px -mr-px flex min-h-[124px] flex-col items-center justify-center gap-2 border-b border-r border-ink/[0.08] px-3 text-center"
+            >
+              <span className="text-[11px] font-medium text-ink/40">{category}</span>
+              <Icon size={26} stroke={1.5} className="text-brand" aria-hidden="true" />
+              <span className="text-[14px] font-medium tracking-[-0.01em]">{name}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

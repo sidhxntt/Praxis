@@ -1,0 +1,22 @@
+{
+  "id": "hana",
+  "name": "Hana",
+  "component": "Hana",
+  "description": "A speaker and advisor's site: a calm portrait on mint paper behind a pane of reeded glass rendered as live refraction.",
+  "traits": [
+    "personal",
+    "editorial",
+    "portrait"
+  ],
+  "theme": "light",
+  "images": [
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/hana/backdrop.webp",
+      "path": "design/websites/hana/backdrop.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/hana/hana.webp",
+      "path": "design/websites/hana/hana.webp"
+    }
+  ]
+}

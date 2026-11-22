@@ -1,0 +1,26 @@
+{
+  "id": "slate",
+  "name": "Slate",
+  "component": "Slate",
+  "description": "An architecture studio showing one house, its name set huge across the sky behind the roofline with a script word in front.",
+  "traits": [
+    "architecture",
+    "editorial",
+    "photographic"
+  ],
+  "theme": "mixed",
+  "images": [
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/slate/house.webp",
+      "path": "design/websites/slate/house.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/slate/sky.webp",
+      "path": "design/websites/slate/sky.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/slate/clouds.webp",
+      "path": "design/websites/slate/clouds.webp"
+    }
+  ]
+}

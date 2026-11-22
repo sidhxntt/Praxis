@@ -21,7 +21,7 @@ Options:
 Frontend UI:
   Frameworks: Next.js, Vite (React), Vue, Astro, Angular (TypeScript only)
   Next.js, Vite, Vue, and Astro support JavaScript and TypeScript.
-  Choose a plain Tailwind + shadcn starter or one of 40 landing-page styles.
+  Choose a plain Tailwind + shadcn starter or, with Next.js or Vite, one of the landing-page heroes.
   Template selection uses a private local visual gallery with a terminal fallback.
   Selected projects include their design guidance in DESIGN.md.
 

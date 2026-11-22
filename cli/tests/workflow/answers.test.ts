@@ -9,7 +9,7 @@ describe("answersToConfig", () => {
         projectType: "frontend",
         language: "javascript",
         frontendFramework: "vite",
-        frontendUi: { mode: "template", style: "apple" },
+        frontendUi: { mode: "template", style: "ora" },
         deployment: ["vercel", "docker"],
         packageManager: "pnpm",
         installDependencies: true,
@@ -23,7 +23,7 @@ describe("answersToConfig", () => {
       frontend: {
         framework: "vite",
         styling: "tailwind-shadcn",
-        ui: { mode: "template", style: "apple" },
+        ui: { mode: "template", style: "ora" },
       },
       deployment: ["vercel", "docker"],
       packageManager: "pnpm",

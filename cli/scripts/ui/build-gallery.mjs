@@ -4,6 +4,8 @@ import path from "node:path";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
+import { buildLivePreviews } from "./build-live.mjs";
+import { exportToWeb } from "./export-web.mjs";
 
 const run = promisify(execFile);
 const require = createRequire(import.meta.url);
@@ -23,7 +25,7 @@ await run(process.execPath, [nextBin, "build", sourceRoot], {
 });
 
 for (const entry of await readdir(targetRoot)) {
-  if (entry !== "previews") {
+  if (entry !== "previews" && entry !== "live") {
     await rm(path.join(targetRoot, entry), { recursive: true, force: true });
   }
 }
@@ -31,4 +33,7 @@ for (const entry of await readdir(targetRoot)) {
 await cp(path.join(outputRoot, "index.html"), path.join(targetRoot, "index.html"));
 await cp(path.join(outputRoot, "_next"), path.join(targetRoot, "_next"), { recursive: true });
 
-console.log("Next.js gallery export is current.");
+const live = await buildLivePreviews();
+console.log(`Next.js gallery export and ${live.length} live previews are current.`);
+const web = await exportToWeb();
+if (web) console.log(`Website templates updated (${web.templates} templates, ${web.pictures} pictures).`);

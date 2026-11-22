@@ -1,0 +1,18 @@
+{
+  "id": "ora",
+  "name": "Ora",
+  "component": "OraCall",
+  "description": "An AI voice receptionist on electric blue, with a glossy glass ball drifting across the headline and bending the words like a real lens.",
+  "traits": [
+    "ai",
+    "saas",
+    "bold"
+  ],
+  "theme": "dark",
+  "images": [
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/ora-call/orb.webp",
+      "path": "design/websites/ora-call/orb.webp"
+    }
+  ]
+}

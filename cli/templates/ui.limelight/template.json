@@ -1,0 +1,22 @@
+{
+  "id": "limelight",
+  "name": "Limelight",
+  "component": "Limelight",
+  "description": "A brand studio on a yellow halftone ground: a black silhouette before a giant word, with a moving light revealing the colour photograph.",
+  "traits": [
+    "agency",
+    "bold",
+    "colorful"
+  ],
+  "theme": "light",
+  "images": [
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/limelight/portrait.webp",
+      "path": "design/websites/limelight/portrait.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/limelight/faces.webp",
+      "path": "design/websites/limelight/faces.webp"
+    }
+  ]
+}

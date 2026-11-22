@@ -1,6 +1,6 @@
 # Praxis Flow
 
-Praxis Flow is a composable CLI for generating native frontend, backend, full-stack, and production-backend projects. It includes five frontend frameworks, JavaScript and TypeScript support, 40 landing-page design directions, Express projects, and Praxis Pro backends for Django/DRF or Go/Gin.
+Praxis Flow is a composable CLI for generating native frontend, backend, full-stack, and production-backend projects. It includes five frontend frameworks, JavaScript and TypeScript support, a library of animated landing-page heroes for Next.js and Vite (React), Express projects, and Praxis Pro backends for Django/DRF or Go/Gin.
 
 ## Install from npm
 

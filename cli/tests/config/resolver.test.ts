@@ -64,7 +64,7 @@ describe("resolveModules", () => {
 
   it("appends the selected UI module after the frontend starter modules", () => {
     const config = quickConfig("acme");
-    config.frontend!.ui = { mode: "template", style: "apple" };
+    config.frontend!.ui = { mode: "template", style: "ora" };
 
     const modules = resolveModules(config);
 
@@ -72,7 +72,7 @@ describe("resolveModules", () => {
       "base.workspace",
       "frontend.next",
       "styling.tailwind-shadcn",
-      "ui.apple",
+      "ui.ora",
     ]);
   });
 

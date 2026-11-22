@@ -41,22 +41,21 @@
     "test": "vitest run",
     "test:pro": "vitest run --exclude '.worktrees/**' tests/generator/pro*.test.ts",
     "test:watch": "vitest",
-    "ui:generate": "node scripts/ui/generate.mjs",
+    "ui:add": "node scripts/ui/add-template.mjs",
+    "ui:images": "node scripts/ui/fetch-images.mjs",
     "ui:previews": "node scripts/ui/render-previews.mjs",
     "ui:gallery": "node scripts/ui/build-gallery.mjs",
+    "ui:web": "node scripts/ui/export-web.mjs",
     "ui:verify": "node scripts/ui/verify-generated.mjs",
     "ui:matrix": "node scripts/ui/matrix.mjs",
-    "check": "npm run ui:gallery && npm run test && npm run build",
+    "check": "npm run ui:images && npm run ui:verify && npm run ui:gallery && npm run test && npm run build",
     "prepublishOnly": "npm run check"
   },
   "files": [
     "dist/",
     "templates/",
-    "!templates/designs/",
-    "!templates/ui.shared/",
-    "!templates/ui.*/DESIGN.md",
-    "!templates/ui.*/style.json",
-    "!templates/ui.*/assets/"
+    "!templates/ui.*/brief.txt",
+    "!templates/ui.*/template.json"
   ],
   "dependencies": {
     "@clack/prompts": "^0.7.0",
@@ -76,7 +75,7 @@
     "@types/react-dom": "^19.2.4",
     "clsx": "^2.1.1",
     "motion": "^12.42.2",
-    "next": "^16.3.5",
+    "next": "^16.4.6",
     "playwright": "1.62.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",

@@ -1,0 +1,30 @@
+{
+  "id": "nocturne",
+  "name": "Nocturne",
+  "component": "Nocturne",
+  "description": "A streaming service whose film is already playing: one picture fills the page and moves like a dolly shot under a floating interface.",
+  "traits": [
+    "streaming",
+    "cinematic",
+    "photographic"
+  ],
+  "theme": "dark",
+  "images": [
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/nocturne/salt.webp",
+      "path": "design/websites/nocturne/salt.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/nocturne/sisters.webp",
+      "path": "design/websites/nocturne/sisters.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/nocturne/tide.webp",
+      "path": "design/websites/nocturne/tide.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/nocturne/north.webp",
+      "path": "design/websites/nocturne/north.webp"
+    }
+  ]
+}

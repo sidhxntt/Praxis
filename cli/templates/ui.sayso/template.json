@@ -1,0 +1,13 @@
+{
+  "id": "sayso",
+  "name": "Sayso",
+  "component": "Sayso",
+  "description": "A product that builds a small app from one spoken sentence: a red moulded device like a toy radio alone on warm paper.",
+  "traits": [
+    "ai",
+    "product",
+    "playful"
+  ],
+  "theme": "light",
+  "images": []
+}

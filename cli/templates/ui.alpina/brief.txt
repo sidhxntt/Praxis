@@ -1,0 +1,1099 @@
+Add this "Alpina" website hero to my project, as the first screen of my landing page.
+
+1. Save it as its own file (for example components/Alpina.tsx). Keep it one self-contained file: React only, its CSS inside it.
+2. Download its pictures into my public folder so its default paths work:
+   - https://www.tobiadonadon.com/design/websites/alpina/plate.webp → public/design/websites/alpina/plate.webp
+   - https://www.tobiadonadon.com/design/websites/alpina/train.webp → public/design/websites/alpina/train.webp
+   - https://www.tobiadonadon.com/design/websites/alpina/fg.webp → public/design/websites/alpina/fg.webp
+   - https://www.tobiadonadon.com/design/websites/alpina/masks.webp → public/design/websites/alpina/masks.webp
+3. Make it mine: my product's name, headline, line and button text, my colours where they're the brand's, my own photo if I give you one. Keep the layout, the type scale and the motion exactly as they are.
+4. Render it at the top of the page. It fills its container's width and is as tall as the screen.
+5. Check before you finish: it builds and typechecks, it looks right at 1440px and 390px wide, and it respects reduced motion.
+
+```tsx
+"use client";
+
+/**
+ * ALPINA · website hero
+ *
+ * The first screen of a night-train company that runs sleepers from Zurich to
+ * Venice through the Alps. The picture is a real place at sunrise: a stone
+ * viaduct curving across a gorge, snow peaks behind, mist lying in the valley.
+ * It is alive. The red train really travels across the viaduct: it is a cut-out
+ * laid on the empty track and moved along the curve of the bridge, car by car,
+ * getting larger as it comes towards you, and it slips behind the trees at both
+ * ends so the loop never shows. Mist rolls through the valley and clouds drift
+ * past the peaks (both drawn live in WebGL over the plate), and the scene is
+ * built in planes that part slowly on their own and more under the pointer:
+ * sky and peaks, the valley and the viaduct with its train, the trees in front,
+ * the headline.
+ *
+ * The one piece of product UI is the booking pill: pick a departure and the
+ * fare updates; "Book" holds the cabin (a soft two-note chime).
+ *
+ * One file, React only. The typefaces come from Google Fonts (loaded in the CSS).
+ *
+ *   <Alpina />
+ *   <Alpina speed={1.4} accent="#1f5fae" cta="See the cabins" />
+ *
+ * Props
+ *   brand    the wordmark                                 "Alpina"
+ *   cta      the button in the nav                        "Book a cabin"
+ *   accent   the Book button, the selected date, focus     "#d4321c"
+ *   speed    how fast the train runs (1 = 11 m/s)         1
+ *   plate    the scene with an empty viaduct              "/design/websites/alpina/plate.webp"
+ *   train    the train, cut out (as it sits in the plate) "/design/websites/alpina/train.webp"
+ *   fg       the trees in front of the track, cut out     "/design/websites/alpina/fg.webp"
+ *   masks    R depth, G mist, B clouds                    "/design/websites/alpina/masks.webp"
+ *   sound    tiny synthesized sounds on interaction       true
+ *   onBook   called with the chosen departure when Book is pressed
+ *
+ * Fills its container's width; height is var(--design-h, 100svh), never under
+ * 640px. Responsive by container query: on a phone the picture is re-framed on
+ * the viaduct and the booking pill becomes a card. The scene pauses off screen
+ * and in a hidden tab. Without WebGL the plate is shown still (the train still runs).
+ * Reduced motion: no entrance, the train stands where the photo has it, nothing drifts.
+ * Keyboard: the date button opens a list of departures (arrows move, Enter
+ * picks, Escape closes). Booking resets itself after about 2.2 s so the next
+ * visitor can try (remove the timeout in `book` to keep it).
+ * Sound: silent until the visitor interacts, when `sound` is false, and when
+ * <html data-cd-mute="1">. The AudioContext is created on the first sound.
+ */
+
+import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+
+type Props = {
+  brand?: string;
+  cta?: string;
+  accent?: string;
+  speed?: number;
+  plate?: string;
+  train?: string;
+  fg?: string;
+  masks?: string;
+  sound?: boolean;
+  onBook?: (d: { date: string; fare: number }) => void;
+};
+
+/* ---------- The plate and the places in it (in plate pixels, 1536 × 1024) ---------- */
+const PW = 1536;
+const PH = 1024;
+
+/* The track: the line under the train's near side, with the train's
+   scale there: g = picture px per metre along the track, h = the train's
+   height in px (side + roof). Metre 0 is the lower-left end, under the trees. */
+const TRACK: [number, number, number, number][] = [
+  [684, 862, 6.8, 52],
+  [696, 832, 6.6, 51],
+  [706, 806, 6.4, 50],
+  [715, 790, 6.3, 49.5],
+  [725, 774, 6.2, 49],
+  [737, 757, 6.1, 48.5],
+  [750, 741, 6.05, 48],
+  [773, 708, 5.9, 47],
+  [798, 688, 5.8, 46],
+  [823, 670, 5.7, 45.5],
+  [850, 655, 5.6, 45],
+  [877, 641, 5.5, 44.5],
+  [905, 627, 5.4, 44],
+  [933, 613, 5.3, 43.5],
+  [963.5, 601, 5.2, 43],
+  [1000, 592, 5.0, 42],
+  [1074, 574, 4.7, 39.5],
+  [1164, 552, 4.2, 36],
+  [1242, 534, 3.6, 33],
+  [1307, 518, 3.1, 30.5],
+  [1330, 503, 2.7, 29.5],
+  [1342, 488, 2.4, 29],
+  [1344, 474, 2.3, 28.5],
+  [1336, 463, 2.3, 28],
+  [1320, 454, 2.4, 27.5],
+  [1297, 446, 2.6, 27],
+  [1270, 440, 2.7, 26.5],
+  [1244, 435, 2.8, 26],
+  [1215, 431, 2.8, 26],
+  [1185, 428, 2.8, 25.5],
+  [1150, 425, 2.8, 25],
+];
+
+/* The train sprite: cut out of the original photograph at 4× (1387 × 415),
+   placed at (960.5, 492.75). The line under it, and its scale, as it sat. */
+const SPR = { x0: 960.5, y0: 492.75, s: 4, w: 1387, h: 415 };
+const SRC: [number, number, number, number][] = [
+  [963.5, 592, 5.2, 43],
+  [1074, 572, 4.7, 39.5],
+  [1164, 551.5, 4.2, 36],
+  [1242, 536, 3.6, 33],
+  [1307, 520, 3.1, 30.5],
+];
+/* The cars, as sprite x ranges: the locomotive and three coaches. */
+const CARS: [number, number][] = [
+  [0, 455],
+  [455, 815],
+  [815, 1125],
+  [1125, 1387],
+];
+/* The consist: the locomotive, then seven coaches. */
+const CONSIST = [0, 1, 2, 3, 1, 2, 3, 1];
+const GAP_M = 60; // metres of empty track between one train and the next
+const BASE_SPEED = 11; // m/s
+/* The locomotive's two lower headlamps, in sprite px. */
+const LAMPS: [number, number][] = [
+  [17, 336],
+  [86, 349],
+];
+
+/* The trees in front of the track (fg.webp, 1312 × 1151): rows 0–617 are the
+   occluders at viaduct depth (trees where the track enters the forest, the
+   pole in front of the track), rows 618–1150 the near trees, lower left. */
+const FG = { x0: 560, x1: 1260, cols: 1312, midRows: 618, rows: 1151, midY0: 400, nearY0: 740, k: 1.875 };
+
+/* Departures. */
+type Dep = { day: string; date: string; fare: number; left: number };
+const DEPS: Dep[] = [
+  { day: "Thu", date: "13 Mar", fare: 310, left: 4 },
+  { day: "Fri", date: "14 Mar", fare: 340, left: 2 },
+  { day: "Sat", date: "15 Mar", fare: 385, left: 1 },
+  { day: "Sun", date: "16 Mar", fare: 295, left: 6 },
+  { day: "Mon", date: "17 Mar", fare: 260, left: 9 },
+  { day: "Tue", date: "18 Mar", fare: 260, left: 8 },
+  { day: "Wed", date: "19 Mar", fare: 275, left: 7 },
+];
+
+/* ---------- Sound ---------- */
+type Blip = { f: number; to?: number; d?: number; g?: number; type?: OscillatorType; at?: number };
+function useBlip(on: boolean) {
+  const ctx = useRef<AudioContext | null>(null);
+  useEffect(() => () => void ctx.current?.close().catch(() => {}), []);
+  return useCallback(
+    (b: Blip) => {
+      if (!on || typeof window === "undefined") return;
+      if (document.documentElement.dataset.cdMute === "1") return;
+      const ua = (navigator as unknown as { userActivation?: { hasBeenActive: boolean } }).userActivation;
+      if (ua && !ua.hasBeenActive) return;
+      try {
+        const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+        if (!AC) return;
+        const a = (ctx.current ??= new AC());
+        if (a.state === "suspended") void a.resume();
+        const t = a.currentTime + (b.at ?? 0);
+        const d = Math.min(b.d ?? 0.04, 0.06);
+        const amp = a.createGain();
+        amp.gain.setValueAtTime(0.0001, t);
+        amp.gain.exponentialRampToValueAtTime(Math.min(b.g ?? 0.035, 0.06), t + 0.005);
+        amp.gain.exponentialRampToValueAtTime(0.0001, t + d);
+        amp.connect(a.destination);
+        const o = a.createOscillator();
+        o.type = b.type ?? "sine";
+        o.frequency.setValueAtTime(b.f, t);
+        if (b.to) o.frequency.exponentialRampToValueAtTime(b.to, t + d);
+        o.connect(amp);
+        o.start(t);
+        o.stop(t + d + 0.01);
+      } catch {
+        /* no sound is fine */
+      }
+    },
+    [on],
+  );
+}
+
+/* ---------- Geometry ---------- */
+type Pt = { x: number; y: number; m: number; h: number; g: number };
+
+/* Densify the track (Catmull-Rom) and measure it in metres. */
+function buildTrack() {
+  const out: Pt[] = [];
+  const n = TRACK.length;
+  const P = (i: number) => TRACK[Math.max(0, Math.min(n - 1, i))];
+  for (let i = 0; i < n - 1; i++) {
+    const [p0, p1, p2, p3] = [P(i - 1), P(i), P(i + 1), P(i + 2)];
+    const steps = 10;
+    for (let s = 0; s < steps; s++) {
+      const t = s / steps;
+      const t2 = t * t;
+      const t3 = t2 * t;
+      const cr = (a: number, b: number, c: number, d: number) =>
+        0.5 * (2 * b + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t2 + (-a + 3 * b - 3 * c + d) * t3);
+      out.push({ x: cr(p0[0], p1[0], p2[0], p3[0]), y: cr(p0[1], p1[1], p2[1], p3[1]), m: 0, h: p1[3] + (p2[3] - p1[3]) * t, g: p1[2] + (p2[2] - p1[2]) * t });
+    }
+  }
+  const last = TRACK[n - 1];
+  out.push({ x: last[0], y: last[1], m: 0, h: last[3], g: last[2] });
+  for (let i = 1; i < out.length; i++) {
+    const a = out[i - 1];
+    const b = out[i];
+    const ds = Math.hypot(b.x - a.x, b.y - a.y);
+    b.m = a.m + ds / ((a.g + b.g) / 2);
+  }
+  return out;
+}
+
+/* A point on the track at metre m (clamped to the ends). */
+function at(tr: Pt[], m: number): Pt {
+  if (m <= 0) return tr[0];
+  const L = tr[tr.length - 1].m;
+  if (m >= L) return tr[tr.length - 1];
+  let lo = 0;
+  let hi = tr.length - 1;
+  while (hi - lo > 1) {
+    const mid = (lo + hi) >> 1;
+    if (tr[mid].m < m) lo = mid;
+    else hi = mid;
+  }
+  const a = tr[lo];
+  const b = tr[hi];
+  const t = (m - a.m) / (b.m - a.m || 1);
+  return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, m, h: a.h + (b.h - a.h) * t, g: a.g + (b.g - a.g) * t };
+}
+
+/* The line under the sprite as it sat in the photo, at plate x. */
+function srcAt(x: number) {
+  let i = 0;
+  while (i < SRC.length - 2 && x > SRC[i + 1][0]) i++;
+  const a = SRC[i];
+  const b = SRC[i + 1];
+  const t = (x - a[0]) / (b[0] - a[0]);
+  return { y: a[1] + (b[1] - a[1]) * t, g: a[2] + (b[2] - a[2]) * t, h: a[3] + (b[3] - a[3]) * t };
+}
+
+/* Each car, cut into thin strips so it follows the curve, with each strip's
+   length in metres (measured where it sat in the photo). */
+type Strip = { sx0: number; sx1: number; m0: number; m1: number; hs: number; a: [number, number]; b: [number, number] };
+type Car = { strips: Strip[]; len: number };
+function buildCars(): Car[] {
+  return CARS.map(([c0, c1]) => {
+    const N = 8;
+    const strips: Strip[] = [];
+    let m = 0;
+    for (let i = 0; i < N; i++) {
+      const sx0 = c0 + ((c1 - c0) * i) / N;
+      const sx1 = c0 + ((c1 - c0) * (i + 1)) / N;
+      const x0 = SPR.x0 + sx0 / SPR.s;
+      const x1 = SPR.x0 + sx1 / SPR.s;
+      const A = srcAt(x0);
+      const B = srcAt(x1);
+      const len = Math.hypot(x1 - x0, B.y - A.y) / ((A.g + B.g) / 2);
+      strips.push({ sx0, sx1, m0: m, m1: m + len, hs: (A.h + B.h) / 2, a: [x0, A.y], b: [x1, B.y] });
+      m += len;
+    }
+    return { strips, len: m };
+  });
+}
+
+/* Plate → screen: cover with a focus point and a little overscan for parallax. */
+type PMap = { s: number; ox: number; oy: number };
+function coverMap(W: number, H: number): PMap {
+  const phone = W < 640;
+  const fx = phone ? 0.68 : 0.5;
+  const fy = phone ? 0.52 : 0.5;
+  const s = Math.max(W / PW, H / PH) * (phone ? 1.08 : 1.06);
+  const iw = PW * s;
+  const ih = PH * s;
+  const ox = Math.min(0, Math.max(W - iw, W / 2 - fx * iw));
+  const oy = Math.min(0, Math.max(H - ih, H / 2 - fy * ih));
+  return { s, ox, oy };
+}
+
+function loadImg(src: string) {
+  return new Promise<HTMLImageElement>((res, rej) => {
+    const i = new Image();
+    i.crossOrigin = "anonymous";
+    i.decoding = "async";
+    i.onload = () => res(i);
+    i.onerror = rej;
+    i.src = src;
+  });
+}
+
+/* A 256² tiling value-noise texture: four independent channels, 16 smooth
+   cells across, so magnified octaves stay soft (no facets, no contour lines). */
+function noiseData(size: number, seed: number) {
+  let s = seed >>> 0;
+  const rnd = () => {
+    s = (s * 1664525 + 1013904223) >>> 0;
+    return s / 4294967296;
+  };
+  const out = new Uint8Array(size * size * 4);
+  const g = 16;
+  for (let c = 0; c < 4; c++) {
+    const lat = Array.from({ length: g * g }, rnd);
+    const v = (xx: number, yy: number) => lat[(((yy % g) + g) % g) * g + (((xx % g) + g) % g)];
+    for (let y = 0; y < size; y++)
+      for (let x = 0; x < size; x++) {
+        const fx = (x / size) * g;
+        const fy = (y / size) * g;
+        const ix = Math.floor(fx);
+        const iy = Math.floor(fy);
+        const tx = fx - ix;
+        const ty = fy - iy;
+        const ux = tx * tx * tx * (tx * (tx * 6 - 15) + 10);
+        const uy = ty * ty * ty * (ty * (ty * 6 - 15) + 10);
+        const a = v(ix, iy) + (v(ix + 1, iy) - v(ix, iy)) * ux;
+        const b = v(ix, iy + 1) + (v(ix + 1, iy + 1) - v(ix, iy + 1)) * ux;
+        out[(y * size + x) * 4 + c] = Math.round((a + (b - a) * uy) * 255);
+      }
+  }
+  return out;
+}
+
+const VERT = `
+attribute vec2 aPos;
+varying vec2 vUv;
+void main(){ vUv = aPos * 0.5 + 0.5; gl_Position = vec4(aPos, 0.0, 1.0); }`;
+
+/* The plate in two depths, mist rolling through the valley, cloud drifting
+   past the peaks, the low sun breathing. Eight texture reads at most. */
+const FRAG = `
+precision highp float;
+varying vec2 vUv;
+uniform sampler2D uPlate, uMask, uNoise;
+uniform vec2 uRes;      // canvas css px
+uniform vec3 uMap;      // ox, oy, scale (css px)
+uniform vec2 uFar, uMid; // parallax offsets, css px
+uniform float uT;
+float fbm(vec2 p){
+  return texture2D(uNoise, p).r * .5
+       + texture2D(uNoise, p * 2.03 + vec2(.37, .11)).g * .27
+       + texture2D(uNoise, p * 4.11 + vec2(.71, .53)).b * .15
+       + texture2D(uNoise, p * 8.27 + vec2(.13, .89)).a * .08;
+}
+void main(){
+  vec2 px = vec2(vUv.x, 1.0 - vUv.y) * uRes;
+  vec2 size = vec2(${PW}.0, ${PH}.0) * uMap.z;
+  vec2 uv0 = (px - uMap.xy) / size;
+  float d = texture2D(uMask, uv0).r;
+  vec2 uv = uv0 - mix(uFar, uMid, d) / size;
+  vec3 col = texture2D(uPlate, uv).rgb;
+  vec4 mk = texture2D(uMask, uv);
+  // mist: soft banks rolling along the valley, folding over themselves
+  // (the noise texture has 16 cells per repeat: q is in repeats)
+  if (mk.g > .01) {
+    vec2 q = vec2(uv.x * .32 - uT * .0034, uv.y * 1.05);
+    float w = texture2D(uNoise, q * .45 + vec2(uT * .0012, -uT * .0008)).r;
+    float n = fbm(q + vec2(w * .045, w * .016));
+    float a = mk.g * smoothstep(.38, .68, n);
+    float lit = clamp(1.05 - uv.x * .9, 0.0, 1.0);
+    vec3 mc = mix(vec3(.82, .85, .89), vec3(1.0, .92, .82), lit);
+    col = mix(col, mc, a * .82);
+  }
+  // cloud on the peaks: wisps drifting slowly right to left
+  if (mk.b > .01) {
+    vec2 q = vec2(uv.x * .38 + uT * .0026, uv.y * 1.5);
+    float w = texture2D(uNoise, q * .5 - vec2(uT * .0009, 0.0)).g;
+    float n = fbm(q + vec2(w * .04, w * .012));
+    float a = mk.b * smoothstep(.40, .66, n);
+    col = mix(col, vec3(1.0, .95, .93), a * .78);
+  }
+  // the low sun, breathing slowly, and shafts of its light fanning over the valley
+  vec2 dir = (uv - vec2(-.02, .33)) * vec2(1.5, 1.0);
+  float ang = atan(dir.y, dir.x);
+  float ray = texture2D(uNoise, vec2(ang * .55 + uT * .0016, .37)).r * .65 + texture2D(uNoise, vec2(ang * 1.3 - uT * .0011, .71)).g * .35;
+  float shaft = smoothstep(.48, .82, ray) * exp(-length(dir) * 2.1) * smoothstep(-.01, .08, dir.y) * (1.0 - d * .55);
+  col += vec3(1.0, .76, .46) * shaft * .2;
+  vec2 sp = (uv - vec2(.0, .32)) * vec2(1.1, 2.0);
+  col += vec3(1.0, .70, .40) * exp(-dot(sp, sp) * 7.0) * (.09 + .035 * sin(uT * .45));
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+export default function Alpina({
+  brand = "Alpina",
+  cta = "Book a cabin",
+  accent = "#d4321c",
+  speed = 1,
+  plate = "/design/websites/alpina/plate.webp",
+  train = "/design/websites/alpina/train.webp",
+  fg = "/design/websites/alpina/fg.webp",
+  masks = "/design/websites/alpina/masks.webp",
+  sound = true,
+  onBook,
+}: Props) {
+  const uid = useId().replace(/:/g, "");
+  const root = useRef<HTMLDivElement>(null);
+  const glRef = useRef<HTMLCanvasElement>(null);
+  const trRef = useRef<HTMLCanvasElement>(null);
+  const nearRef = useRef<HTMLDivElement>(null);
+  const stillRef = useRef<HTMLDivElement>(null);
+  const typeRef = useRef<HTMLDivElement>(null);
+  const speedRef = useRef(speed);
+  speedRef.current = speed;
+  const blip = useBlip(sound);
+
+  const [sel, setSel] = useState(1);
+  const [open, setOpen] = useState(false);
+  const [focus, setFocus] = useState(1);
+  const [booked, setBooked] = useState(false);
+  const bookedTimer = useRef(0);
+  const listRef = useRef<HTMLDivElement>(null);
+  const dateBtn = useRef<HTMLButtonElement>(null);
+
+  /* The scene: WebGL plate + train canvas + pointer, one loop. */
+  useEffect(() => {
+    const el = root.current;
+    const cv = glRef.current;
+    const tc = trRef.current;
+    const near = nearRef.current;
+    const still = stillRef.current;
+    const type = typeRef.current;
+    if (!el || !cv || !tc || !near || !still || !type) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let dead = false;
+    let raf = 0;
+    let visible = true;
+    let W = 1;
+    let H = 1;
+    let dpr = 1;
+    let map: PMap = coverMap(1440, 810);
+    const track = buildTrack();
+    const L = track[track.length - 1].m;
+    const cars = buildCars();
+    const trainLen = CONSIST.reduce((s, c) => s + cars[c].len, 0);
+    const spacing = trainLen + GAP_M;
+    // Where the locomotive's nose sat in the photo, in track metres.
+    let noseM = 0;
+    {
+      let best = 1e9;
+      for (const p of track) {
+        const dd = Math.hypot(p.x - SRC[0][0], p.y - SRC[0][1]);
+        if (dd < best) {
+          best = dd;
+          noseM = p.m;
+        }
+      }
+    }
+
+    const ptr = { tx: 0, ty: 0, x: 0, y: 0, on: false };
+
+    const layout = () => {
+      const r = el.getBoundingClientRect();
+      W = Math.max(1, Math.round(r.width));
+      H = Math.max(1, Math.round(r.height));
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      cv.width = Math.round(W * dpr);
+      cv.height = Math.round(H * dpr);
+      tc.width = Math.round(W * dpr);
+      tc.height = Math.round(H * dpr);
+      map = coverMap(W, H);
+      const s = map.s;
+      Object.assign(still.style, {
+        left: `${map.ox}px`,
+        top: `${map.oy}px`,
+        width: `${PW * s}px`,
+        height: `${PH * s}px`,
+      });
+      Object.assign(near.style, {
+        left: `${map.ox + FG.x0 * s}px`,
+        top: `${map.oy + FG.nearY0 * s}px`,
+        width: `${(FG.x1 - FG.x0) * s}px`,
+        height: `${((FG.rows - FG.midRows) / FG.k) * s}px`,
+        backgroundSize: `100% ${(FG.rows / (FG.rows - FG.midRows)) * 100}%`,
+      });
+    };
+    layout();
+    const ro = new ResizeObserver(() => {
+      layout();
+      draw(last);
+    });
+    ro.observe(el);
+    const io = new IntersectionObserver(([x]) => {
+      visible = x.isIntersecting;
+      if (visible && !raf && !reduced) raf = requestAnimationFrame(loop);
+    });
+    io.observe(el);
+    const onVis = () => {
+      if (!document.hidden && !raf && !reduced) raf = requestAnimationFrame(loop);
+    };
+    document.addEventListener("visibilitychange", onVis);
+
+    /* --- WebGL --- */
+    const gl = cv.getContext("webgl", { antialias: false, alpha: false, premultipliedAlpha: false }) as WebGLRenderingContext | null;
+    let prog: WebGLProgram | null = null;
+    const U: Record<string, WebGLUniformLocation | null> = {};
+    const tex: WebGLTexture[] = [];
+    let glReady = false;
+    if (gl) {
+      const sh = (t: number, src: string) => {
+        const s = gl.createShader(t)!;
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        return s;
+      };
+      prog = gl.createProgram()!;
+      gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT));
+      gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) prog = null;
+      if (prog) {
+        gl.useProgram(prog);
+        const buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+        const loc = gl.getAttribLocation(prog, "aPos");
+        gl.enableVertexAttribArray(loc);
+        gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+        for (const n of ["uPlate", "uMask", "uNoise", "uRes", "uMap", "uFar", "uMid", "uT"]) U[n] = gl.getUniformLocation(prog, n);
+        gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+        const mk = (unit: number, src: TexImageSource | null, data?: Uint8Array, size?: number) => {
+          const t = gl.createTexture()!;
+          gl.activeTexture(gl.TEXTURE0 + unit);
+          gl.bindTexture(gl.TEXTURE_2D, t);
+          if (data && size) gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+          else if (src) gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
+          const pot = !!data;
+          if (pot) gl.generateMipmap(gl.TEXTURE_2D);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, pot ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, pot ? gl.REPEAT : gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, pot ? gl.REPEAT : gl.CLAMP_TO_EDGE);
+          tex.push(t);
+        };
+        mk(2, null, noiseData(256, 11), 256);
+        Promise.all([loadImg(plate), loadImg(masks)])
+          .then(([a, b]) => {
+            if (dead || !prog) return;
+            gl.useProgram(prog);
+            mk(0, a);
+            mk(1, b);
+            gl.uniform1i(U.uPlate, 0);
+            gl.uniform1i(U.uMask, 1);
+            gl.uniform1i(U.uNoise, 2);
+            glReady = true;
+            draw(last);
+          })
+          .catch(() => {});
+      }
+    }
+
+    /* --- The train --- */
+    const tx = tc.getContext("2d");
+    let spr: HTMLImageElement | null = null;
+    let fgImg: HTMLImageElement | null = null;
+    loadImg(train)
+      .then((i) => {
+        spr = i;
+        draw(last);
+      })
+      .catch(() => {});
+    loadImg(fg)
+      .then((i) => {
+        fgImg = i;
+        draw(last);
+      })
+      .catch(() => {});
+
+    const drawTrain = (headM: number, mx: number, my: number) => {
+      const img = spr;
+      if (!tx || !img) return;
+      const s = map.s;
+      const kx = img.naturalWidth / SPR.w;
+      const ky = img.naturalHeight / SPR.h;
+      let m = headM;
+      CONSIST.forEach((ci, idx) => {
+        const car = cars[ci];
+        if (m > L + 2 || m + car.len < -2) {
+          m += car.len;
+          return;
+        }
+        for (const st of car.strips) {
+          const A = at(track, m + st.m0);
+          const B = at(track, m + st.m1);
+          if (st.m1 + m < 0 || st.m0 + m > L) continue;
+          const ht = (A.h + B.h) / 2;
+          // source frame (u_s, v_s) → target frame (u_t, v_t)
+          const usx = st.b[0] - st.a[0];
+          const usy = st.b[1] - st.a[1];
+          const vsy = -st.hs;
+          const utx = B.x - A.x;
+          const uty = B.y - A.y;
+          const vty = -ht;
+          // inverse of [[usx, 0],[usy, vsy]]
+          const det = usx * vsy;
+          if (Math.abs(det) < 1e-6) continue;
+          const i00 = vsy / det;
+          const i10 = -usy / det;
+          const i11 = usx / det;
+          // M = [[utx, 0],[uty, vty]] · inv
+          const a = utx * i00;
+          const b = uty * i00 + vty * i10;
+          const c = 0;
+          const d = vty * i11;
+          const e = A.x - (a * st.a[0] + c * st.a[1]);
+          const f = A.y - (b * st.a[0] + d * st.a[1]);
+          tx.setTransform(dpr * s * a, dpr * s * b, dpr * s * c, dpr * s * d, dpr * (s * e + map.ox + mx), dpr * (s * f + map.oy + my));
+          const ov = 0.9; // overlap, sprite px, so strips never seam
+          const sx0 = Math.max(0, st.sx0 - ov);
+          const sx1 = Math.min(SPR.w, st.sx1 + ov);
+          tx.drawImage(img, sx0 * kx, 0, (sx1 - sx0) * kx, SPR.h * ky, SPR.x0 + sx0 / SPR.s, SPR.y0, (sx1 - sx0) / SPR.s, SPR.h / SPR.s);
+        }
+        // headlamps on the locomotive
+        if (idx === 0) {
+          const st = car.strips[0];
+          const A = at(track, m + st.m0);
+          const B = at(track, m + st.m1);
+          const ht = (A.h + B.h) / 2;
+          const k = ht / st.hs;
+          for (const [lx, ly] of LAMPS) {
+            const px = SPR.x0 + lx / SPR.s;
+            const py = SPR.y0 + ly / SPR.s;
+            const fx = (px - st.a[0]) / (st.b[0] - st.a[0]);
+            const up = srcAt(px).y - py;
+            const X = A.x + (B.x - A.x) * fx;
+            const Y = A.y + (B.y - A.y) * fx - up * k;
+            const sx = (s * X + map.ox + mx) * dpr;
+            const sy = (s * Y + map.oy + my) * dpr;
+            const r = 7 * k * s * dpr;
+            tx.setTransform(1, 0, 0, 1, 0, 0);
+            const g = tx.createRadialGradient(sx, sy, 0, sx, sy, r);
+            g.addColorStop(0, "rgba(255,248,226,.95)");
+            g.addColorStop(0.22, "rgba(255,226,170,.45)");
+            g.addColorStop(1, "rgba(255,200,120,0)");
+            tx.globalCompositeOperation = "lighter";
+            tx.fillStyle = g;
+            tx.fillRect(sx - r, sy - r, r * 2, r * 2);
+            tx.globalCompositeOperation = "source-over";
+          }
+        }
+        m += car.len;
+      });
+    };
+
+    /* --- One frame --- */
+    let last = reduced ? 3 : 0;
+    const par = { x: 0, y: 0 };
+    const draw = (t: number) => {
+      const s = map.s;
+      const sc = Math.min(1, W / 1440) * 0.6 + 0.4;
+      const far = { x: -par.x * 3 * sc, y: -par.y * 2 * sc };
+      const mid = { x: -par.x * 12 * sc, y: -par.y * 6 * sc };
+      const nr = { x: -par.x * 30 * sc, y: -par.y * 12 * sc };
+      if (gl && prog && glReady) {
+        if (!still.dataset.hide) {
+          still.dataset.hide = "1";
+          still.style.opacity = "0";
+        }
+        gl.viewport(0, 0, cv.width, cv.height);
+        gl.uniform2f(U.uRes, W, H);
+        gl.uniform3f(U.uMap, map.ox, map.oy, s);
+        gl.uniform2f(U.uFar, far.x, far.y);
+        gl.uniform2f(U.uMid, mid.x, mid.y);
+        gl.uniform1f(U.uT, t);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      } else {
+        still.style.transform = `translate3d(${mid.x}px, ${mid.y}px, 0)`;
+      }
+      if (tx) {
+        tx.setTransform(1, 0, 0, 1, 0, 0);
+        tx.clearRect(0, 0, tc.width, tc.height);
+        const v = BASE_SPEED * speedRef.current;
+        // the train sits where the photo has it 3 s after it appears
+        const head0 = noseM - v * (t - 3);
+        let h = ((head0 % spacing) + spacing) % spacing;
+        h -= spacing;
+        for (; h < L + 2; h += spacing) if (h + trainLen > -2) drawTrain(h, mid.x, mid.y);
+        // trees and the pole that stand in front of the track, at viaduct depth
+        if (fgImg) {
+          tx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          const kx = fgImg.naturalWidth / FG.cols;
+          tx.drawImage(
+            fgImg,
+            0,
+            0,
+            FG.cols * kx,
+            FG.midRows * kx,
+            map.ox + FG.x0 * s + mid.x,
+            map.oy + FG.midY0 * s + mid.y,
+            (FG.x1 - FG.x0) * s,
+            (FG.midRows / FG.k) * s,
+          );
+        }
+      }
+      near.style.transform = `translate3d(${nr.x}px, ${nr.y}px, 0)`;
+      type.style.transform = `translate3d(${par.x * 10 * sc}px, ${par.y * 5 * sc}px, 0)`;
+    };
+
+    let t0 = performance.now();
+    let prev = t0;
+    const loop = (now: number) => {
+      raf = 0;
+      if (dead) return;
+      if (!visible || document.hidden) {
+        t0 += now - prev; // freeze time while hidden
+        prev = now;
+        return;
+      }
+      const dt = Math.min(0.05, (now - prev) / 1000);
+      prev = now;
+      const t = (now - t0) / 1000;
+      last = t;
+      // a slow ambient dolly, plus the pointer
+      const ax = Math.sin(t * 0.39) * 0.42 + Math.sin(t * 0.17 + 1.3) * 0.18;
+      const ay = Math.sin(t * 0.27 + 0.6) * 0.3;
+      const gx = ptr.on ? ptr.tx * 0.85 + ax * 0.35 : ax;
+      const gy = ptr.on ? ptr.ty * 0.85 + ay * 0.35 : ay;
+      const k = 1 - Math.exp(-dt * 2.6);
+      par.x += (gx - par.x) * k;
+      par.y += (gy - par.y) * k;
+      draw(t);
+      raf = requestAnimationFrame(loop);
+    };
+
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      ptr.tx = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width) * 2 - 1));
+      ptr.ty = Math.max(-1, Math.min(1, ((e.clientY - r.top) / r.height) * 2 - 1));
+      ptr.on = true;
+    };
+    const onLeave = () => {
+      ptr.on = false;
+    };
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerleave", onLeave);
+
+    if (reduced) {
+      draw(3);
+    } else {
+      raf = requestAnimationFrame((n) => {
+        t0 = n;
+        prev = n;
+        loop(n);
+      });
+    }
+
+    return () => {
+      dead = true;
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVis);
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerleave", onLeave);
+      if (gl) {
+        for (const t of tex) gl.deleteTexture(t);
+        if (prog) gl.deleteProgram(prog);
+      }
+    };
+  }, [plate, train, fg, masks]);
+
+  /* --- Booking --- */
+  const pick = useCallback(
+    (i: number) => {
+      setSel(i);
+      setOpen(false);
+      blip({ f: 880, to: 1320, d: 0.035, g: 0.03, type: "triangle" });
+      dateBtn.current?.focus();
+    },
+    [blip],
+  );
+  useEffect(() => {
+    if (!open) return;
+    setFocus(sel);
+    const onDown = (e: PointerEvent) => {
+      const t = e.target as Node;
+      if (listRef.current?.contains(t) || dateBtn.current?.contains(t)) return;
+      setOpen(false);
+    };
+    const r = root.current;
+    r?.addEventListener("pointerdown", onDown);
+    return () => r?.removeEventListener("pointerdown", onDown);
+  }, [open, sel]);
+  useEffect(() => {
+    if (open) listRef.current?.querySelector<HTMLButtonElement>(`[data-i="${focus}"]`)?.focus();
+  }, [open, focus]);
+  const onListKey = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      e.preventDefault();
+      setFocus((f) => Math.min(DEPS.length - 1, f + 1));
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      e.preventDefault();
+      setFocus((f) => Math.max(0, f - 1));
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setOpen(false);
+      dateBtn.current?.focus();
+    }
+  };
+  const book = () => {
+    if (booked) return;
+    setBooked(true);
+    blip({ f: 659, d: 0.06, g: 0.04, type: "sine" });
+    blip({ f: 988, d: 0.06, g: 0.035, type: "sine", at: 0.13 });
+    onBook?.({ date: `${DEPS[sel].day} ${DEPS[sel].date}`, fare: DEPS[sel].fare });
+    window.clearTimeout(bookedTimer.current);
+    // Resets so the next visitor can try. Remove to keep it booked.
+    bookedTimer.current = window.setTimeout(() => setBooked(false), 2200);
+  };
+  useEffect(() => () => window.clearTimeout(bookedTimer.current), []);
+
+  const dep = DEPS[sel];
+  const vars = { "--alp-accent": accent } as CSSProperties;
+
+  return (
+    <div ref={root} className="alp-root" style={vars}>
+      <style>{css}</style>
+      <div className="alp-scene" aria-hidden="true">
+        <div ref={stillRef} className="alp-still" style={{ backgroundImage: `url(${plate})` }} />
+        <canvas ref={glRef} className="alp-gl" />
+        <canvas ref={trRef} className="alp-train" />
+        <div ref={nearRef} className="alp-near" style={{ backgroundImage: `url(${fg})` }} />
+        <div className="alp-shade" />
+        <div className="alp-grain" />
+      </div>
+
+      <header className="alp-nav">
+        <a className="alp-logo" href="#" onClick={(e) => e.preventDefault()}>
+          <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M2 16 L8 6 L11 11 L13 8 L18 16 Z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+          </svg>
+          {brand}
+        </a>
+        <nav className="alp-links" aria-label="Main">
+          <a href="#" onClick={(e) => e.preventDefault()}>Routes</a>
+          <a href="#" onClick={(e) => e.preventDefault()}>Cabins</a>
+          <a href="#" onClick={(e) => e.preventDefault()}>Dining</a>
+        </nav>
+        <button type="button" className="alp-navbtn">{cta}</button>
+      </header>
+
+      <div ref={typeRef} className="alp-type">
+        <h1 className="alp-h1">
+          <span className="alp-line"><span>Sleep through</span></span>
+          <span className="alp-line"><span>the Alps.</span></span>
+        </h1>
+        <p className="alp-sub">Zurich to Venice overnight. Board at 21:40, wake up at the lagoon.</p>
+      </div>
+
+      <div className="alp-book" role="group" aria-label="Book a sleeper">
+        <span className="alp-seg alp-route">
+          Zurich <span aria-hidden="true">→</span><span className="alp-sr"> to </span> Venice
+        </span>
+        <button
+          ref={dateBtn}
+          type="button"
+          className="alp-seg alp-date"
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-controls={`alp-list-${uid}`}
+          onClick={() => {
+            setOpen((o) => !o);
+            blip({ f: 620, d: 0.03, g: 0.025, type: "triangle" });
+          }}
+        >
+          {dep.day} {dep.date}
+          <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+            <path d="M2 4 L5 7 L8 4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </button>
+        <span className="alp-seg alp-fare" aria-live="polite">
+          Sleeper for 2 · <span key={dep.fare} className="alp-num">€{dep.fare}</span>
+        </span>
+        <button type="button" className={`alp-go${booked ? " is-on" : ""}`} onClick={book}>
+          <span className="alp-go-a">Book</span>
+          <span className="alp-go-b" aria-hidden={!booked}>
+            <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true">
+              <path d="M2.5 7.3 L5.6 10.2 L11.5 3.8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Held
+          </span>
+        </button>
+
+        <div
+          id={`alp-list-${uid}`}
+          ref={listRef}
+          className={`alp-list${open ? " is-open" : ""}`}
+          role="listbox"
+          aria-label="Departures from Zurich, 21:40"
+          onKeyDown={onListKey}
+          hidden={!open}
+        >
+          <div className="alp-list-h">Departures · 21:40 from Zürich HB</div>
+          <div className="alp-days">
+            {DEPS.map((d, i) => (
+              <button
+                key={d.date}
+                type="button"
+                role="option"
+                aria-selected={i === sel}
+                data-i={i}
+                tabIndex={i === focus ? 0 : -1}
+                className={`alp-day${i === sel ? " is-sel" : ""}`}
+                onClick={() => pick(i)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    pick(i);
+                  }
+                }}
+              >
+                <span className="alp-day-d">{d.day}</span>
+                <span className="alp-day-n">{d.date.split(" ")[0]}</span>
+                <span className="alp-day-p">€{d.fare}</span>
+                <span className={`alp-day-l${d.left <= 2 ? " is-low" : ""}`}>{d.left} left</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const css = `
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Inter+Tight:wght@400;500;600&display=swap');
+.alp-root{container-type:inline-size;width:100%;height:var(--design-h,100svh);min-height:640px;position:relative;overflow:hidden;isolation:isolate;
+  font-family:"Inter Tight",ui-sans-serif,system-ui,sans-serif;color:#fff;background:#8fa6bf;-webkit-font-smoothing:antialiased}
+.alp-scene{position:absolute;inset:0;overflow:hidden}
+.alp-still{position:absolute;left:0;top:0;width:100%;height:100%;background-size:cover;background-position:50% 50%;transition:opacity .4s ease;will-change:transform}
+.alp-gl,.alp-train{position:absolute;inset:0;width:100%;height:100%;display:block}
+.alp-near{position:absolute;background-repeat:no-repeat;background-position:0 100%;will-change:transform;pointer-events:none}
+.alp-shade{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(20,30,40,.36) 0%,rgba(20,30,40,.12) 22%,transparent 42%,transparent 72%,rgba(20,20,10,.42) 100%)}
+.alp-grain{position:absolute;inset:0;pointer-events:none;opacity:.09;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>")}
+
+.alp-nav{position:absolute;left:44px;right:44px;top:30px;display:flex;align-items:center;gap:30px;font-size:14px;font-weight:500;z-index:5;
+  animation:alp-fade .9s .1s both cubic-bezier(.2,.8,.2,1)}
+.alp-logo{display:flex;align-items:center;gap:9px;margin-right:auto;font-weight:600;font-size:18px;letter-spacing:-.01em;color:inherit;text-decoration:none}
+.alp-links{display:flex;gap:28px}
+.alp-links a{color:inherit;text-decoration:none;opacity:.86;transition:opacity .2s}
+.alp-links a:hover{opacity:1}
+.alp-navbtn{font:inherit;font-size:13.5px;font-weight:500;color:#1a1208;background:#fff;border:0;border-radius:999px;padding:10px 18px;cursor:pointer;
+  transition:transform .18s cubic-bezier(.3,1.4,.5,1),box-shadow .2s}
+.alp-navbtn:hover{box-shadow:0 6px 20px rgba(10,20,30,.22)}
+.alp-navbtn:active{transform:scale(.97)}
+
+.alp-type{position:absolute;left:56px;top:150px;z-index:4;will-change:transform}
+.alp-h1{margin:0;font-family:"Archivo",ui-sans-serif,system-ui,sans-serif;font-weight:800;font-stretch:72%;font-variation-settings:"wdth" 72;
+  font-size:clamp(56px,9.17cqi,140px);line-height:.86;letter-spacing:-.01em;word-spacing:.08em;text-transform:uppercase;filter:drop-shadow(0 2px 22px rgba(20,25,40,.2))}
+.alp-line{display:block;overflow:hidden;padding-bottom:.04em;margin-bottom:-.04em}
+.alp-line>span{display:block;animation:alp-rise 1.05s both cubic-bezier(.16,.84,.24,1)}
+.alp-line:nth-child(1)>span{animation-delay:.15s}
+.alp-line:nth-child(2)>span{animation-delay:.27s}
+.alp-sub{margin:20px 0 0;font-size:17px;max-width:420px;line-height:1.45;opacity:.92;animation:alp-fade .9s .5s both cubic-bezier(.2,.8,.2,1);
+  text-shadow:0 1px 14px rgba(20,25,40,.25)}
+
+.alp-book{position:absolute;left:56px;bottom:44px;z-index:6;display:flex;align-items:center;background:#fff;color:#1a1208;border-radius:999px;padding:6px;font-size:14px;
+  box-shadow:0 10px 40px rgba(20,20,10,.22),0 1px 0 rgba(255,255,255,.6) inset;animation:alp-up .9s .45s both cubic-bezier(.2,.8,.2,1)}
+.alp-seg{padding:10px 18px;white-space:nowrap}
+.alp-seg{position:relative}
+.alp-seg+.alp-seg::before{content:"";position:absolute;left:0;top:28%;height:44%;width:1px;background:rgba(26,18,8,.1)}
+.alp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.alp-date{font:inherit;color:inherit;background:none;border:0;display:inline-flex;align-items:center;gap:7px;cursor:pointer;border-radius:999px;
+  transition:background .2s}
+.alp-date:hover,.alp-date[aria-expanded="true"]{background:rgba(26,18,8,.05)}
+.alp-date svg{opacity:.55;transition:transform .25s cubic-bezier(.3,1.4,.5,1)}
+.alp-date[aria-expanded="true"] svg{transform:rotate(180deg)}
+.alp-num{display:inline-block;font-variant-numeric:tabular-nums;animation:alp-num .42s both cubic-bezier(.3,1.4,.5,1)}
+.alp-go{position:relative;font:inherit;font-size:14px;font-weight:500;color:#fff;background:var(--alp-accent);border:0;border-radius:999px;padding:11px 20px;cursor:pointer;overflow:hidden;
+  min-width:68px;transition:transform .18s cubic-bezier(.3,1.4,.5,1),filter .2s}
+.alp-go:hover{filter:brightness(1.07)}
+.alp-go:active{transform:scale(.96)}
+.alp-go-a,.alp-go-b{display:inline-flex;align-items:center;justify-content:center;gap:5px;transition:transform .36s cubic-bezier(.3,1.3,.5,1),opacity .2s}
+.alp-go-b{position:absolute;inset:0;transform:translateY(110%);opacity:0}
+.alp-go.is-on .alp-go-a{transform:translateY(-110%);opacity:0}
+.alp-go.is-on .alp-go-b{transform:none;opacity:1}
+
+.alp-list{position:absolute;left:0;bottom:calc(100% + 12px);background:#fff;color:#1a1208;border-radius:20px;padding:14px;box-shadow:0 18px 50px rgba(15,20,25,.28);
+  transform-origin:30% 100%;animation:alp-pop .32s both cubic-bezier(.3,1.3,.5,1)}
+.alp-list[hidden]{display:none}
+.alp-list-h{font-size:12px;font-weight:500;color:rgba(26,18,8,.55);margin:0 4px 10px}
+.alp-days{display:flex;gap:6px}
+.alp-day{font:inherit;color:inherit;background:#f3f1ee;border:0;border-radius:14px;width:62px;padding:9px 0 8px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;
+  transition:background .18s,transform .18s cubic-bezier(.3,1.4,.5,1),color .18s}
+.alp-day:hover{background:#e9e6e1}
+.alp-day:active{transform:scale(.96)}
+.alp-day-d{font-size:11px;font-weight:500;opacity:.6}
+.alp-day-n{font-size:19px;font-weight:600;letter-spacing:-.02em;line-height:1.15}
+.alp-day-p{font-size:12px;font-weight:500;font-variant-numeric:tabular-nums}
+.alp-day-l{font-size:10px;opacity:.5;margin-top:2px}
+.alp-day-l.is-low{opacity:.9;color:var(--alp-accent)}
+.alp-day.is-sel{background:#1a1208;color:#fff}
+.alp-day.is-sel .alp-day-l{color:#fff;opacity:.6}
+
+.alp-root :focus-visible{outline:2px solid var(--alp-accent);outline-offset:3px}
+.alp-book :focus-visible{outline-offset:2px}
+
+@keyframes alp-rise{from{transform:translateY(105%)}to{transform:none}}
+@keyframes alp-fade{from{opacity:0}to{opacity:1}}
+@keyframes alp-up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes alp-pop{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes alp-num{from{opacity:0;transform:translateY(60%)}to{opacity:1;transform:none}}
+
+@container (max-width:1100px){
+  .alp-h1{font-size:clamp(56px,10.5cqi,140px)}
+}
+@container (max-width:640px){
+  .alp-nav{left:20px;right:20px;top:20px;gap:12px}
+  .alp-links{display:none}
+  .alp-navbtn{padding:9px 14px;font-size:13px}
+  .alp-type{left:20px;right:20px;top:96px}
+  .alp-h1{font-size:17.4cqi;line-height:.88}
+  .alp-sub{font-size:15.5px;max-width:300px;margin-top:14px}
+  .alp-book{left:16px;right:16px;bottom:16px;border-radius:22px;padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:0}
+  .alp-seg{padding:10px 12px}
+  .alp-route{grid-column:1/-1;font-weight:600;font-size:15px;padding-bottom:4px}
+  .alp-date{justify-content:flex-start}
+  .alp-date::before{display:none}
+  .alp-go{grid-column:1/-1;margin-top:6px;padding:14px 20px;font-size:15px}
+  .alp-list{left:0;right:0;padding:12px}
+  .alp-days{overflow-x:auto;scrollbar-width:none;margin:0 -12px;padding:0 12px}
+  .alp-day{flex:0 0 56px;width:56px}
+}
+@media (prefers-reduced-motion:reduce){
+  .alp-nav,.alp-line>span,.alp-sub,.alp-book,.alp-list,.alp-num{animation:none}
+  .alp-go-a,.alp-go-b,.alp-date svg{transition:none}
+}
+`;
+```
+
+---
+
+The full brief of this design, for reference, or to rebuild it in another stack:
+
+# Alpina · night-train hero
+
+The first screen of a night-train company running sleepers from Zurich to Venice through the Alps. The picture is a real place at sunrise: a curved stone viaduct high over a gorge, snow peaks lit pink behind, mist lying in the valley and a village with a white church far below. It is alive, like footage: the red train really travels across the viaduct, car by car, getting larger as it comes towards you and slipping behind the trees at both ends so the loop never shows; mist rolls through the valley, wisps of cloud drift on the peaks, shafts of low sun fan across the valley, and the scene is built in planes that part slowly on their own and more under the pointer. The one piece of product UI is the booking pill: pick a departure and the fare updates, Book holds the cabin.
+
+## Images (one generated plate, three files cut from it)
+
+Plate prompt (landscape, 1536×1024, gpt-image class model):
+"Golden-hour aerial photograph of a curved stone railway viaduct high over a forested Alpine gorge, a red Swiss electric train (locomotive and three red coaches) crossing it, snow-capped peaks lit pink and gold behind under a clear blue sky, the sun rising at the far left horizon with a warm peach glow, a green valley with a village and white church far below on the left with low mist lying in it, a river, conifers in the foreground lower left, a sunlit limestone cliff at the right. 35 mm, drone height, crisp, natural colour, Kodak Portra warmth, real photography. Open sky in the upper left third for a headline. No text, no logos."
+
+Then the same photo edited to remove the train (an image-edit pass: "remove the red train from the viaduct so the empty track, parapet and overhead line continue along the curve, keep everything else identical"). The two are pixel-aligned (phase correlation < 0.2 px).
+
+- `plate.webp`: the empty plate, Lanczos ×1.875 to 2880×1920, unsharp 1.4px 45%, cwebp q86.
+- `train.webp` (1387×415, alpha): the train lifted out of the ORIGINAL photo (Apple Vision subject lift on a 4× crop), so its light and grain are the plate's own. It sits at plate (960.5, 492.75) at 4 sprite px per plate px.
+- `fg.webp` (1312×1151, alpha): plate pixels cut with painted masks (zones × a foliage key: HSV saturation > .38, hue 35–110°). Rows 0–617 = things at viaduct depth that stand in front of the track (the trees where the track enters the forest at the hairpin, the catenary pole at x 773); rows 618–1150 = the near trees and rock lower left (plate 560–1260 × 740–1024).
+- `masks.webp` (768×512): R = depth (0 sky and peaks, 1 everything nearer, feathered 14px), G = where mist may live (five soft ellipses along the valley floor and the slope), B = where cloud may live (two ellipses on the peaks, one on the far ridge).
+
+## Layers (back to front)
+
+1. **Still**: the plate as a CSS background (shown until WebGL draws, kept if WebGL is missing).
+2. **WebGL canvas** (one WebGL1 context, DPR ≤ 2, paused off screen). The plate is mapped like `cover` ×1.06 overscan (phone ×1.08, focus x .68 on the viaduct). Fragment shader, ≤ 8 texture reads in any pixel:
+   - Parallax: plate uv shifted by mix(far, mid, depth).
+   - Mist: fbm of a 256² 4-channel value-noise texture (16 smooth quintic cells per repeat, one octave per channel at ×1, 2.03, 4.11, 8.27), q = (u·.32 − .0034t, v·1.05), domain-warped by one coarse tap, `smoothstep(.38,.68)` × G × .82, colour from cool (.82,.85,.89) to sunlit (1,.92,.82) towards the sun.
+   - Cloud: the same at q = (u·.38 + .0026t, v·1.5), `smoothstep(.40,.66)` × B × .78, colour (1,.95,.93).
+   - Sun shafts: two taps of the noise along the angle from the sun (−.02, .33), `smoothstep(.48,.82)` × exp(−2.1·dist) below the sun line, + rgb(1,.76,.46) × .2; the sun glow breathes (.09 ± .035, sin .45t).
+3. **Train canvas** (2D, DPR ≤ 2). The track is a Catmull-Rom line of 31 hand-placed plate points under the train's near side, each with g (plate px per metre: 6.8 at the near end → 2.3 on the hairpin) and h (train height px: 52 → 25). Distances are integrated in metres, so the train slows and shrinks as it goes away. Each car (locomotive + 7 coaches cycling the three coach cut-outs, 166 m) is cut into 8 vertical strips; each strip is drawn with its own affine matrix that maps its source baseline (where it sat in the photo) and vertical onto the track chord and the local height. Speed 11 m/s × `speed`; trains follow 60 m apart; at 3 s after mount the locomotive sits exactly where the photo had it. Two warm headlamp glows (`lighter`). Then the viaduct-depth occluders from fg.webp.
+4. **Near trees** (fg.webp lower part, DOM layer).
+5. **Shade** (top 36% → 0 at 42%, bottom 42% dark) and a 9% multiply grain.
+6. **Copy, pill, nav.**
+
+Parallax (px at 1440, eased with 1 − e^(−2.6dt)): far 3/2, mid 12/6, near trees 30/12, headline −10/−5 (moves the other way). Ambient dolly with no pointer: x = .42 sin .39t + .18 sin(.17t + 1.3), y = .3 sin(.27t + .6); with a pointer, 85% pointer + 35% dolly.
+
+## Copy
+
+Nav: mountain mark + "Alpina" · Routes · Cabins · Dining · white pill "Book a cabin". Headline "Sleep through / the Alps." Line: "Zurich to Venice overnight. Board at 21:40, wake up at the lagoon." Pill: "Zurich → Venice" | "Fri 14 Mar ⌄" | "Sleeper for 2 · €340" | red "Book" → "✓ Held". Departures (popover above the pill, "Departures · 21:40 from Zürich HB"): Thu 13 €310 4 left · Fri 14 €340 2 left · Sat 15 €385 1 left (red) · Sun 16 €295 6 left · Mon 17 €260 9 left · Tue 18 €260 8 left · Wed 19 €275 7 left.
+
+## Type and colour
+
+Headline **Archivo** 800 at wdth 72, `clamp(56px, 9.17cqi, 140px)` (132px at 1440), line-height .86, uppercase, word-spacing .08em, a soft drop-shadow filter. UI **Inter Tight** 400–600: logo 18/600, nav 14/500, line 17/1.45, pill 14, day chips 11/19/12/10. White on the picture; pill ink #1a1208 on #fff; accent signal red #d4321c (Book, low-seat count, focus ring); selected day #1a1208.
+
+## Layout
+
+1440×810 is the composition: nav 30px from the top, 44px sides; headline at 56/150 over the sky; line 20px below (max 420px); pill 56px left, 44px from the bottom. The viaduct and train fill the centre right. Phone (≤ 640px container): the picture re-framed on the viaduct, headline 17.4cqi in three lines at top 96px, the pill becomes a card (route, date | fare, full-width Book), the departures scroll sideways.
+
+## Motion timings
+
+Entrance (done by 1.5 s): headline lines rise out of masks 1.05 s cubic-bezier(.16,.84,.24,1) at .15/.27 s; nav fades .1 s; line .5 s; pill rises .45 s. Popover pops .32 s cubic-bezier(.3,1.3,.5,1); the fare rolls in .42 s; Book flips to Held .36 s and resets after 2.2 s. Sounds: a 620 Hz tick on open, an 880→1320 Hz triangle blip on pick, a 659 + 988 Hz two-note chime on Book (≤ 60 ms each, peak ≤ .04).
+
+Reduced motion: no entrance, the train stands where the photo has it, nothing drifts.

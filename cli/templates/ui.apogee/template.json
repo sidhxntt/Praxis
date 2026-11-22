@@ -1,0 +1,46 @@
+{
+  "id": "apogee",
+  "name": "Apogee",
+  "component": "Apogee",
+  "description": "A weekly letter about the night sky: one living photograph of a tidal flat at dusk with a ringed planet half-set behind the horizon.",
+  "traits": [
+    "newsletter",
+    "cinematic",
+    "photographic"
+  ],
+  "theme": "dark",
+  "images": [
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/apogee/sky.webp",
+      "path": "design/websites/apogee/sky.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/apogee/flat.webp",
+      "path": "design/websites/apogee/flat.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/apogee/planet.webp",
+      "path": "design/websites/apogee/planet.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/apogee/ridge.webp",
+      "path": "design/websites/apogee/ridge.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/apogee/stars.webp",
+      "path": "design/websites/apogee/stars.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/apogee/mist-a.webp",
+      "path": "design/websites/apogee/mist-a.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/apogee/mist-b.webp",
+      "path": "design/websites/apogee/mist-b.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/apogee/grain.webp",
+      "path": "design/websites/apogee/grain.webp"
+    }
+  ]
+}

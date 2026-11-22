@@ -12,7 +12,7 @@ Praxis tests the generator at several boundaries because a passing TypeScript bu
 | Standard generation | `matrix`, `frameworks`, `generate`, `lifecycle` tests | supported standard combinations and runtime lifecycle |
 | Pro generation | `pro*.test.ts` | stacks, capabilities, Compose, Kubernetes, Terraform, runtime contracts |
 | UI artifacts | `cli/tests/ui/` | catalog, nine adapters, previews, accessibility, responsiveness, visual structure |
-| Complete UI matrix | `uiMatrix.test.ts`, `ui:matrix` | all 40 styles plus starter across every target |
+| Complete UI matrix | `uiMatrix.test.ts`, `ui:matrix` | all 18 templates plus starter across every React target |
 | Packaging | `package.test.ts` | npm tarball contains runtime templates and excludes authoring sources |
 | Website | `npm run build:web` | production Next.js build |
 | Documentation | `npm run docs:check` | resolvable links and renderable Wiki pages |
@@ -35,7 +35,7 @@ When a retained Git worktree exists beneath `.worktrees/`, run Vitest from the `
 
 ## UI framework build matrix
 
-CI builds 41 projects per target: one starter and all 40 styles. Targets are `next-js`, `next-ts`, `vite-js`, `vite-ts`, `vue-js`, `vue-ts`, `astro-js`, `astro-ts`, and `angular-ts`.
+CI builds 19 projects per target: one starter and all 18 templates. Targets are `next-js`, `next-ts`, `vite-js`, and `vite-ts`; Vue, Astro and Angular do not offer UI templates.
 
 To reproduce one shard:
 
@@ -76,7 +76,7 @@ npm --workspace cli run test:pro
 | Composer | composer tests and affected generated-project tests |
 | One standard module | affected matrix configuration and lifecycle test |
 | Pro capability | capability, Compose, Kubernetes/Terraform tests as applicable; both stacks |
-| UI renderer/profile | `ui:generate`, `ui:previews`, `ui:verify`, affected target build, UI quality tests |
+| UI template | `ui:add`, `ui:images`, `ui:previews`, `ui:gallery`, `ui:verify`, affected target build, UI quality tests |
 | Package contents | package test and `npm pack --dry-run` |
 | Wiki/docs | `docs:check` and representative rendered-page inspection |
 

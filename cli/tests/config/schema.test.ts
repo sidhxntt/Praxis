@@ -83,7 +83,7 @@ describe("PraxisConfig", () => {
     );
   });
 
-  it.each(["next", "vite", "vue", "astro"] as const)(
+  it.each(["next", "vite"] as const)(
     "accepts JavaScript and TypeScript UI templates for %s",
     (framework) => {
       for (const language of ["javascript", "typescript"] as const) {
@@ -92,25 +92,31 @@ describe("PraxisConfig", () => {
         config.frontend = {
           framework,
           styling: "tailwind-shadcn",
-          ui: { mode: "template", style: "apple" },
+          ui: { mode: "template", style: "ora" },
         };
         expect(validateConfig(config).frontend?.ui).toEqual({
           mode: "template",
-          style: "apple",
+          style: "ora",
         });
       }
     },
   );
 
-  it("accepts Angular templates in TypeScript projects", () => {
-    const config = quickConfig("acme");
-    config.frontend = {
-      framework: "angular",
-      styling: "tailwind-shadcn",
-      ui: { mode: "template", style: "apple" },
-    };
-    expect(validateConfig(config).frontend?.framework).toBe("angular");
-  });
+  it.each(["vue", "astro", "angular"] as const)(
+    "rejects UI templates for %s, which is not React",
+    (framework) => {
+      const config = quickConfig("acme");
+      config.language = "typescript";
+      config.frontend = {
+        framework,
+        styling: "tailwind-shadcn",
+        ui: { mode: "template", style: "ora" },
+      };
+      expect(() => validateConfig(config)).toThrow(
+        "UI templates are React components and require next or vite",
+      );
+    },
+  );
 
   it("rejects Angular templates in JavaScript projects with guidance", () => {
     const config = quickConfig("acme");
@@ -136,7 +142,7 @@ describe("PraxisConfig", () => {
     config.frontend = {
       framework: "next",
       styling: "tailwind-shadcn",
-      ui: { mode: "starter", style: "apple" },
+      ui: { mode: "starter", style: "ora" },
     };
     expect(() => validateConfig(config)).toThrow(
       'unknown starter UI configuration key "style"',

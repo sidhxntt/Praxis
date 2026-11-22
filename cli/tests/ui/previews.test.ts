@@ -32,8 +32,8 @@ describe("rendered UI previews", () => {
     for (const style of catalog) {
       for (const [kind, expected] of Object.entries({
         thumbnail: { width: 640, minimumHeight: 400, exactHeight: 400 },
-        desktop: { width: 1440, minimumHeight: 901 },
-        mobile: { width: 390, minimumHeight: 845 },
+        desktop: { width: 1440, minimumHeight: 900, exactHeight: 900 },
+        mobile: { width: 390, minimumHeight: 844, exactHeight: 844 },
       })) {
         const preview = style.previews[kind as keyof CatalogRecord["previews"]];
         manifested.push(path.basename(preview.path));
@@ -55,6 +55,6 @@ describe("rendered UI previews", () => {
 
     expect((await readdir(path.join(root, "gallery/previews"))).sort())
       .toEqual(manifested.sort());
-    expect(manifested).toHaveLength(120);
+    expect(manifested).toHaveLength(UI_STYLE_IDS.length * 3);
   });
 });

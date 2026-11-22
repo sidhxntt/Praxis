@@ -1,10 +1,12 @@
 import { createServer, IncomingMessage, ServerResponse } from "node:http";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { isUiStyleId, UI_STYLES, UiStyleId } from "./catalog";
+import { isUiStyleId, UI_STYLE_IDS, UI_STYLES, UiStyleId } from "./catalog";
 
 export interface GalleryOptions {
   galleryRoot?: string;
+  /** Where the ui.<id> template modules live (their pictures feed the live previews). */
+  templatesRoot?: string;
   timeoutMs?: number;
   signal?: AbortSignal;
 }
@@ -25,12 +27,15 @@ const NEXT_ASSET_TYPES = new Map([
   [".css", "text/css; charset=utf-8"],
   [".js", "text/javascript; charset=utf-8"],
   [".woff2", "font/woff2"],
+  [".webp", "image/webp"],
+  [".svg", "image/svg+xml"],
 ] as const);
 
 export async function startGallery(options: GalleryOptions = {}): Promise<GallerySession> {
   const root = path.resolve(
     options.galleryRoot ?? path.resolve(__dirname, "../../templates/ui.catalog/gallery"),
   );
+  const templatesRoot = path.resolve(options.templatesRoot ?? path.resolve(root, "../.."));
   const timeoutMs = options.timeoutMs ?? 5 * 60_000;
   let selected = false;
   let settled = false;
@@ -43,7 +48,7 @@ export async function startGallery(options: GalleryOptions = {}): Promise<Galler
 
   const server = createServer(async (request, response) => {
     try {
-      await handleRequest(request, response, root, () => selected, (id) => {
+      await handleRequest(request, response, root, templatesRoot, () => selected, (id) => {
         selected = true;
         response.once("finish", () => {
           setTimeout(() => void finish(undefined, id), 20);
@@ -107,6 +112,7 @@ async function handleRequest(
   request: IncomingMessage,
   response: ServerResponse,
   root: string,
+  templatesRoot: string,
   hasSelection: () => boolean,
   select: (id: UiStyleId) => void,
 ): Promise<void> {
@@ -125,7 +131,7 @@ async function handleRequest(
     }
     if (/^\/_next\/static\/[a-zA-Z0-9._/-]+$/.test(pathname)) {
       const extension = path.extname(pathname);
-      const contentType = NEXT_ASSET_TYPES.get(extension as ".css" | ".js" | ".woff2");
+      const contentType = NEXT_ASSET_TYPES.get(extension as ".css" | ".js" | ".woff2" | ".webp" | ".svg");
       if (!contentType) return send(response, 404, "Not found");
       const assetPath = path.resolve(root, `.${pathname}`);
       const staticRoot = path.resolve(root, "_next/static");
@@ -137,6 +143,45 @@ async function handleRequest(
       } catch {
         return send(response, 404, "Not found");
       }
+    }
+    const live = pathname.match(/^\/live\/([a-z0-9-]+)\/(?:index\.html)?$/);
+    if (live && isUiStyleId(live[1])) {
+      try {
+        const page = await readFile(path.join(root, "live", live[1], "index.html"));
+        response.setHeader("content-type", "text/html; charset=utf-8");
+        response.setHeader("cache-control", "no-store");
+        return send(response, 200, page, LIVE_CSP);
+      } catch {
+        return send(response, 404, "Not found");
+      }
+    }
+    const liveAsset = pathname.match(/^\/live\/assets\/([A-Za-z0-9_-]+\.(js|css))$/);
+    if (liveAsset) {
+      try {
+        const bytes = await readFile(path.join(root, "live", "assets", liveAsset[1]));
+        response.setHeader("content-type", liveAsset[2] === "js" ? "text/javascript; charset=utf-8" : "text/css; charset=utf-8");
+        response.setHeader("cache-control", "public, max-age=31536000, immutable");
+        return send(response, 200, bytes);
+      } catch {
+        return send(response, 404, "Not found");
+      }
+    }
+    const picture = pathname.match(/^\/design\/websites\/([a-z0-9-]+)\/([a-z0-9_-]+(?:\.[a-z0-9_-]+)*\.(webp|png|jpe?g|svg|avif))$/);
+    if (picture) {
+      const type = PICTURE_TYPES[picture[3] as keyof typeof PICTURE_TYPES];
+      for (const id of UI_STYLE_IDS) {
+        try {
+          const bytes = await readFile(path.join(
+            templatesRoot, `ui.${id}`, "files", "shared", "public", "design", "websites", picture[1], picture[2],
+          ));
+          response.setHeader("content-type", type);
+          response.setHeader("cache-control", "public, max-age=3600");
+          return send(response, 200, bytes);
+        } catch {
+          // not this template's picture
+        }
+      }
+      return send(response, 404, "Not found");
     }
     const preview = pathname.match(/^\/previews\/([a-z0-9-]+)-(thumbnail|desktop|mobile)\.webp$/);
     if (preview && isUiStyleId(preview[1])) {
@@ -187,9 +232,22 @@ async function readJsonBody(request: IncomingMessage): Promise<unknown> {
   }
 }
 
-function send(response: ServerResponse, status: number, body: string | Buffer): void {
+const GALLERY_CSP = "default-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; frame-src 'self'";
+// The live previews render each hero exactly as it ships, including the Google
+// Fonts its CSS imports; nothing else may leave the machine.
+const LIVE_CSP = "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; frame-ancestors 'self'";
+const PICTURE_TYPES = {
+  webp: "image/webp",
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  svg: "image/svg+xml",
+  avif: "image/avif",
+} as const;
+
+function send(response: ServerResponse, status: number, body: string | Buffer, csp = GALLERY_CSP): void {
   response.statusCode = status;
   response.setHeader("x-content-type-options", "nosniff");
-  response.setHeader("content-security-policy", "default-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'");
+  response.setHeader("content-security-policy", csp);
   response.end(body);
 }

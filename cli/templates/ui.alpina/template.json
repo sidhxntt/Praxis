@@ -1,0 +1,30 @@
+{
+  "id": "alpina",
+  "name": "Alpina",
+  "component": "Alpina",
+  "description": "A night train crossing a stone viaduct at sunrise, alive like footage: the train runs car by car while mist and light move through the valley.",
+  "traits": [
+    "travel",
+    "cinematic",
+    "photographic"
+  ],
+  "theme": "mixed",
+  "images": [
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/alpina/plate.webp",
+      "path": "design/websites/alpina/plate.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/alpina/train.webp",
+      "path": "design/websites/alpina/train.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/alpina/fg.webp",
+      "path": "design/websites/alpina/fg.webp"
+    },
+    {
+      "url": "https://www.tobiadonadon.com/design/websites/alpina/masks.webp",
+      "path": "design/websites/alpina/masks.webp"
+    }
+  ]
+}
